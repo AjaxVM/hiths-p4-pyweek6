@@ -6,7 +6,7 @@ class Ship:
     def __init__(self, pos):
         self._alive = True
 
-        self.hull_max = 50
+        self.hull_max = 70
         self.hull = self.hull_max
         self.crew_max = 50
         self.crew = self.crew_max
