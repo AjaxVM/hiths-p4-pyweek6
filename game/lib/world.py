@@ -2,7 +2,8 @@ import pygame
 from pygame.locals import *
 
 ##from territory_draw import MapObject, Territory
-from collisions import Polygon, Vector
+from collisions import Polygon, Vector, line_intersect
+import math
 
 
 class MapObject(object):
@@ -24,16 +25,64 @@ class MapObject(object):
         for i in self.territories:
             if i.poly.collidepoly(terr.poly):
                 return False
+##                if i.player != terr.player:
+##                    return False
+##                else:
+##                    return True
         return True
 
 
+##    def merge_territories(self, t1, t2):
+##        inside = []
+##        other = []
+##        x = 0
+##        print 1
+##        for i in t2.points:
+##            if i in t1.pixels:
+##                inside.append([i, t2.points[x-1], t2.points[x+1]])
+##                other.append([i, t2.points[x-1]])
+##            else:
+##                other.append([i, t2.points[x-1]])
+##            x += 1
+##
+##        x = 0
+##        print 2
+##        for i in t1.points:
+##            if i in t2.pixels:
+##                inside.append([i, t1.points[x-1], t1.points[x+1]])
+##                other.append([i, t1.points[x-1]])
+##            else:
+##                other.append([i, t1.points[x-1]])
+##            x += 1
+##
+##        new = []
+##        for i in other:
+##            new.append(i[0])
+##        for i in inside:
+##            for x in other:
+##                if not x == [i[0], i[1]]:
+##                    a = line_intersect([i[0], i[1]], x)
+##                    if a:
+##                        new.append(a)
+##                    a = line_intersect([i[0], i[2]], x)
+##                    if a:
+##                        new.append(a)
+##            new.remove(i[0])
+##        t1.pixels.extend(t2.pixels)
+##
+##        t1.points = new
+##        return t1
+
+
 class Territory(object):
-    def __init__(self):
+    def __init__(self, player):
         self.points = []
         self.pixels = []
         self.rect = pygame.Rect(0,0,1,1)
         self.midpoint = [0,0]
         self.poly = None
+
+        self.player = player
 
     def add_point(self, point):
         self.points.append(point)
@@ -81,16 +130,20 @@ class Territory(object):
 
 
 class TerritoryDrawer(object):
-    def __init__(self, world):
+    def __init__(self, world, player=0):
         self.world = world
 
         self.t = None
         self.active = False
 
+        self.player = player
+        self.button = 1
+
     def update_event(self, event):
         if self.active:
             if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
+                if event.button == self.button:
+                    print "click!"
                     x, y = event.pos
                     ox, oy = self.world.camera.get_offset()
                     x += ox
@@ -98,7 +151,7 @@ class TerritoryDrawer(object):
                     pos = x, y
                     if self.world.mo.test_point(pos):
                         if not self.t:
-                            self.t = Territory()
+                            self.t = Territory(self.player)
                             self.t.add_point(pos)
                         else:
                             if self.t.within_range(pos):
@@ -200,8 +253,10 @@ class World(object):
                 px -= x
                 py -= y
                 np.append((px, py))
-            pygame.draw.polygon(screen, [255,0,0], np)
-            pygame.draw.polygon(screen, [0,255,0], np, 3)
+            colors = [[[255,0,0], [0,255,0]],
+                      [[125,125,125],[0,0,0]]]
+            pygame.draw.polygon(screen, colors[i.player][0], np)
+            pygame.draw.polygon(screen, colors[i.player][0], np, 3)
 
 
 
@@ -213,6 +268,10 @@ def main():
     tdraw = TerritoryDrawer(world)
     tdraw.active = True
 
+    tdraw2 = TerritoryDrawer(world, 1)
+    tdraw2.active = True
+    tdraw2.button = 3
+
     while 1:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -220,6 +279,7 @@ def main():
                 return None
 
             tdraw.update_event(event)
+            tdraw2.update_event(event)
 
 
         x, y = pygame.mouse.get_pos()
@@ -234,6 +294,7 @@ def main():
 
         world.render(screen)
         tdraw.render(screen)
+        tdraw2.render(screen)
         pygame.display.flip()
 
 main()

@@ -93,3 +93,31 @@ class Polygon:
 
     def collideline(self, other):
         other = Polygon([other[0], other[1], other[0]])
+
+
+def line_intersect(a, b):
+    denom = ((b[1][1] - b[0][1]) * (a[1][0] - a[0][0])) -\
+            ((b[1][0] - b[0][0]) * (a[1][1] - a[0][1]))
+    nume_a = ((b[1][0] - b[0][0]) * (a[0][1] - b[0][1])) -\
+             ((b[1][1] - b[0][1]) * (a[0][0] - b[0][0]))
+    nume_b = ((a[1][0] - a[0][0]) * (a[0][1] - b[0][1])) - \
+             ((a[1][1] - a[0][1]) * (a[0][0] - b[0][0]))
+
+    if denom == 0:
+        if nume_a == 0 and nume_b == 0:
+            return False
+        return False
+
+    ua = nume_a / denom
+    ub = nume_b / denom
+
+    if (ua >= 0 and ua <= 1) and (ub >= 0 and ub <= 1):
+        x = a[0][0] + ua * (a[1][0] - a[0][0])
+        y = a[0][1] + ua * (a[1][1] - a[0][1])
+        return int(x), int(y)
+    return False
+
+
+a = line_intersect([[2.0, 0.0], [2.0, 10.0]],
+                   [[5.0, 0.0], [5.0, 10.0]])
+print a
