@@ -13,7 +13,7 @@ class State:
             ship = Ship()
             self._ships.append(ship)
 
-    def attack_ship(self, attacker, target, attack_type = 'ball'):
+    def attack_ship(self, attacker, target, attack_type = ('ball', 'medium')):
         if attacker == target:
             return # Can't attack self
         b = Battle((self._ships[attacker], self._ships[target]), attack_type)
