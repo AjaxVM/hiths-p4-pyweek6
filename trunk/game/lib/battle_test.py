@@ -1,4 +1,4 @@
-import game
+##import game
 from objects import *
 from combat import *
 
