@@ -84,7 +84,7 @@ class Island(object):
 ##        self.image = self.images["img-%s.png"%size]
 ##        self.image = data.image("island-%s.png"%size)
         #no longer need to cache here or in world, as data loader does that automatically ;)
-        self.image = data.image("island.png")
+        self.image = random.choice([data.image("island.png"), data.image("island2.png"), data.image("island3.png")])
         self.size = size
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
