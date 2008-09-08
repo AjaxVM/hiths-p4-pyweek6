@@ -19,6 +19,11 @@ _dmg_table = {
 _range_modifiers = { 'long' : 0.5, 'medium' : 1, 'close' : 1.2 }
 _low_crew_penalty = 0.2
 
+# Boarding
+_board_min = 2
+_board_max = 5
+_board_min_factor = 0.2
+
 class Battle:
     """Represents a single battle between two ships. The two opponents should
     be passed as a tuple. The attack_type is a tuple of (shot_type, range)."""
@@ -41,9 +46,12 @@ class Battle:
 
     def execute(self):
         """Calculate battle results."""
-        # Ships attack eachother simultaneously
-        self._do_damage(0,1)
-        self._do_damage(1,0)
+        if self.shot_types[0] == 'board':
+            self._calculate_boarding()
+        else:
+            # Ships attack eachother simultaneously
+            self._do_damage(0,1)
+            self._do_damage(1,0)
 
         # Check if either crew was wiped out, or if both were
         if self.opponents[0].crew <= 0 and self.opponents[1].crew <= 0:
@@ -79,7 +87,22 @@ class Battle:
         self.opponents[taker].crew -= crew
         self.opponents[taker].speed -= speed
         # Record damage information
-        self.results['damage'][ship] = (hull, crew, speed)
+        self.results['damage'][self.opponents[taker]] = (hull, crew, speed)
+
+    def _calculate_boarding(self):
+        # Use min factor to only slightly affect the numbers
+        crew0_attack = random.randint(_board_min, _board_max) * _board_min_factor
+        crew1_attack = random.randint(_board_min, _board_max) * _board_min_factor
+        print 'crew attack', crew0_attack, crew1_attack
+
+        crew0_dmg = int(self.opponents[1].crew * crew1_attack)
+        crew1_dmg = int(self.opponents[0].crew * crew0_attack)
+        self.opponents[0].crew -= crew0_dmg
+        self.opponents[1].crew -= crew1_dmg
+
+        # Record damage information
+        self.results['damage'][self.opponents[0]] = (0, crew1_dmg, 0)
+        self.results['damage'][self.opponents[1]] = (0, crew0_dmg, 0)
 
     def _get_dmg_distribution(self, damage, shot_type):
         """Computes the distribution of damage based on the shot_type and
