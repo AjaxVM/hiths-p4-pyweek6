@@ -10,4 +10,6 @@ all_images = {}
 def image(name):
     if name in all_images:
         return all_images[name]
-    return pygame.image.load(os.path.join(data_path, name)).convert_alpha()
+    image = pygame.image.load(os.path.join(data_path, name)).convert_alpha()
+    all_images[name] = image
+    return image
