@@ -1,4 +1,8 @@
 #! /usr/bin/env python
 
-from lib import main
-main.main()
+import sys
+sys.path.append("lib")
+sys.path.append("data")
+
+import game
+game.main()

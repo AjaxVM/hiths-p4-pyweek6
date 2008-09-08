@@ -259,14 +259,13 @@ class World(object):
         self.ssize = screen_size
         self.wsize = world_size
 
-        #load the images after the screen is initialised
-        Island.images = {"img-10.png": data.load_image("island.png")}
-
         self.mo = MapObject(self.wsize)
-
-        #self.tile_image = pygame.Surface((25, 25))
-        #self.tile_image.fill((75, 75, 255)) #only till we have a good image
-        self.tile_image = data.load_image("water.png")
+        self.tile_images = [data.image("water.png"),
+                            data.image("water2.png"),
+                            data.image("water3.png")]
+        self.cur_ti = self.tile_images[0]
+        self.cur_i = 0
+        self.cur_timer = 0
 
         self.camera = Camera(self.ssize, self.wsize)
 
@@ -276,6 +275,13 @@ class World(object):
         self.make_islands()
 
     def render(self, screen):
+        self.cur_timer += 1
+        if self.cur_timer >= 25:
+            self.cur_timer = 0
+            self.cur_i += 1
+            if self.cur_i == 3:
+                self.cur_i = 0
+            self.cur_ti = self.tile_images[self.cur_i]
         x, y = self.camera.get_offset()
         if x:
             tox = x % 25
@@ -290,7 +296,7 @@ class World(object):
 
         for ix in xrange(-1,640/25+2):
             for iy in yy:
-                screen.blit(self.tile_image, (ix*25+tox, iy*25+toy))
+                screen.blit(self.cur_ti, (ix*25+tox, iy*25+toy))
 
         for i in self.mo.territories:
             np = []

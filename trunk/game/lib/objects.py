@@ -1,4 +1,5 @@
 import math, pygame, random
+import data
 
 class Ship(object):
     image = pygame.Surface((25, 25)) # Image series the game should use to render
@@ -78,14 +79,12 @@ class Resources(object):
         self.crew = crew
 
 class Island(object):
-    #This won't work when loading images... the screen has to initialise :P
-    #Look at around line 263 in world.py
-    #images = {"img-10.png": pygame.Surface((50, 50))}
-    #images.values()[0].fill((0, 255, 0)) #fill the island square
-
     def __init__(self, pos, size):
         self.pos = pos
-        self.image = self.images["img-%s.png"%size]
+##        self.image = self.images["img-%s.png"%size]
+##        self.image = data.image("island-%s.png"%size)
+        #no longer need to cache here or in world, as data loader does that automatically ;)
+        self.image = data.image("island.png")
         self.size = size
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
