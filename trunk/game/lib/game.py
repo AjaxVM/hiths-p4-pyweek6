@@ -32,15 +32,10 @@ class TerritoryDrawer(object):
                         else:
                             if self.t.within_range(pos):
                                 self.t.finish()
-                                if len(self.t.pixels) < 50:
-                                    self.t = None
-                                    return None
                                 if self.world.mo.test_territory(self.t):
                                     for i in self.world.islands:
                                         if self.t.poly.colliderect(i.rect):
                                             self.world.mo.add(self.t)
-                                            self.t = None
-                                            return None
                                 self.t = None
                             else:
                                 self.t.add_point(pos)
