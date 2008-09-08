@@ -13,7 +13,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
 
-    ships = [Ship([64, 64]), Ship([240, 240])]
+    ships = [Ship([64, 64], 0), Ship([240, 240], 0)]
     turn = 1
     print "Turn:",turn
 	

@@ -1,7 +1,6 @@
 import random
 # TODO list:
 # Implement boarding
-# Check for wiped out crew, but intact ship, in which case the ship can change hands
 # Implement misses based on opponent speed and range
 # Make adjustments to the damage distribution based on what is being damaged,
 # then we can have a realistically sized crew and also adequate speed.
@@ -25,7 +24,8 @@ class Battle:
     be passed as a tuple. The attack_type is a tuple of (shot_type, range)."""
     def __init__(self, opponents, attack_type):
         self.opponents = opponents
-        self.results = []
+        self.results = {}
+        self.results['damage'] = {}
 
         # Set up defender shot type, range is fixed
         d_shot_type = ''
@@ -45,20 +45,29 @@ class Battle:
         self._do_damage(0,1)
         self._do_damage(1,0)
 
-        # Check ship status
-        if not self.opponents[0].is_alive():
-            print 'Ship', 0, 'sank.',
-        if not self.opponents[1].is_alive():
-            print 'Ship', 1, 'sank.',
+        # Check if either crew was wiped out, or if both were
+        if self.opponents[0].crew <= 0 and self.opponents[1].crew <= 0:
+            # The sea claims both unmanned ships..
+            # These ships will fail the next checks
+            self.opponents[0].hull = -1
+            self.opponents[1].hull = -1
+            self.results['captured'] = 0
+        elif self.opponents[0].crew <= 0:
+            self.results['captured'] = self.opponents[0]
+        elif self.opponents[1].crew <= 0:
+            self.results['captured'] = self.opponents[1]
 
-        s0 = self.opponents[0]
-        s1 = self.opponents[1]
-        print 'Combat end.'
-        print 'Ship 0:', s0.hull, s0.crew, s0.speed, 'Ship 1:', s1.hull, s1.crew, s1.speed
+        # Check ship status and set winner
+        if not self.opponents[0].is_alive():
+            self.results['winner'] = self.opponents[1] # Assume the other ship won
+        if not self.opponents[1].is_alive():
+            if 'winner' in self.results:
+                del self.results['winner'] # Both ships sank
+            else:
+                self.results['winner'] = self.opponents[0]
 
     def _do_damage(self, giver, taker):
-        """Calculates and applies damage. If a ship is dead, returns True so
-        the battle can end."""
+        """Calculates and applies damage."""
         ship = self.opponents[giver]
         crew_penalty = self._get_crew_penalty(ship)
 
@@ -69,7 +78,8 @@ class Battle:
         self.opponents[taker].hull -= hull
         self.opponents[taker].crew -= crew
         self.opponents[taker].speed -= speed
-        print "Ship %s attack" % giver, damage
+        # Record damage information
+        self.results['damage'][ship] = (hull, crew, speed)
 
     def _get_dmg_distribution(self, damage, shot_type):
         """Computes the distribution of damage based on the shot_type and
@@ -85,7 +95,7 @@ class Battle:
         """Get the penalty for having less than 50% crew. The penalty is
         relative to the number of missing crew."""
         if ship.crew <= (ship.crew_max / 2):
-            print 'Suffering crew penalty'
+            print 'Ship', ship.owner, 'suffering crew penalty'
             return int((ship.crew_max - ship.crew) * _low_crew_penalty)
         else:
             return 0
