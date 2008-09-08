@@ -88,21 +88,21 @@ class Island(object):
         self.rect.center = self.pos
 
         self.resources = [] #can be gold, crew and string
-        self.font = pygame.font.Font(None, 12)
+        self.font = pygame.font.Font(None, 15)
 
     def render(self, screen, offset):
         ox, oy = offset
         x, y = self.pos
         x -= ox
         y -= oy
-        if (x - self.rect.width < 0) or (x >= 640) or\
-           (y - self.rect.height < 0) or (y >= 480):
+        if (x < -self.rect.width) or (x >= 640 + self.rect.width) or\
+           (y < -self.rect.height) or (y >= 480 +self.rect.height):
             return None
         screen.blit(self.image, (x, y))
-        off = 10
+        off = 9
         for i in self.resources:
             screen.blit(self.font.render(i, True, [0,0,0]), (x, y - off))
-            off += 12
+            off += 9
 
     def get_random_resources(self):
         choices = ["gold", "string", "crew"]

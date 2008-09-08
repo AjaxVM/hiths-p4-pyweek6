@@ -32,6 +32,9 @@ class TerritoryDrawer(object):
                         else:
                             if self.t.within_range(pos):
                                 self.t.finish()
+                                if len(self.t.pixels) < 50:
+                                    self.t = None
+                                    return None
                                 if self.world.mo.test_territory(self.t):
                                     for i in self.world.islands:
                                         if self.t.poly.colliderect(i.rect):
@@ -63,13 +66,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
 
-    world = World()
-    for x in xrange(1000):
-        px = random.randint(0, world.wsize[0])
-        py = random.randint(0, world.wsize[1])
-        i = Island((px, py), 10)
-        i.get_random_resources()
-        world.islands.append(i)
+    world = World(world_size=(1500, 1500))
     tdraw = TerritoryDrawer(world)
     tdraw.active = True
 

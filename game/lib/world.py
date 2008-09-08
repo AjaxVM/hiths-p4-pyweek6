@@ -5,6 +5,7 @@ from pygame.locals import *
 from collisions import Polygon, Vector, line_intersect
 import math
 import random
+from objects import *
 
 
 class MapObject(object):
@@ -172,6 +173,8 @@ class World(object):
         self.islands = []
         self.units = []
 
+        self.make_islands()
+
     def render(self, screen):
         x, y = self.camera.get_offset()
         if x:
@@ -188,11 +191,6 @@ class World(object):
         for ix in xrange(-1,640/25+2):
             for iy in yy:
                 screen.blit(self.tile_image, (ix*25+tox, iy*25+toy))
-        for i in self.islands:
-            i.render(screen, (x, y))
-
-        for i in self.units:
-            i.render(screen, (x, y))
 
         for i in self.mo.territories:
             np = []
@@ -203,5 +201,24 @@ class World(object):
                 np.append((px, py))
             colors = [[[255,0,0], [0,255,0]],
                       [[125,125,125],[0,0,0]]]
-##            pygame.draw.polygon(screen, colors[i.player][0], np)
             pygame.draw.polygon(screen, colors[i.player][0], np, 3)
+
+        for i in self.islands:
+            i.render(screen, (x, y))
+
+        for i in self.units:
+            i.render(screen, (x, y))
+
+    def make_islands(self):
+        grid = []
+        for x in xrange(self.wsize[0]/25):
+            for y in xrange(self.wsize[1]/25):
+                grid.append((x, y))
+        self.islands = []
+        for x in xrange(len(grid)/15):
+            x, y = random.choice(grid)
+            grid.remove((x, y))
+            off = random.randint(0,10)
+            i = Island((x*25+off, y*25+off), 10)
+            i.get_random_resources()
+            self.islands.append(i)
