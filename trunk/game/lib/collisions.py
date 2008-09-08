@@ -87,12 +87,13 @@ class Polygon:
             return True
 
     def colliderect(self, other):
-        other = Polygon([other.rect.topleft, other.rect.topright,
-                         other.rect.bottomleft, other.rect.bottomright])
+        other = Polygon([Vector(*other.topleft), Vector(*other.topright),
+                         Vector(*other.bottomright), Vector(*other.bottomleft),
+                         Vector(*other.topleft)])
         return self.collidepoly(other)
 
     def collideline(self, other):
-        other = Polygon([other[0], other[1], other[0]])
+        other = Polygon([Vector(*other[0]), Vector(*other[1]), Vector(*other[0])])
 
 
 def line_intersect(a, b):

@@ -1,7 +1,8 @@
-import math, pygame
+import math, pygame, random
 
-class Ship:
-    graphic = 'generic_ship' # Image series the game should use to render
+class Ship(object):
+    image = pygame.Surface((25, 25)) # Image series the game should use to render
+    image.fill((255, 0, 0))
 
     def __init__(self, pos):
         self._alive = True
@@ -19,7 +20,7 @@ class Ship:
         self.moved = False
         self.selected = False
 
-        self.hold_capacity = 40 # Resources can only be this number total
+        self.hold_capacity = 40 # Resources can only equal this number total
         self.resources = Resources(0, 0, 0) # Start empty
 
     def is_alive(self):
@@ -62,9 +63,51 @@ class Ship:
         pos[1] += math.cos(math.radians(mouse_angle))*distance
         return pos, distance
 
-class Resources:
-    def __init__(self, wood, string, crew):
-        self.wood = wood
+    def render(self, screen, offset):
+        ox, oy = offset
+        x, y = self.pos
+        x -= ox
+        y -= oy
+        screen.blit(self.image, (x, y))
+
+class Resources(object):
+    def __init__(self, gold, string, crew):
+        self.gold = gold
         self.string = string
         self.crew = crew
 
+class Island(object):
+    images = {"img-10.png": pygame.Surface((10, 10))}
+    images.values()[0].fill((0, 255, 0)) #fill the island square
+
+    def __init__(self, pos, size):
+        self.pos = pos
+        self.image = self.images["img-%s.png"%size]
+        self.size = size
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos
+
+        self.resources = [] #can be gold, crew and string
+        self.font = pygame.font.Font(None, 12)
+
+    def render(self, screen, offset):
+        ox, oy = offset
+        x, y = self.pos
+        x -= ox
+        y -= oy
+        if (x - self.rect.width < 0) or (x >= 640) or\
+           (y - self.rect.height < 0) or (y >= 480):
+            return None
+        screen.blit(self.image, (x, y))
+        off = 10
+        for i in self.resources:
+            screen.blit(self.font.render(i, True, [0,0,0]), (x, y - off))
+            off += 12
+
+    def get_random_resources(self):
+        choices = ["gold", "string", "crew"]
+        num = random.randint(0,3)
+        for i in xrange(num):
+            x = random.choice(choices)
+            choices.remove(x)
+            self.resources.append(x)
