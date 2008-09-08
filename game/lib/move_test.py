@@ -3,7 +3,7 @@
 """Click the ships (green circles) and right click to move them.
 Press Spacebar to end  the turn"""
 
-import pygame
+import pygame, data
 from pygame.locals import *
 
 from objects import *
@@ -15,6 +15,7 @@ def main():
 
     ships = [Ship([64, 64], 0), Ship([240, 240], 0)]
     turn = 1
+    ship_image = data.image("ship.png")
     print "Turn:",turn
 	
     while 1:
@@ -34,9 +35,7 @@ def main():
             if e.type == MOUSEBUTTONDOWN:
                 if e.button == 1:
                     for s in ships:
-                        rect = Rect(s.pos[0], s.pos[1], 32, 32)
-                        rect.center = s.pos
-                        if rect.collidepoint(e.pos) and not s.moved:
+                        if s.rect.collidepoint(e.pos) and not s.moved:
                             s.selected = True
                         else:
                             s.selected = False
@@ -47,10 +46,10 @@ def main():
 	    
         screen.fill((0,0,255))
         for s in ships:
-            pygame.draw.circle(screen, (0, 255, 0), (s.pos[0], s.pos[1]), 16)
+            screen.blit(ship_image, s.rect)
             if s.selected:
                 pygame.draw.line(screen, (255, 255, 255), s.pos, s.get_mouse_pos()[0], 2)
-                pygame.draw.circle(screen, (255, 255, 0), (s.pos[0], s.pos[1]), 16, 2)
+                pygame.draw.circle(screen, (255, 255, 0), s.rect.center, 30, 2)
         pygame.display.flip()
 	    
 main()
