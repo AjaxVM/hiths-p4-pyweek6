@@ -8,7 +8,7 @@ class InputController(object):
 
     def event(self, event):
         if self.player.is_turn():
-            self.player.event(event)
+            print event #hmm, this could could interesting...
 
     def update(self):
         pass
@@ -54,11 +54,20 @@ class Player(object):
         self.controller = controller(state, self)
         self.num = num
 
+        self.to_be_rendered_objects = []
+
     def is_turn(self):
         return self.state.uturn == self.num
 
     def end_turn(self):
         self.state.next_player_turn()
+
+    def render(self, screen, offset):
+        #this allows us to render player actions to the screen.
+        #Like the territory drawing will go through here now - because
+        #it is highly dependant on turn and other user actions.
+        for i in self.to_be_rendered_objects:
+            i.render(screen, offset)
 
 class State(object):
     def __init__(self, world):
