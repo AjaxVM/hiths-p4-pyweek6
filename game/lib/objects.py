@@ -4,8 +4,9 @@ class Ship(object):
     image = pygame.Surface((25, 25)) # Image series the game should use to render
     image.fill((255, 0, 0))
 
-    def __init__(self, pos):
+    def __init__(self, pos, owner): # TODO: owner should be a reference to a player
         self._alive = True
+        self.owner = owner
 
         self.hull_max = 70
         self.hull = self.hull_max
