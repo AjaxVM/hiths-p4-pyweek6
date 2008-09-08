@@ -8,6 +8,22 @@ import random
 from objects import *
 
 
+class Segment(object):
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+        self.intersects = []
+
+    def inter(self, other):
+        x = line_intersection((self.start, self.end), (other.start, other.end))
+        if x:
+            self.intersects.append(other)
+
+    def poi(self, other):
+        return line_intersection((self.start, self.end), (other.start, other.end))
+
+
 class MapObject(object):
     def __init__(self, size):
         self.size = size
@@ -30,15 +46,96 @@ class MapObject(object):
 ##                if i.player != terr.player:
 ##                    return False
 ##                else:
+####                    return True
+##                    self.merge_territories(i, terr)
 ##                    return True
         return True
 
 
 ##    def merge_territories(self, t1, t2):
+##        t1segs = []
+##        for i in xrange(len(t1.points)):
+##            if i < len(t1.points)-1:
+##                t1segs.append(Segment(t1.points[i], t1.points[i+1]))
+##            else:
+##                t1segs.append(Segment(t1.points[i], t1.points[0]))
+##        t2segs = []
+##        for i in xrange(len(t2.points)):
+##            if i < len(t2.points)-1:
+##                t2segs.append(Segment(t2.points[i], t2.points[i+1]))
+##            else:
+##                t2segs.append(Segment(t2.points[i], t2.points[0]))
+##
+##
+##        for i in t1segs:
+##            for x in t2segs:
+##                i.inter(x)
+##                x.inter(i)
+##
+##
+##        new = []
+##        cur = t1segs[0]
+##        while 1:
+##            if cur.intersects:
+##                if len(cur.intersects) > 1:
+##                    n = cur.intersects[0]
+##                    for i in cur.intersects:
+##                        if (cur.start+cur.end)*(i.start+i.end) <\
+##                           (cur.start+cur.end)*(n.start+n.end):
+##                            n = i
+##                else:
+##                    n = cur.intersects[0]
+##
+##                p = n.intersects[0]
+##
+##                if len(n.intersects)>1:
+##                    for i in n.intersects:
+##                        if t1segs.index(i) < t1segs.index(p):
+##                            p = i
+##                new.append((cur.start, cur.poi(p)))
+##            else:
+##                new.append((cur.start, cur.end))
+
+
+##        use = t1segs
+
+
+##        new = []
+##        for seg in t1segs:
+##            for s in t2segs:
+##                x = line_intersect((seg.start, seg.end),
+##                                   (s.start, s.end))
+##                if x:
+##                    new.append(Segment(seg.start, x))
+##                    i = t2segs.index(s)+1
+##                    nx = line_intersect((x, s.end), (ns.start, ns.end))
+##                    if nx:
+##                        new.append(Segment(x, nx))
+##                        new.append(Segment(nx, seg.end))
+##                        break
+##                    while 1:
+##                        for ns in t1segs:
+##                            if not ns == seg:
+##                                nx = line_intersect((x, s.end), (ns.start, ns.end))
+##                                if nx:
+##                                    new.append(Segment(x, nx))
+##                                    new.append(Segment(nx, seg.end))
+##                                    break
+##                        new.append(Segment(x, s.end))
+##                        i += 1
+##                        if i == len(t2segs):
+##                            i = 0
+##                            print 1
+##                        s = t2segs[i]
+##                else:
+##                    new.append(seg)
+
+        t1.points = new
+        t1.pixels.extend(t2.pixels)
+            
 ##        inside = []
 ##        other = []
 ##        x = 0
-##        print 1
 ##        for i in t2.points:
 ##            if i in t1.pixels:
 ##                inside.append([i, t2.points[x-1], t2.points[x+1]])
@@ -48,7 +145,6 @@ class MapObject(object):
 ##            x += 1
 ##
 ##        x = 0
-##        print 2
 ##        for i in t1.points:
 ##            if i in t2.pixels:
 ##                inside.append([i, t1.points[x-1], t1.points[x+1]])
@@ -211,14 +307,15 @@ class World(object):
 
     def make_islands(self):
         grid = []
-        for x in xrange(self.wsize[0]/25):
-            for y in xrange(self.wsize[1]/25):
+        for x in xrange(self.wsize[0]/125):
+            for y in xrange(self.wsize[1]/125):
                 grid.append((x, y))
         self.islands = []
-        for x in xrange(len(grid)/15):
+        for x in xrange(len(grid)/random.randint(3,5)):
             x, y = random.choice(grid)
             grid.remove((x, y))
-            off = random.randint(0,10)
-            i = Island((x*25+off, y*25+off), 10)
+            offx = random.randint(0,50)
+            offy = random.randint(0,50)
+            i = Island((x*125+offx, y*125+offy), 10)
             i.get_random_resources()
             self.islands.append(i)
