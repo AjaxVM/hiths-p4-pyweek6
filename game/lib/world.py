@@ -159,9 +159,9 @@ class World(object):
         self.wsize = world_size
 
         self.mo = MapObject(self.wsize, self)
-        self.tile_images = [data.image("water.png"),
-                            data.image("water2.png"),
-                            data.image("water3.png")]
+        self.tile_images = [pygame.transform.scale2x(data.image("water.png")),
+                            pygame.transform.scale2x(data.image("water2.png")),
+                            pygame.transform.scale2x(data.image("water3.png"))]
         self.cur_ti = self.tile_images[0]
         self.cur_i = 0
         self.cur_timer = 0
@@ -177,7 +177,7 @@ class World(object):
 
     def render(self, screen):
         self.cur_timer += 1
-        if self.cur_timer >= 25:
+        if self.cur_timer >= 50:
             self.cur_timer = 0
             self.cur_i += 1
             if self.cur_i == 3:
@@ -185,19 +185,19 @@ class World(object):
             self.cur_ti = self.tile_images[self.cur_i]
         x, y = self.camera.get_offset()
         if x:
-            tox = x % 25
+            tox = x % 50
         else:
             tox = 0
         if y:
-            toy = y % 25
+            toy = y % 50
         else:
             toy = 0
 
-        yy = xrange(-1,480/25+2)
+        yy = xrange(-1,480/50+2)
 
-        for ix in xrange(-1,640/25+2):
+        for ix in xrange(-1,640/50+2):
             for iy in yy:
-                screen.blit(self.cur_ti, (ix*25+tox, iy*25+toy))
+                screen.blit(self.cur_ti, (ix*50+tox, iy*50+toy))
 
         for i in self.mo.territories:
             np = []
