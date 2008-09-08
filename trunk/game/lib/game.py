@@ -99,4 +99,5 @@ def main():
         tdraw2.render(screen)
         pygame.display.flip()
 
-main()
+if __name__ == "__main__":
+    main()
