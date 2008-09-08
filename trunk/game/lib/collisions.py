@@ -117,8 +117,3 @@ def line_intersect(a, b):
         y = a[0][1] + ua * (a[1][1] - a[0][1])
         return int(x), int(y)
     return False
-
-
-a = line_intersect([[2.0, 0.0], [2.0, 10.0]],
-                   [[5.0, 0.0], [5.0, 10.0]])
-print a
