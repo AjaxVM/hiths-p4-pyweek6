@@ -145,6 +145,7 @@ class World(object):
         self.mo = MapObject(self.wsize, self)
         self.tile_image = data.image("water.png")
         self.cur_timer = 0
+        self.cur_cycle = 0
 
         self.camera = Camera(self.ssize, self.wsize)
 
@@ -157,8 +158,11 @@ class World(object):
 
     def render(self, screen):
         self.cur_timer += 1
-        if self.cur_timer >= 75:
+        if self.cur_timer >= 10:
             self.cur_timer = 0
+            self.cur_cycle += 1
+            if self.cur_cycle >= 25:
+                self.cur_cycle = 0
         x, y = self.camera.get_offset()
         if x:
             tox = x % 25
@@ -173,7 +177,8 @@ class World(object):
 
         for ix in xrange(-1,self.ssize[0]/25+2):
             for iy in yy:
-                screen.blit(self.tile_image, (ix*25+tox+int(self.cur_timer/3), iy*25+toy))
+                screen.blit(self.tile_image, (ix*25+tox+self.cur_cycle,
+                                              iy*25+toy+self.cur_cycle))
 
         for i in self.mo.territories:
             np = []
