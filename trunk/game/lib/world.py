@@ -50,7 +50,7 @@ class MapObject(object):
 
         islands = []
         for i in self.world.islands:
-            if terr.poly.colliderect(i.rect):
+            if terr.rect.colliderect(i.rect) and terr.poly.colliderect(i.rect):
                 islands.append(i)
         if not islands:
             return False
@@ -120,7 +120,6 @@ class Territory(object):
         return r.collidepoint(pos)
 
     def calculate_ship_support_cap(self):
-        print len(self.pixels)
         area_amount = int(len(self.pixels) / 2500) #so for every 50 pixels we have we can support a new ship
         island_amount = len(self.islands) * 3 #so for each island we get 3 new ships we can support
         default_amount = 1 #this is what you automatically will get

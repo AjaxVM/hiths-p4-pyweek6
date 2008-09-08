@@ -94,7 +94,7 @@ class Island(object):
 
     def render(self, screen, offset):
         ox, oy = offset
-        x, y = self.pos
+        x, y = self.rect.topleft
         x -= ox
         y -= oy
         if (x < -self.rect.width) or (x >= 640 + self.rect.width) or\
