@@ -9,20 +9,20 @@ from objects import *
 import data
 
 
-class Segment(object):
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
-        self.intersects = []
-
-    def inter(self, other):
-        x = line_intersection((self.start, self.end), (other.start, other.end))
-        if x:
-            self.intersects.append(other)
-
-    def poi(self, other):
-        return line_intersection((self.start, self.end), (other.start, other.end))
+##class Segment(object):
+##    def __init__(self, start, end):
+##        self.start = start
+##        self.end = end
+##
+##        self.intersects = []
+##
+##    def inter(self, other):
+##        x = line_intersection((self.start, self.end), (other.start, other.end))
+##        if x:
+##            self.intersects.append(other)
+##
+##    def poi(self, other):
+##        return line_intersection((self.start, self.end), (other.start, other.end))
 
 
 class MapObject(object):
@@ -41,6 +41,8 @@ class MapObject(object):
         return True
 
     def test_territory(self, terr):
+        if len(terr.pixels) < 50:
+            return False
         for i in self.territories:
             if i.poly.collidepoly(terr.poly):
                 return False
@@ -183,12 +185,15 @@ class Territory(object):
 
         self.player = player
 
+        self.pop_cap = 0
+
     def add_point(self, point):
         self.points.append(point)
 
     def finish(self):
         self.points.append(self.points[0])
         self.get_pixels()
+        self.calculate_ship_support_cap()
 
     def get_pixels(self):
         lx = self.points[0][0]
@@ -225,7 +230,14 @@ class Territory(object):
 
     def within_range(self, pos):
         r = pygame.Rect(self.points[0][0]-10, self.points[0][1]-10, 20, 20)
-        return r.collidepoint(pos)                
+        return r.collidepoint(pos)
+
+    def calculate_ship_support_cap(self):
+        area_amount = int(len(self.pixels) / 50) #so for every 50 pixels we have we can support a new ship
+        island_amount = len(self.islands) * 3 #so for each island we get 3 new ships we can support
+        default_amount = 1 #this is what you automatically will get
+
+        self.pop_cap = area_amount + island_amount + default_amount
 
 
 class Camera(object):
