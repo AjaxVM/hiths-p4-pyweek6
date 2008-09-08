@@ -6,6 +6,7 @@ from collisions import Polygon, Vector, line_intersect
 import math
 import random
 from objects import *
+import data
 
 
 class Segment(object):
@@ -260,9 +261,9 @@ class World(object):
 
         self.mo = MapObject(self.wsize)
 
-        self.tile_image = pygame.Surface((25, 25))
-        self.tile_image.fill((75, 75, 255)) #only till we have a good image
-
+        #self.tile_image = pygame.Surface((25, 25))
+        #self.tile_image.fill((75, 75, 255)) #only till we have a good image
+        self.tile_image = data.load_image("water.png")
 
         self.camera = Camera(self.ssize, self.wsize)
 
