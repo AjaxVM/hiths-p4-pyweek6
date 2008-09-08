@@ -19,6 +19,8 @@ class Ship(object):
         self.distance_left = self.speed
         
         self.pos = list(pos)
+        self.rect = pygame.Rect(0, 0, 50, 50)
+        self.rect.center = self.pos
         self.moved = False
         self.selected = False
 
@@ -44,6 +46,7 @@ class Ship(object):
             pos, distance = self.get_mouse_pos()
             self.pos = list(pos)
             self.distance_left -= distance
+            self.rect.center = self.pos
         else:
             self.moved = True
         
