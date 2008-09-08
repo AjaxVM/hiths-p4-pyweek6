@@ -77,7 +77,7 @@ class Resources(object):
         self.crew = crew
 
 class Island(object):
-    images = {"img-10.png": pygame.Surface((10, 10))}
+    images = {"img-10.png": pygame.Surface((50, 50))}
     images.values()[0].fill((0, 255, 0)) #fill the island square
 
     def __init__(self, pos, size):
@@ -88,7 +88,7 @@ class Island(object):
         self.rect.center = self.pos
 
         self.resources = [] #can be gold, crew and string
-        self.font = pygame.font.Font(None, 15)
+        self.font = pygame.font.Font(None, 20)
 
     def render(self, screen, offset):
         ox, oy = offset
@@ -99,10 +99,10 @@ class Island(object):
            (y < -self.rect.height) or (y >= 480 +self.rect.height):
             return None
         screen.blit(self.image, (x, y))
-        off = 9
+        off = 15
         for i in self.resources:
             screen.blit(self.font.render(i, True, [0,0,0]), (x, y - off))
-            off += 9
+            off += 15
 
     def get_random_resources(self):
         choices = ["gold", "string", "crew"]
