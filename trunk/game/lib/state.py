@@ -62,10 +62,11 @@ class Player(object):
     def end_turn(self):
         self.state.next_player_turn()
 
-    def render(self, screen, offset):
+    def render(self, screen):
         #this allows us to render player actions to the screen.
         #Like the territory drawing will go through here now - because
         #it is highly dependant on turn and other user actions.
+        offset = self.state.world.camera.get_offset()
         for i in self.to_be_rendered_objects:
             i.render(screen, offset)
 
@@ -94,3 +95,7 @@ class State(object):
         if self.uturn == len(self.players):
             self.uturn = 0
             self.turn += 1
+
+    def render(self, screen):
+        for i in self.players:
+            i.render(screen)

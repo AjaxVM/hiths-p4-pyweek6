@@ -26,11 +26,12 @@ import data
 
 
 class MapObject(object):
-    def __init__(self, size):
+    def __init__(self, size, world):
+        self.world = world
         self.size = size
         self.territories = []
 
-    def add(self,terr):
+    def add(self, terr):
         self.territories.append(terr)
 
     def test_point(self, point):
@@ -46,133 +47,17 @@ class MapObject(object):
         for i in self.territories:
             if i.poly.collidepoly(terr.poly):
                 return False
-##                if i.player != terr.player:
-##                    return False
-##                else:
-####                    return True
-##                    self.merge_territories(i, terr)
-##                    return True
+
+        islands = []
+        for i in self.world.islands:
+            if terr.poly.colliderect(i.rect):
+                islands.append(i)
+        if not islands:
+            return False
+
+        terr.islands = islands
+        terr.calculate_ship_support_cap()
         return True
-
-
-##    def merge_territories(self, t1, t2):
-##        t1segs = []
-##        for i in xrange(len(t1.points)):
-##            if i < len(t1.points)-1:
-##                t1segs.append(Segment(t1.points[i], t1.points[i+1]))
-##            else:
-##                t1segs.append(Segment(t1.points[i], t1.points[0]))
-##        t2segs = []
-##        for i in xrange(len(t2.points)):
-##            if i < len(t2.points)-1:
-##                t2segs.append(Segment(t2.points[i], t2.points[i+1]))
-##            else:
-##                t2segs.append(Segment(t2.points[i], t2.points[0]))
-##
-##
-##        for i in t1segs:
-##            for x in t2segs:
-##                i.inter(x)
-##                x.inter(i)
-##
-##
-##        new = []
-##        cur = t1segs[0]
-##        while 1:
-##            if cur.intersects:
-##                if len(cur.intersects) > 1:
-##                    n = cur.intersects[0]
-##                    for i in cur.intersects:
-##                        if (cur.start+cur.end)*(i.start+i.end) <\
-##                           (cur.start+cur.end)*(n.start+n.end):
-##                            n = i
-##                else:
-##                    n = cur.intersects[0]
-##
-##                p = n.intersects[0]
-##
-##                if len(n.intersects)>1:
-##                    for i in n.intersects:
-##                        if t1segs.index(i) < t1segs.index(p):
-##                            p = i
-##                new.append((cur.start, cur.poi(p)))
-##            else:
-##                new.append((cur.start, cur.end))
-
-
-##        use = t1segs
-
-
-##        new = []
-##        for seg in t1segs:
-##            for s in t2segs:
-##                x = line_intersect((seg.start, seg.end),
-##                                   (s.start, s.end))
-##                if x:
-##                    new.append(Segment(seg.start, x))
-##                    i = t2segs.index(s)+1
-##                    nx = line_intersect((x, s.end), (ns.start, ns.end))
-##                    if nx:
-##                        new.append(Segment(x, nx))
-##                        new.append(Segment(nx, seg.end))
-##                        break
-##                    while 1:
-##                        for ns in t1segs:
-##                            if not ns == seg:
-##                                nx = line_intersect((x, s.end), (ns.start, ns.end))
-##                                if nx:
-##                                    new.append(Segment(x, nx))
-##                                    new.append(Segment(nx, seg.end))
-##                                    break
-##                        new.append(Segment(x, s.end))
-##                        i += 1
-##                        if i == len(t2segs):
-##                            i = 0
-##                            print 1
-##                        s = t2segs[i]
-##                else:
-##                    new.append(seg)
-
-        t1.points = new
-        t1.pixels.extend(t2.pixels)
-            
-##        inside = []
-##        other = []
-##        x = 0
-##        for i in t2.points:
-##            if i in t1.pixels:
-##                inside.append([i, t2.points[x-1], t2.points[x+1]])
-##                other.append([i, t2.points[x-1]])
-##            else:
-##                other.append([i, t2.points[x-1]])
-##            x += 1
-##
-##        x = 0
-##        for i in t1.points:
-##            if i in t2.pixels:
-##                inside.append([i, t1.points[x-1], t1.points[x+1]])
-##                other.append([i, t1.points[x-1]])
-##            else:
-##                other.append([i, t1.points[x-1]])
-##            x += 1
-##
-##        new = []
-##        for i in other:
-##            new.append(i[0])
-##        for i in inside:
-##            for x in other:
-##                if not x == [i[0], i[1]]:
-##                    a = line_intersect([i[0], i[1]], x)
-##                    if a:
-##                        new.append(a)
-##                    a = line_intersect([i[0], i[2]], x)
-##                    if a:
-##                        new.append(a)
-##            new.remove(i[0])
-##        t1.pixels.extend(t2.pixels)
-##
-##        t1.points = new
-##        return t1
 
 
 class Territory(object):
@@ -184,6 +69,8 @@ class Territory(object):
         self.poly = None
 
         self.player = player
+
+        self.islands = []
 
         self.pop_cap = 0
 
@@ -233,7 +120,8 @@ class Territory(object):
         return r.collidepoint(pos)
 
     def calculate_ship_support_cap(self):
-        area_amount = int(len(self.pixels) / 50) #so for every 50 pixels we have we can support a new ship
+        print len(self.pixels)
+        area_amount = int(len(self.pixels) / 2500) #so for every 50 pixels we have we can support a new ship
         island_amount = len(self.islands) * 3 #so for each island we get 3 new ships we can support
         default_amount = 1 #this is what you automatically will get
 
@@ -271,7 +159,7 @@ class World(object):
         self.ssize = screen_size
         self.wsize = world_size
 
-        self.mo = MapObject(self.wsize)
+        self.mo = MapObject(self.wsize, self)
         self.tile_images = [data.image("water.png"),
                             data.image("water2.png"),
                             data.image("water3.png")]
@@ -285,6 +173,8 @@ class World(object):
         self.units = []
 
         self.make_islands()
+
+        self.font = pygame.font.Font(None, 30)
 
     def render(self, screen):
         self.cur_timer += 1
@@ -326,6 +216,14 @@ class World(object):
 
         for i in self.units:
             i.render(screen, (x, y))
+
+        for i in self.mo.territories:
+            px, py = i.pixels[int(len(i.pixels)/2)]
+            
+            px -= x
+            py -= y
+            screen.blit(self.font.render(str(i.pop_cap), 1, [0,0,0]),
+                        (px, py))
 
     def make_islands(self):
         grid = []
