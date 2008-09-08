@@ -259,6 +259,9 @@ class World(object):
         self.ssize = screen_size
         self.wsize = world_size
 
+        #load the images after the screen is initialised
+        Island.images = {"img-10.png": data.load_image("island.png")}
+
         self.mo = MapObject(self.wsize)
 
         #self.tile_image = pygame.Surface((25, 25))
