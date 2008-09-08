@@ -78,8 +78,10 @@ class Resources(object):
         self.crew = crew
 
 class Island(object):
-    images = {"img-10.png": pygame.Surface((50, 50))}
-    images.values()[0].fill((0, 255, 0)) #fill the island square
+    #This won't work when loading images... the screen has to initialise :P
+    #Look at around line 263 in world.py
+    #images = {"img-10.png": pygame.Surface((50, 50))}
+    #images.values()[0].fill((0, 255, 0)) #fill the island square
 
     def __init__(self, pos, size):
         self.pos = pos
