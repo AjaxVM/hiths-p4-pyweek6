@@ -42,7 +42,7 @@ class Ship(object):
 
     def move(self):
         """Moves the player to the mouse pos."""
-        if self.distance_left > 0:
+        if int(self.distance_left) > 0:
             pos, distance = self.get_mouse_pos()
             self.pos = list(pos)
             self.distance_left -= distance
