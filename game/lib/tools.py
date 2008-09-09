@@ -34,11 +34,7 @@ class ShipRangeRender(object):
 
         if self.ship.can_move:
             screen.blit(self.move_circle, [x - self.ship.speed, y - self.ship.speed])
-##            pygame.draw.circle(screen, [0, 255, 0], (x, y), self.ship.speed, 3)
         if self.ship.can_attack:
-##            pygame.draw.circle(screen, [255, 255, 0], (x, y), self.ship.long_range, 3)
-##            pygame.draw.circle(screen, [255, 165, 0], (x, y), self.ship.medium_range, 3)
-##            pygame.draw.circle(screen, [255, 0, 0], (x, y), self.ship.short_range, 3)
             screen.blit(self.range_circle, [x - self.ship.long_range, y - self.ship.long_range])
 
 
@@ -61,7 +57,7 @@ class TerritoryDrawer(object):
                     pos = x, y
                     if self.world.mo.test_point(pos):
                         if not self.t:
-                            self.t = Territory(self.player.num)
+                            self.t = Territory(self.player)
                             self.t.add_point(pos)
                         else:
                             if self.t.within_range(pos):
