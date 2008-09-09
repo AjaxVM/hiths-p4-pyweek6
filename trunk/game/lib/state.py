@@ -17,6 +17,9 @@ class InputController(object):
             if event.type == KEYDOWN:
                 if event.key == K_r:
                     self.tdraw.active = True
+                if event.key == K_RETURN:
+                    self.player.end_turn()
+                    return True
             self.tdraw.update_event(event)
 
     def update(self):
@@ -97,7 +100,8 @@ class State(object):
 
     def event(self, event):
         for i in self.players:
-            i.controller.event(event)
+            x = i.controller.event(event)
+            if x:  return
 
     def update(self):
         for i in self.players:
