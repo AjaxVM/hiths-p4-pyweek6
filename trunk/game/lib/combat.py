@@ -1,9 +1,4 @@
 import random
-# TODO list:
-# Implement boarding
-# Implement misses based on opponent speed and range
-# Make adjustments to the damage distribution based on what is being damaged,
-# then we can have a realistically sized crew and also adequate speed.
 
 # Minimum and maximum damage
 _min_dmg = 20
@@ -12,11 +7,13 @@ _max_dmg = 60
 # Percentages of damage for each ammo type
 _dmg_table = {
         'ball'  : {'hull' : .70, 'crew' : .25, 'speed' : .05 },
-        'chain' : {'hull' : .30, 'crew' : .20, 'speed' : .50 },
+        'chain' : {'hull' : .30, 'crew' : .30, 'speed' : .40 },
         'grape' : {'hull' : .25, 'crew' : .70, 'speed' : .05 }
         }
+_dmg_balance = { 'hull' : 1, 'crew' : 0.75, 'speed' : 8 }
 
-_range_modifiers = { 'long' : 0.5, 'medium' : 1, 'close' : 1.2 }
+_range_modifiers = { 'long' : 0.7, 'medium' : 1, 'close' : 1.2 }
+_speed_defense_bonus = { 'long' : 0.1, 'medium' : 0.05, 'close' : 0 }
 _low_crew_penalty = 0.2
 
 # Boarding
@@ -31,18 +28,18 @@ class Battle:
         self.opponents = opponents
         self.results = {}
         self.results['damage'] = {}
+        self.range = attack_type[1]
 
         # Set up defender shot type, range is fixed
         d_shot_type = ''
         rand = random.randint(0, 10)
-        if rand <= 7:
+        if rand <= 7 or self.range == 'long':
             d_shot_type = 'ball'
         else:
             d_shot_type = 'grape'
         print "Attack types: 0 - %s, 1 - %s, %s range." % (attack_type[0], d_shot_type, attack_type[1])
 
         self.shot_types = (attack_type[0], d_shot_type)
-        self.range = attack_type[1]
 
     def execute(self):
         """Calculate battle results."""
@@ -79,8 +76,20 @@ class Battle:
         ship = self.opponents[giver]
         crew_penalty = self._get_crew_penalty(ship)
 
-        damage = (ship.damage_multiplier * _range_modifiers[self.range] \
+        # Grape is useless at long range
+        range_modifier = _range_modifiers[self.range] 
+        if self.range == 'long' and self.shot_types[giver] == 'grape':
+            range_modifier = 0
+
+        damage = (ship.damage_multiplier * range_modifier \
                 * random.randint(_min_dmg, _max_dmg)) - crew_penalty
+
+        # Subtract some damage for fast target. 
+        # The longer the range, the more damage subtracted.
+        damage -= int(_speed_defense_bonus[self.range] * self.opponents[taker].speed)
+
+        if damage < 0:
+            damage = 0 # No negative damage
 
         hull, crew, speed = self._get_dmg_distribution(damage, self.shot_types[giver])
         self.opponents[taker].hull -= hull
@@ -90,6 +99,8 @@ class Battle:
         self.results['damage'][self.opponents[taker]] = (hull, crew, speed)
 
     def _calculate_boarding(self):
+        """Compute a boarding attempt. Largest crew has the best advantage, but
+        there is a deal of randomness."""
         # Use min factor to only slightly affect the numbers
         crew0_attack = random.randint(_board_min, _board_max) * _board_min_factor
         crew1_attack = random.randint(_board_min, _board_max) * _board_min_factor
@@ -109,9 +120,9 @@ class Battle:
         returns damage for hull, crew, speed in that order."""
         dist = _dmg_table[shot_type]
         # Truncate so we don't deal fractional damage
-        hull = int(damage * dist['hull'])
-        crew = int(damage * dist['crew'])
-        speed = int(damage * dist['speed'])
+        hull = int(damage * dist['hull'] * _dmg_balance['hull'])
+        crew = int(damage * dist['crew'] * _dmg_balance['crew'])
+        speed = int(damage * dist['speed'] * _dmg_balance['speed'])
         return (hull, crew, speed)
 
     def _get_crew_penalty(self, ship):

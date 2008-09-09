@@ -9,7 +9,7 @@ class Ship(object):
 
         self.hull_max = 70
         self.hull = self.hull_max
-        self.crew_max = 50
+        self.crew_max = 30
         self.crew = self.crew_max
         self.speed_max = 100
         self.speed = self.speed_max
