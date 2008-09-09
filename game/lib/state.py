@@ -23,7 +23,7 @@ class InputController(object):
             if event.key == K_RETURN:
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
-                new = objects.Ship(self.selected_territory.capitol.pos, self.player)
+                new = objects.Ship(self.selected_territory, self.player)
                 self.player.ships.append(new)
         self.tdraw.update_event(event)
 

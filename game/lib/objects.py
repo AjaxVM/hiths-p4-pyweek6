@@ -3,9 +3,10 @@ import data
 
 class Ship(object):
 
-    def __init__(self, pos, owner): # TODO: owner should be a reference to a player
+    def __init__(self, territory, owner): # TODO: owner should be a reference to a player
         self._alive = True
         self.owner = owner
+        self.territory = territory
 
         self.hull_max = 70
         self.hull = self.hull_max
@@ -21,7 +22,7 @@ class Ship(object):
 
         self.image = data.image("ship.png")
         
-        self.pos = list(pos)
+        self.pos = list(self.territory.capitol.pos)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
 
