@@ -126,7 +126,7 @@ class Player(object):
         self.to_be_rendered_objects = []
 
         self.controller = controller(state, self)
-        self.territories = []
+        self.territories = self.state.world.mo.get_territories(self.pnum)
         self.ships = []
 
     def is_turn(self):
