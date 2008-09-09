@@ -13,14 +13,12 @@ class InputController(object):
         self.player.to_be_rendered_objects.append(self.tdraw)
 
     def event(self, event):
-        if self.player.is_turn():
-            if event.type == KEYDOWN:
-                if event.key == K_r:
-                    self.tdraw.active = True
-                if event.key == K_RETURN:
-                    self.player.end_turn()
-                    return True
-            self.tdraw.update_event(event)
+        if event.type == KEYDOWN:
+            if event.key == K_r:
+                self.tdraw.active = True
+            if event.key == K_RETURN:
+                self.player.end_turn()
+        self.tdraw.update_event(event)
 
     def update(self):
         pass
@@ -43,8 +41,7 @@ class AIController(object):
         pass
 
     def update(self):
-        if self.player.is_turn():
-            self.think()
+        self.think()
 
     def think(self):
         print "thinking..."
@@ -126,13 +123,10 @@ class State(object):
         self.pt_index += 1
 
     def event(self, event):
-        for i in self.players:
-            x = i.controller.event(event)
-            if x:  return
+        self.players[self.uturn].controller.event(event)
 
     def update(self):
-        for i in self.players:
-            i.controller.update()
+        self.players[self.uturn].controller.update()
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()
@@ -143,5 +137,4 @@ class State(object):
         self.players[self.uturn].start_turn()
 
     def render(self, screen):
-        for i in self.players:
-            i.render(screen)
+        self.players[self.uturn].render(screen)
