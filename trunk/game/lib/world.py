@@ -163,7 +163,6 @@ class World(object):
         self.tile_image = data.image("water.png")
         self.cur_timer = 0
         self.cur_cycle = 0
-        self.sea_frame = 0
 
         self.camera = Camera(self.ssize, self.wsize)
 
@@ -174,9 +173,8 @@ class World(object):
         self.font = data.font(None, 30)
 
     def render(self, screen):
-        self.sea_frame += 1
         self.cur_timer += 1
-        if self.cur_timer >= 20:
+        if self.cur_timer >= 10:
             self.cur_timer = 0
             self.cur_cycle += 1
             if self.cur_cycle >= 25:
@@ -195,7 +193,7 @@ class World(object):
 
         for ix in xrange(-2,self.ssize[0]/25+4):
             for iy in yy:
-                screen.blit(self.tile_image, (ix*25+tox+math.sin(math.radians(self.sea_frame))*6,
+                screen.blit(self.tile_image, (ix*25+tox+self.cur_cycle,
                                               iy*25+toy+self.cur_cycle))
 
         for i in self.mo.territories:
@@ -206,6 +204,7 @@ class World(object):
                 py -= y
                 np.append((px, py))
             pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
+
 
         for i in self.islands:
             i.render(screen, (x, y))
@@ -224,3 +223,4 @@ class World(object):
             i = Island((x*125+offx, y*125+offy))
             i.get_random_resources()
             self.islands.append(i)
+
