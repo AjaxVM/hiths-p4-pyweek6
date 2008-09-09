@@ -75,11 +75,6 @@ class Polygon:
                          Vector(*other.bottomright), Vector(*other.bottomleft),
                          Vector(*other.topleft)])
         return self.collidepoly(other)
-
-    def collideline(self, other):
-        other = Polygon([Vector(*other[0]), Vector(*other[1]), Vector(*other[0])])
-
-
 def line_intersect(a, b):
     denom = ((b[1][1] - b[0][1]) * (a[1][0] - a[0][0])) -\
             ((b[1][0] - b[0][0]) * (a[1][1] - a[0][1]))

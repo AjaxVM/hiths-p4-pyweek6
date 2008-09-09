@@ -3,6 +3,31 @@ from pygame.locals import *
 from world import Territory
 
 
+class ShipRangeRender(object):
+    def __init__(self, ship, player, world):
+        self.ship = ship
+        self.player = player
+        self.world = world
+        self.move_circle = pygame.Surface([self.ship.speed*2, self.ship.speed*2]).convert()
+        pygame.draw.circle(self.move_circle, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
+        self.move_circle.set_colorkey(self.move_circle.get_at((0,0)), RLEACCEL)
+        self.move_circle.set_alpha(90)
+
+    def render(self, screen):
+        ox, oy = self.world.camera.get_offset()
+        x, y = self.ship.pos
+        x -= ox
+        y -= oy
+
+        if self.ship.can_move:
+            screen.blit(self.move_circle, [x - self.ship.speed, y - self.ship.speed])
+            pygame.draw.circle(screen, [0, 255, 0], (x, y), self.ship.speed, 3)
+        if self.ship.can_attack:
+            pygame.draw.circle(screen, [255, 255, 0], (x, y), self.ship.long_range, 3)
+            pygame.draw.circle(screen, [255, 165, 0], (x, y), self.ship.medium_range, 3)
+            pygame.draw.circle(screen, [255, 0, 0], (x, y), self.ship.short_range, 3)
+
+
 class TerritoryDrawer(object):
     def __init__(self, player, world):
         self.player = player
@@ -31,6 +56,7 @@ class TerritoryDrawer(object):
                                 self.t.finish()
                                 if self.world.mo.test_territory(self.t):
                                     self.world.mo.add(self.t)
+                                    self.player.territories.append(self.t)
                                 self.t = None
                                 self.active = False
                             else:

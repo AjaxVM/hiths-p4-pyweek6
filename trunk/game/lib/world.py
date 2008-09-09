@@ -42,6 +42,7 @@ class MapObject(object):
 
         terr.islands = islands
         terr.calculate_ship_support_cap()
+        terr.get_capitol()
         return True
 
 
@@ -58,6 +59,7 @@ class Territory(object):
         self.islands = []
 
         self.pop_cap = 0
+        self.capitol = None
 
     def add_point(self, point):
         self.points.append(point)
@@ -66,6 +68,10 @@ class Territory(object):
         self.points.append(self.points[0])
         self.get_pixels()
         self.calculate_ship_support_cap()
+
+    def get_capitol(self):
+        if self.islands:
+            self.capitol = random.choice(self.islands)
 
     def get_pixels(self):
         lx = self.points[0][0]
