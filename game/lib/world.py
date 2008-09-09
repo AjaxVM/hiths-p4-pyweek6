@@ -113,13 +113,15 @@ class Territory(object):
                 if surf.get_at((x, y)) == (255,0,0,255):
                     self.pixels.append((lx+x, ly+y))
 
+        self.pixels = set(self.pixels)
+
 
     def within_range(self, pos):
         r = pygame.Rect(self.points[0][0]-10, self.points[0][1]-10, 20, 20)
         return r.collidepoint(pos)
 
     def calculate_ship_support_cap(self):
-        area_amount = int(len(self.pixels) / 2500) #so for every 50 pixels we have we can support a new ship
+        area_amount = int(len(self.pixels) / 5000) #so for every 5000 pixels we have we can support a new ship
         island_amount = len(self.islands) * 3 #so for each island we get 3 new ships we can support
         default_amount = 1 #this is what you automatically will get
 
