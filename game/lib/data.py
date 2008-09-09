@@ -13,3 +13,12 @@ def image(name):
     image = pygame.image.load(os.path.join(data_path, name)).convert_alpha()
     all_images[name] = image
     return image
+
+all_fonts = {}
+def font(name, size):
+    if (name, size) in all_fonts:
+        return all_fonts[(name, size)]
+
+    f = pygame.font.Font(name, size)
+    all_fonts[(name, size)] = f
+    return f
