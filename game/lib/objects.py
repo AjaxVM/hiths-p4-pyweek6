@@ -2,8 +2,6 @@ import math, pygame, random
 import data
 
 class Ship(object):
-    image = pygame.Surface((25, 25)) # Image series the game should use to render
-    image.fill((255, 0, 0))
 
     def __init__(self, pos, owner): # TODO: owner should be a reference to a player
         self._alive = True
@@ -16,16 +14,23 @@ class Ship(object):
         self.speed_max = 100
         self.speed = self.speed_max
         self.damage_multiplier = 1
-        self.distance_left = self.speed
+
+        self.long_range = 50
+        self.medium_range = 35
+        self.short_range = 15
+
+        self.image = data.image("ship.png")
         
         self.pos = list(pos)
-        self.rect = pygame.Rect(0, 0, 50, 50)
+        self.rect = self.image.get_rect()
         self.rect.center = self.pos
-        self.moved = False
-        self.selected = False
 
         self.hold_capacity = 40 # Resources can only equal this number total
         self.resources = Resources(0, 0, 0) # Start empty
+
+        self.can_move = True
+        self.can_attack = True
+        self.goto = None
 
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
@@ -37,40 +42,47 @@ class Ship(object):
             return True
 
     def end_turn(self):
-        self.distance_left = self.speed
-        self.moved = False
+        self.can_move = True
+        self.can_attack = True
 
-    def move(self):
-        """Moves the player to the mouse pos."""
-        if int(self.distance_left) > 0:
-            pos, distance = self.get_mouse_pos()
-            self.pos = list(pos)
-            self.distance_left -= distance
-            self.rect.center = self.pos
-        else:
-            self.moved = True
-        
-    def get_mouse_pos(self):
-        """Returns the pos of the mouse minus the distance left
-        that the ship can go, and the distance you can move"""
-        mx, my = pygame.mouse.get_pos()
-        x = self.pos[0] - mx
-        y = self.pos[1] - my
+    def move_to(self, pos):
+        if self.can_move:
+            distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
+            if not distance <= self.speed:
+                return
+            self.goto = pos
+            self.can_move = False
+
+    def get_next_pos(self):
+        mx, my = self.goto
+        x, y = self.pos
+        x -= mx
+        y -= my
+
         angle = math.atan2(y, x)
-        mouse_angle = int(270.0 - (angle * 180.0)/math.pi)
-        pos = list(self.pos)
-        xdiff = abs(mx-pos[0])
-        ydiff = abs(my-pos[1])
-        distance = math.sqrt((xdiff**2)+(ydiff**2))
-        if distance > self.distance_left:
-            distance = self.distance_left
-        pos[0] += math.sin(math.radians(mouse_angle))*distance
-        pos[1] += math.cos(math.radians(mouse_angle))*distance
-        return pos, distance
+        if angle:
+            mangle = int(270.0 - (angle * 180) / math.pi)
+        else:
+            mangle = 0
+
+        x, y = self.pos
+        x += int(math.sin(math.radians(mangle))*3)
+        y += int(math.cos(math.radians(mangle))*3)
+
+        if abs(x-mx) + abs(y-my) < 5:
+            self.goto = None
+            self.can_move = False
+            return mx, my
+
+        return x, y
+
+    def update(self):
+        if self.goto:
+            self.pos = self.rect.center = self.get_next_pos()
 
     def render(self, screen, offset):
         ox, oy = offset
-        x, y = self.pos
+        x, y = self.rect.topleft
         x -= ox
         y -= oy
         screen.blit(self.image, (x, y))

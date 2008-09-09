@@ -15,7 +15,7 @@ def main():
 
     ships = [Ship([64, 64], 0), Ship([240, 240], 0)]
     turn = 1
-    ship_image = data.image("ship.png")
+    selected = None
     print "Turn:",turn
 	
     while 1:
@@ -35,21 +35,19 @@ def main():
             if e.type == MOUSEBUTTONDOWN:
                 if e.button == 1:
                     for s in ships:
-                        if s.rect.collidepoint(e.pos) and not s.moved:
-                            s.selected = True
-                        else:
-                            s.selected = False
+                        if s.rect.collidepoint(e.pos):
+                            selected = s
                 if e.button == 3:
-                    for s in ships:
-                        if s.selected:
-                            s.move()
+                    if selected:
+                        selected.move_to(e.pos)
 	    
         screen.fill((0,0,255))
         for s in ships:
-            screen.blit(ship_image, s.rect)
-            if s.selected:
-                pygame.draw.line(screen, (255, 255, 255), s.pos, s.get_mouse_pos()[0], 2)
-                pygame.draw.circle(screen, (255, 255, 0), s.rect.center, 30, 2)
+            s.update()
+            s.render(screen,[0,0])
+        if selected:
+            s = selected
+            pygame.draw.circle(screen, (255, 255, 0), s.rect.center, s.speed, 2)
         pygame.display.flip()
 	    
 main()
