@@ -58,7 +58,7 @@ class Ship(object):
             if distance_to_capital < self.string:
                 distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
                 if not distance <= self.speed:
-                    return Falsedistance_to_capital
+                    return False
                 self.goto = pos
                 self.can_move = False
                 self.distance_from_capitol = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + (abs(pos[1]-self.territory.capitol.pos[1])**2))
