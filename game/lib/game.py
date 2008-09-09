@@ -5,6 +5,7 @@ from world import *
 from objects import *
 import tools
 from state import *
+import data
 
 import random
 
@@ -16,7 +17,9 @@ def main():
     state = State(world)
 
     state.add_player()
-    state.add_player(AIController)
+    state.add_player()
+
+    font = data.font(None, 30)
 
     while 1:
         for event in pygame.event.get():
@@ -40,6 +43,8 @@ def main():
 
         world.render(screen)
         state.render(screen)
+        screen.blit(font.render("turn: %s"%state.turn, 1, [0,0,0],[255,255,255]), (0,0))
+        screen.blit(font.render("player: %s"%state.uturn, 1, state.colors[state.uturn],[255,255,255]), (250,0))
         pygame.display.flip()
 
 if __name__ == "__main__":
