@@ -11,7 +11,20 @@ class ShipRangeRender(object):
         self.move_circle = pygame.Surface([self.ship.speed*2, self.ship.speed*2]).convert()
         pygame.draw.circle(self.move_circle, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
         self.move_circle.set_colorkey(self.move_circle.get_at((0,0)), RLEACCEL)
-        self.move_circle.set_alpha(90)
+        self.move_circle.set_alpha(125)
+
+        self.range_circle = pygame.Surface([self.ship.long_range*2, self.ship.long_range*2]).convert()
+        pygame.draw.circle(self.range_circle, [255, 255, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.long_range, 3)
+        pygame.draw.circle(self.range_circle, [255, 165, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.medium_range, 3)
+        pygame.draw.circle(self.range_circle, [255, 0, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.short_range, 3)
+        self.range_circle.set_colorkey(self.range_circle.get_at((0,0)), RLEACCEL)
+        self.range_circle.set_alpha(100)
 
     def render(self, screen):
         ox, oy = self.world.camera.get_offset()
@@ -21,11 +34,12 @@ class ShipRangeRender(object):
 
         if self.ship.can_move:
             screen.blit(self.move_circle, [x - self.ship.speed, y - self.ship.speed])
-            pygame.draw.circle(screen, [0, 255, 0], (x, y), self.ship.speed, 3)
+##            pygame.draw.circle(screen, [0, 255, 0], (x, y), self.ship.speed, 3)
         if self.ship.can_attack:
-            pygame.draw.circle(screen, [255, 255, 0], (x, y), self.ship.long_range, 3)
-            pygame.draw.circle(screen, [255, 165, 0], (x, y), self.ship.medium_range, 3)
-            pygame.draw.circle(screen, [255, 0, 0], (x, y), self.ship.short_range, 3)
+##            pygame.draw.circle(screen, [255, 255, 0], (x, y), self.ship.long_range, 3)
+##            pygame.draw.circle(screen, [255, 165, 0], (x, y), self.ship.medium_range, 3)
+##            pygame.draw.circle(screen, [255, 0, 0], (x, y), self.ship.short_range, 3)
+            screen.blit(self.range_circle, [x - self.ship.long_range, y - self.ship.long_range])
 
 
 class TerritoryDrawer(object):

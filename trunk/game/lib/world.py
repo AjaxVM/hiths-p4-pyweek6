@@ -157,7 +157,7 @@ class World(object):
         self.camera = Camera(self.ssize, self.wsize)
 
         self.islands = []
-        self.units = []
+##        self.units = []
 
         self.make_islands()
 
@@ -199,16 +199,16 @@ class World(object):
         for i in self.islands:
             i.render(screen, (x, y))
 
-        for i in self.units:
-            i.render(screen, (x, y))
+##        for i in self.units:
+##            i.render(screen, (x, y))
 
-        for i in self.mo.territories:
-            px, py = i.pixels[int(len(i.pixels)/2)]
-            
-            px -= x
-            py -= y
-            screen.blit(self.font.render(str(i.pop_cap), 1, [0,0,0]),
-                        (px, py))
+##        for i in self.mo.territories:
+##            px, py = i.pixels[int(len(i.pixels)/2)]
+##            
+##            px -= x
+##            py -= y
+##            screen.blit(self.font.render(str(i.pop_cap), 1, [0,0,0]),
+##                        (px, py))
 
     def make_islands(self):
         grid = []
