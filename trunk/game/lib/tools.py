@@ -10,8 +10,22 @@ class ShipRangeRender(object):
         self.world = world
         self.move_circle = pygame.Surface([self.ship.speed*2, self.ship.speed*2]).convert()
         pygame.draw.circle(self.move_circle, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
+
+        m2 = self.move_circle.copy()
+        m2.fill((0,0,0))
+        p1 = self.ship.territory.capitol.pos
+        p2 = self.ship.rect.center
+        p2dif = p2[0] - self.ship.speed, p2[1] - self.ship.speed
+##        x = p1[0] - p2[0]
+##        y = p1[1] - p2[1]
+        x = p1[0] - p2dif[0]
+        y = p1[1] - p2dif[1]
+        pygame.draw.circle(m2, [0, 255, 0], (x, y), self.ship.string)
+        m2.set_colorkey((0, 255, 0), RLEACCEL)
+        self.move_circle.blit(m2, (0,0))
+
         self.move_circle.set_colorkey(self.move_circle.get_at((0,0)), RLEACCEL)
-        self.move_circle.set_alpha(125)
+        self.move_circle.set_alpha(175)
 
         self.range_circle = pygame.Surface([self.ship.long_range*2, self.ship.long_range*2]).convert()
         pygame.draw.circle(self.range_circle, [255, 255, 0],
@@ -24,7 +38,6 @@ class ShipRangeRender(object):
                            [self.ship.long_range, self.ship.long_range],
                             self.ship.short_range, 3)
         self.range_circle.set_colorkey(self.range_circle.get_at((0,0)), RLEACCEL)
-        self.range_circle.set_alpha(100)
 
     def render(self, screen):
         ox, oy = self.world.camera.get_offset()
