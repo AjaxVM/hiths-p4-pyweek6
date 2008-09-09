@@ -163,6 +163,7 @@ class World(object):
         self.tile_image = data.image("water.png")
         self.cur_timer = 0
         self.cur_cycle = 0
+        self.sea_frame = 0
 
         self.camera = Camera(self.ssize, self.wsize)
 
@@ -173,8 +174,9 @@ class World(object):
         self.font = data.font(None, 30)
 
     def render(self, screen):
+        self.sea_frame += 1
         self.cur_timer += 1
-        if self.cur_timer >= 10:
+        if self.cur_timer >= 20:
             self.cur_timer = 0
             self.cur_cycle += 1
             if self.cur_cycle >= 25:
@@ -193,7 +195,7 @@ class World(object):
 
         for ix in xrange(-2,self.ssize[0]/25+4):
             for iy in yy:
-                screen.blit(self.tile_image, (ix*25+tox+self.cur_cycle,
+                screen.blit(self.tile_image, (ix*25+tox+math.sin(math.radians(self.sea_frame))*6,
                                               iy*25+toy+self.cur_cycle))
 
         for i in self.mo.territories:
