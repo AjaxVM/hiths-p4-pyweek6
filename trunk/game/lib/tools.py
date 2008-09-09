@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from pygame.locals import *
 from world import Territory
 
@@ -32,11 +32,13 @@ class ShipRangeRender(object):
         x -= ox
         y -= oy
 
+        pos1 = (self.ship.rect.centerx - ox, self.ship.rect.centery - oy)
+        pos2 = (self.ship.territory.capitol.pos[0] - ox, self.ship.territory.capitol.pos[1] - oy)
         if self.ship.can_move:
             screen.blit(self.move_circle, [x - self.ship.speed, y - self.ship.speed])
         if self.ship.can_attack:
             screen.blit(self.range_circle, [x - self.ship.long_range, y - self.ship.long_range])
-
+        pygame.draw.line(screen, [random.randrange(255), random.randrange(255), random.randrange(255)], pos1, pos2, 3)
 
 class TerritoryDrawer(object):
     def __init__(self, player, world):
