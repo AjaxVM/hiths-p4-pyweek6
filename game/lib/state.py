@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import tools
 import constants
+import objects
 
 class InputController(object):
     """A class that handles the player based on user input"""
@@ -12,16 +13,51 @@ class InputController(object):
         self.tdraw = tools.TerritoryDrawer(self.player, self.state.world)
         self.player.to_be_rendered_objects.append(self.tdraw)
 
+        self.selected_territory = None
+        self.selected_unit = None
+
     def event(self, event):
         if event.type == KEYDOWN:
             if event.key == K_r:
                 self.tdraw.active = True
             if event.key == K_RETURN:
                 self.player.end_turn()
+            if event.key == K_SPACE and self.selected_territory:
+                new = objects.Ship(self.selected_territory.capitol.pos, self.player)
+                self.state.world.units.append(new)
+                self.player.units.append(new)
         self.tdraw.update_event(event)
 
+        if not self.tdraw.active:
+            if event.type == MOUSEBUTTONDOWN:
+                x, y = event.pos
+                mx, my = self.state.world.camera.get_offset()
+                x += mx
+                y += my
+                p = (x, y)
+                if event.button == 1:
+                    for i in self.player.units:
+                        if self.selected_unit and i == self.selected_unit[0]:
+                            continue
+                        if i.rect.collidepoint(p):
+                            self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
+                            self.player.to_be_rendered_objects.append(self.selected_unit[1])
+                            return
+
+                    for i in self.player.territories:
+                        if p in i.pixels:
+                            self.selected_territory = i
+                            return
+                if event.button == 3:
+                    if self.selected_unit:
+                        x = self.selected_unit[0].move_to(p)
+                        if x:
+                            self.player.to_be_rendered_objects.remove(self.selected_unit[1])
+                            self.selected_unit = None
+
     def update(self):
-        pass
+        for i in self.player.units:
+            i.update()
 
     def start_turn(self):
         self.tdraw.t = None
@@ -30,6 +66,8 @@ class InputController(object):
     def end_turn(self):
         self.tdraw.t = None
         self.tdraw.active = False
+        for i in self.player.units:
+            i.end_turn()
 
 
 class AIController(object):
@@ -41,6 +79,8 @@ class AIController(object):
         pass
 
     def update(self):
+        for i in self.player.units:
+            i.update()
         self.think()
 
     def think(self):
@@ -69,7 +109,8 @@ class NetworkController(object):
         pass
 
     def update(self):
-        pass
+        for i in self.player.units:
+            i.update()
 
     def start_turn(self):
         pass
@@ -86,6 +127,8 @@ class Player(object):
         self.to_be_rendered_objects = []
 
         self.controller = controller(state, self)
+        self.territories = []
+        self.units = []
 
     def is_turn(self):
         return self.state.uturn == self.num

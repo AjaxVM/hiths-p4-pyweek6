@@ -15,9 +15,9 @@ class Ship(object):
         self.speed = self.speed_max
         self.damage_multiplier = 1
 
-        self.long_range = 50
-        self.medium_range = 35
-        self.short_range = 15
+        self.long_range = 200
+        self.medium_range = 150
+        self.short_range = 60
 
         self.image = data.image("ship.png")
         
@@ -49,9 +49,10 @@ class Ship(object):
         if self.can_move:
             distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
             if not distance <= self.speed:
-                return
+                return False
             self.goto = pos
             self.can_move = False
+            return True
 
     def get_next_pos(self):
         mx, my = self.goto
