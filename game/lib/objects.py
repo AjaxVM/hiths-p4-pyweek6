@@ -34,7 +34,7 @@ class Ship(object):
         self.can_move = True
         self.can_attack = True
         self.goto = None
-        self.camera = self.territory.player.state.world.camera
+        self.camera = self.owner.state.world.camera
 
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
@@ -52,21 +52,18 @@ class Ship(object):
     def move_to(self, pos):
         if self.can_move:
             co = self.camera.get_offset()
-            mp = pygame.mouse.get_pos()
-            mp = [mp[0]+co[0], mp[1]+co[1]]
-            distance_to_capital = math.sqrt((abs(mp[0]-self.territory.capitol.pos[0])**2) + (abs(mp[1]-self.territory.capitol.pos[1])**2))
+            distance_to_capital = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + \
+                                            (abs(pos[1]-self.territory.capitol.pos[1])**2))
             if distance_to_capital < self.string:
                 distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
                 if not distance <= self.speed:
                     return False
                 self.goto = pos
                 self.can_move = False
-                self.distance_from_capitol = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + (abs(pos[1]-self.territory.capitol.pos[1])**2))
-                print "Ship's distance from the capitol:",self.distance_from_capitol
+                self.distance_from_capitol = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) +\
+                                                       (abs(pos[1]-self.territory.capitol.pos[1])**2))
                 return True
             else:
-                print "You can't move that far! Not enough bloody magic string!"
-                print "Destination's distance from capitol:",distance_to_capital
                 return False
 
     def get_next_pos(self):
