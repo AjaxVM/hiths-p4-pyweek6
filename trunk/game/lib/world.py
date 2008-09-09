@@ -15,9 +15,13 @@ class MapObject(object):
         self.world = world
         self.size = size
         self.territories = []
+        self.territories_by_player = []
 
     def add(self, terr):
         self.territories.append(terr)
+        while terr.player.pnum >= len(self.territories_by_player):
+            self.territories_by_player.append([])
+        self.territories_by_player[terr.player.pnum].append(terr)
 
     def test_point(self, point):
         for i in self.territories:
@@ -44,6 +48,9 @@ class MapObject(object):
         terr.calculate_ship_support_cap()
         terr.get_capitol()
         return True
+
+    def get_territories(self, pnum):
+        return self.territories_by_player[pnum]
 
 
 class Territory(object):
@@ -157,7 +164,6 @@ class World(object):
         self.camera = Camera(self.ssize, self.wsize)
 
         self.islands = []
-##        self.units = []
 
         self.make_islands()
 
@@ -194,21 +200,10 @@ class World(object):
                 px -= x
                 py -= y
                 np.append((px, py))
-            pygame.draw.polygon(screen, constants.player_colors[i.player], np, 3)
+            pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
 
         for i in self.islands:
             i.render(screen, (x, y))
-
-##        for i in self.units:
-##            i.render(screen, (x, y))
-
-##        for i in self.mo.territories:
-##            px, py = i.pixels[int(len(i.pixels)/2)]
-##            
-##            px -= x
-##            py -= y
-##            screen.blit(self.font.render(str(i.pop_cap), 1, [0,0,0]),
-##                        (px, py))
 
     def make_islands(self):
         grid = []

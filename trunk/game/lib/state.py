@@ -65,7 +65,7 @@ class InputController(object):
     def end_turn(self):
         self.tdraw.t = None
         self.tdraw.active = False
-        for i in self.player.units:
+        for i in self.player.ships:
             i.end_turn()
 
 
@@ -78,7 +78,7 @@ class AIController(object):
         pass
 
     def update(self):
-        for i in self.player.units:
+        for i in self.player.ships:
             i.update()
         self.think()
 
@@ -108,7 +108,7 @@ class NetworkController(object):
         pass
 
     def update(self):
-        for i in self.player.units:
+        for i in self.player.ships:
             i.update()
 
     def start_turn(self):
@@ -120,8 +120,8 @@ class NetworkController(object):
 class Player(object):
     def __init__(self, state, controller, num=0):
         self.state = state
-        self.num = num
-        self.color = self.state.colors[self.num]
+        self.pnum = num
+        self.color = self.state.colors[self.pnum]
 
         self.to_be_rendered_objects = []
 
@@ -130,7 +130,7 @@ class Player(object):
         self.ships = []
 
     def is_turn(self):
-        return self.state.uturn == self.num
+        return self.state.uturn == self.pnum
 
     def end_turn(self):
         self.state.next_player_turn()
@@ -143,10 +143,12 @@ class Player(object):
         #Like the territory drawing will go through here now - because
         #it is highly dependant on turn and other user actions.
         pos = self.state.world.camera.get_offset()
-        for i in self.to_be_rendered_objects:
-            i.render(screen)
         for i in self.ships:
             i.render(screen, pos)
+
+    def render_turn(self, screen):
+        for i in self.to_be_rendered_objects:
+            i.render(screen)
 
     def start_turn(self):
         self.controller.start_turn()
@@ -161,7 +163,7 @@ class State(object):
         self.pt_index = 0 #this is the index available for the next player
         self.max_players = 5 #tweak this - probably less is better though
         self.colors = constants.player_colors #this will be the color of the players -
-                                          #and the color of the flags by the units
+                                          #and the color of the flags by the ships
 
     def add_player(self, control_type=InputController):
         self.players.append(Player(self, control_type, self.pt_index))
@@ -182,4 +184,6 @@ class State(object):
         self.players[self.uturn].start_turn()
 
     def render(self, screen):
-        self.players[self.uturn].render(screen)
+        self.players[self.uturn].render_turn(screen)
+        for i in self.players:
+            i.render(screen)
