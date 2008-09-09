@@ -28,6 +28,7 @@ class Ship(object):
 
         self.hold_capacity = 40 # Resources can only equal this number total
         self.resources = Resources(0, 0, 0) # Start empty
+        self.string = 200
 
         self.can_move = True
         self.can_attack = True
@@ -48,12 +49,19 @@ class Ship(object):
 
     def move_to(self, pos):
         if self.can_move:
-            distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
-            if not distance <= self.speed:
+            mp = pygame.mouse.get_pos()
+            distance_to_capital = math.sqrt((abs(mp[0]-self.territory.capitol.pos[0])**2) + (abs(mp[1]-self.territory.capitol.pos[1])**2))
+            print distance_to_capital
+            if distance_to_capital < self.string:
+                distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
+                if not distance <= self.speed:
+                    return Falsedistance_to_capital
+                self.goto = pos
+                self.can_move = False
+                return True
+            else:
+                print "You can't move that far! Not enough bloody magic string!"
                 return False
-            self.goto = pos
-            self.can_move = False
-            return True
 
     def get_next_pos(self):
         mx, my = self.goto
