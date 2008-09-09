@@ -67,6 +67,12 @@ class InputController(object):
         self.tdraw.active = False
         for i in self.player.ships:
             i.end_turn()
+        if self.selected_unit:
+            try:
+                self.player.to_be_rendered_objects.remove(self.selected_unit[1])
+            except:
+                pass
+            self.selected_unit = None
 
 
 class AIController(object):
