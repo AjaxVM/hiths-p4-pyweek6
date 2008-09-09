@@ -24,8 +24,7 @@ class InputController(object):
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
                 new = objects.Ship(self.selected_territory.capitol.pos, self.player)
-                self.state.world.units.append(new)
-                self.player.units.append(new)
+                self.player.ships.append(new)
         self.tdraw.update_event(event)
 
         if not self.tdraw.active:
@@ -36,7 +35,7 @@ class InputController(object):
                 y += my
                 p = (x, y)
                 if event.button == 1:
-                    for i in self.player.units:
+                    for i in self.player.ships:
                         if self.selected_unit and i == self.selected_unit[0]:
                             continue
                         if i.rect.collidepoint(p):
@@ -56,7 +55,7 @@ class InputController(object):
                             self.selected_unit = None
 
     def update(self):
-        for i in self.player.units:
+        for i in self.player.ships:
             i.update()
 
     def start_turn(self):
@@ -128,7 +127,7 @@ class Player(object):
 
         self.controller = controller(state, self)
         self.territories = []
-        self.units = []
+        self.ships = []
 
     def is_turn(self):
         return self.state.uturn == self.num
@@ -143,8 +142,11 @@ class Player(object):
         #this allows us to render player actions to the screen.
         #Like the territory drawing will go through here now - because
         #it is highly dependant on turn and other user actions.
+        pos = self.state.world.camera.get_offset()
         for i in self.to_be_rendered_objects:
             i.render(screen)
+        for i in self.ships:
+            i.render(screen, pos)
 
     def start_turn(self):
         self.controller.start_turn()
