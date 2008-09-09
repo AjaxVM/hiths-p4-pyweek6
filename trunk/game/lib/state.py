@@ -55,8 +55,7 @@ class InputController(object):
                             self.selected_unit = None
 
     def update(self):
-        for i in self.player.ships:
-            i.update()
+        pass
 
     def start_turn(self):
         self.tdraw.t = None
@@ -84,8 +83,6 @@ class AIController(object):
         pass
 
     def update(self):
-        for i in self.player.ships:
-            i.update()
         self.think()
 
     def think(self):
@@ -114,8 +111,7 @@ class NetworkController(object):
         pass
 
     def update(self):
-        for i in self.player.ships:
-            i.update()
+        pass
 
     def start_turn(self):
         pass
@@ -160,6 +156,10 @@ class Player(object):
         self.controller.start_turn()
         pass
 
+    def update_ships(self):
+        for i in self.ships:
+            i.update()
+
 class State(object):
     def __init__(self, world):
         self.world = world
@@ -180,6 +180,8 @@ class State(object):
 
     def update(self):
         self.players[self.uturn].controller.update()
+        for i in self.players:
+            i.update_ships()
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()
