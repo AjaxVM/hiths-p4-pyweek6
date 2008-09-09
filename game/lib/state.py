@@ -16,6 +16,13 @@ class InputController(object):
         self.selected_territory = None
         self.selected_unit = None
 
+    def unselect_unit(self):
+        try:
+            self.player.to_be_rendered_objects.remove(self.selected_unit[1])
+        except:
+            pass
+        self.selected_unit = None
+
     def event(self, event):
         if event.type == KEYDOWN:
             if event.key == K_r:
@@ -35,6 +42,10 @@ class InputController(object):
                 y += my
                 p = (x, y)
                 if event.button == 1:
+                    if self.selected_unit:
+                        self.unselect_unit()
+                    self.selected_territory = None
+
                     for i in self.player.ships:
                         if self.selected_unit and i == self.selected_unit[0]:
                             continue
@@ -67,11 +78,7 @@ class InputController(object):
         for i in self.player.ships:
             i.end_turn()
         if self.selected_unit:
-            try:
-                self.player.to_be_rendered_objects.remove(self.selected_unit[1])
-            except:
-                pass
-            self.selected_unit = None
+            self.unselect_unit()
 
 
 class AIController(object):
