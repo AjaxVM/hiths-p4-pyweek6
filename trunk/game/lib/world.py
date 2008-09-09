@@ -7,6 +7,7 @@ import math
 import random
 from objects import *
 import data
+import constants
 
 
 class MapObject(object):
@@ -154,7 +155,7 @@ class World(object):
 
         self.make_islands()
 
-        self.font = pygame.font.Font(None, 30)
+        self.font = data.font(None, 30)
 
     def render(self, screen):
         self.cur_timer += 1
@@ -173,9 +174,9 @@ class World(object):
         else:
             toy = 0
 
-        yy = xrange(-1,self.ssize[1]/25+2)
+        yy = xrange(-2,self.ssize[1]/25+4)
 
-        for ix in xrange(-1,self.ssize[0]/25+2):
+        for ix in xrange(-2,self.ssize[0]/25+4):
             for iy in yy:
                 screen.blit(self.tile_image, (ix*25+tox+self.cur_cycle,
                                               iy*25+toy+self.cur_cycle))
@@ -187,9 +188,7 @@ class World(object):
                 px -= x
                 py -= y
                 np.append((px, py))
-            colors = [[[255,0,0], [0,255,0]],
-                      [[125,125,125],[0,0,0]]]
-            pygame.draw.polygon(screen, colors[i.player][0], np, 3)
+            pygame.draw.polygon(screen, constants.player_colors[i.player], np, 3)
 
         for i in self.islands:
             i.render(screen, (x, y))
@@ -207,8 +206,8 @@ class World(object):
 
     def make_islands(self):
         grid = []
-        for x in xrange(self.wsize[0]/125):
-            for y in xrange(self.wsize[1]/125):
+        for x in xrange(1,self.wsize[0]/125-2):
+            for y in xrange(1,self.wsize[1]/125-2):
                 grid.append((x, y))
         self.islands = []
         for x in xrange(len(grid)/random.randint(3,5)):

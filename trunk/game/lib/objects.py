@@ -89,7 +89,7 @@ class Island(object):
         self.rect.center = self.pos
 
         self.resources = [] #can be gold, crew and string
-        self.font = pygame.font.Font(None, 20)
+        self.font = data.font(None, 20)
 
     def render(self, screen, offset):
         ox, oy = offset
