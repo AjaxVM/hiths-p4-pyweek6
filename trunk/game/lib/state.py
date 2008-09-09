@@ -25,6 +25,14 @@ class InputController(object):
     def update(self):
         pass
 
+    def start_turn(self):
+        self.tdraw.t = None
+        self.tdraw.active = False
+
+    def end_turn(self):
+        self.tdraw.t = None
+        self.tdraw.active = False
+
 
 class AIController(object):
     def __init__(self, state, player):
@@ -41,6 +49,12 @@ class AIController(object):
     def think(self):
         print "thinking..."
         self.player.end_turn()
+
+    def start_turn(self):
+        pass
+
+    def end_turn(self):
+        pass
 
 
 class NetworkController(object):
@@ -60,6 +74,12 @@ class NetworkController(object):
     def update(self):
         pass
 
+    def start_turn(self):
+        pass
+
+    def end_turn(self):
+        pass
+
 class Player(object):
     def __init__(self, state, controller, num=0):
         self.state = state
@@ -76,12 +96,19 @@ class Player(object):
     def end_turn(self):
         self.state.next_player_turn()
 
+    def do_end_turn(self):
+        self.controller.end_turn()
+
     def render(self, screen):
         #this allows us to render player actions to the screen.
         #Like the territory drawing will go through here now - because
         #it is highly dependant on turn and other user actions.
         for i in self.to_be_rendered_objects:
             i.render(screen)
+
+    def start_turn(self):
+        self.controller.start_turn()
+        pass
 
 class State(object):
     def __init__(self, world):
@@ -108,10 +135,12 @@ class State(object):
             i.controller.update()
 
     def next_player_turn(self):
+        self.players[self.uturn].do_end_turn()
         self.uturn += 1
         if self.uturn == len(self.players):
             self.uturn = 0
             self.turn += 1
+        self.players[self.uturn].start_turn()
 
     def render(self, screen):
         for i in self.players:
