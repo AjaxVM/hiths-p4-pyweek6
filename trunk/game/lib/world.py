@@ -27,7 +27,6 @@ class MapObject(object):
         for i in self.territories:
             if point in i.pixels:
                 return False
-
         return True
 
     def test_territory(self, terr):
@@ -50,6 +49,8 @@ class MapObject(object):
         return True
 
     def get_territories(self, pnum):
+        while pnum >= len(self.territories_by_player):
+            self.territories_by_player.append([])
         return self.territories_by_player[pnum]
 
 

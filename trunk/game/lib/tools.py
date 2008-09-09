@@ -66,7 +66,6 @@ class TerritoryDrawer(object):
                                 self.t.finish()
                                 if self.world.mo.test_territory(self.t):
                                     self.world.mo.add(self.t)
-                                    self.player.territories.append(self.t)
                                 self.t = None
                                 self.active = False
                             else:
