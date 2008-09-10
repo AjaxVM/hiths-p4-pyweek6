@@ -26,6 +26,7 @@ class Ship(object):
     def __init__(self, territory, owner, type='frigate', test=False): # TODO: owner should be a reference to a player
         self._alive = True
         self.owner = owner
+        self.type = type
 
         td = ship_types[type]
         self.hull_max = td['hull']
