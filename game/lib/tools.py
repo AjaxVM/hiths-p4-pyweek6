@@ -9,7 +9,21 @@ class ShipRangeRender(object):
         self.player = player
         self.world = world
 
-        #create the speed image
+        self.range_circle = pygame.Surface([self.ship.long_range*2, self.ship.long_range*2]).convert()
+        pygame.draw.circle(self.range_circle, [255, 255, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.long_range, 3)
+        pygame.draw.circle(self.range_circle, [255, 165, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.medium_range, 3)
+        pygame.draw.circle(self.range_circle, [255, 0, 0],
+                           [self.ship.long_range, self.ship.long_range],
+                            self.ship.short_range, 3)
+        self.range_circle.set_colorkey(self.range_circle.get_at((0,0)), RLEACCEL)
+
+        self.rerender()
+
+    def rerender(self):
         self.move_circle = pygame.Surface([self.ship.speed*2, self.ship.speed*2]).convert()
         pygame.draw.circle(self.move_circle, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
 
@@ -48,18 +62,6 @@ class ShipRangeRender(object):
 
         self.move_circle.set_colorkey((0,0,0), RLEACCEL)
         self.move_circle.set_alpha(175)
-
-        self.range_circle = pygame.Surface([self.ship.long_range*2, self.ship.long_range*2]).convert()
-        pygame.draw.circle(self.range_circle, [255, 255, 0],
-                           [self.ship.long_range, self.ship.long_range],
-                            self.ship.long_range, 3)
-        pygame.draw.circle(self.range_circle, [255, 165, 0],
-                           [self.ship.long_range, self.ship.long_range],
-                            self.ship.medium_range, 3)
-        pygame.draw.circle(self.range_circle, [255, 0, 0],
-                           [self.ship.long_range, self.ship.long_range],
-                            self.ship.short_range, 3)
-        self.range_circle.set_colorkey(self.range_circle.get_at((0,0)), RLEACCEL)
 
     def render(self, screen):
         ox, oy = self.world.camera.get_offset()
