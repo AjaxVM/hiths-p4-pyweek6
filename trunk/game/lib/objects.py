@@ -1,32 +1,59 @@
 import math, pygame, random
 import data
 
+ship_types = {
+    'junk' : \
+        { 'hull' : 70, 'crew' : 30, 'speed' : 200, \
+        'hold_capacity' : 40, 'damage_multiplier' : 1.2, 'cost' : 50 },
+    'frigate' : \
+        { 'hull' : 120, 'crew' : 50, 'speed' : 120, \
+        'hold_capacity' : 100, 'damage_multiplier' : 1, 'cost' : 150 },
+    'juggernaut' : \
+        { 'hull' : 180, 'crew' : 100, 'speed' : 80, \
+        'hold_capacity' : 80, 'damage_multiplier' : 2.5, 'cost' : 250 },
+    'merchant' : \
+        { 'hull' : 100, 'crew' : 20, 'speed' : 140, \
+        'hold_capacity' : 150, 'damage_multiplier' : 0.5, 'cost' : 40 },
+    'dutchman' : \
+        { 'hull' : 400, 'crew' : 80, 'speed' : 100, \
+        'hold_capacity' : 0, 'damage_multiplier' : 3, 'cost' : 350 }
+    # TODO: add capitol/city here or subclass it from ship, or just make it
+    # have the same attributes?
+}
+
 class Ship(object):
 
-    def __init__(self, territory, owner): # TODO: owner should be a reference to a player
+    def __init__(self, territory, owner, type='frigate', test=False): # TODO: owner should be a reference to a player
         self._alive = True
         self.owner = owner
-        self.territory = territory
 
-        self.hull_max = 70
+        td = ship_types[type]
+        self.hull_max = td['hull']
         self.hull = self.hull_max
-        self.crew_max = 30
+        self.crew_max = td['crew']
         self.crew = self.crew_max
-        self.speed_max = 100
+        self.speed_max = td['speed']
         self.speed = self.speed_max
-        self.damage_multiplier = 1
+        self.damage_multiplier = td['damage_multiplier']
+
+        # Keep compatibility with battle_test, all new variables need to go
+        # below here.
+        if test:
+            return
 
         self.long_range = 200
         self.medium_range = 150
         self.short_range = 60
 
+        self.territory = territory
         self.image = data.image("ship.png")
         
         self.pos = list(self.territory.capitol.pos)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
 
-        self.hold_capacity = 40 # Resources can only equal this number total
+        # Total resources can only equal hold capacity
+        self.hold_capacity = td['hold_capacity']
         self.resources = Resources(0, 0, 0) # Start empty
         self.string = 300
         self.distance_from_capitol = 0
