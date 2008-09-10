@@ -48,10 +48,13 @@ class Ship(object):
 
         self.territory = territory
         self.image = data.image("ship.png")
+        self.shadow = data.image("ship_shadow.png")
+        self.anchor = data.image("anchor.png")
         
         self.pos = list(self.territory.capitol.pos)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.aoff = self.rect.width - self.anchor.get_width(), self.rect.height - self.anchor.get_height()
 
         # Total resources can only equal hold capacity
         self.hold_capacity = td['hold_capacity']
@@ -63,6 +66,9 @@ class Ship(object):
         self.can_attack = True
         self.goto = None
         self.camera = self.owner.state.world.camera
+        self.vertical_offset = 0
+        self.hopping = False
+        self.anchored_to = None
 
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
@@ -119,6 +125,27 @@ class Ship(object):
 
     def update(self):
         if self.goto:
+            self.hopping = False
+            self.anchored_to = None
+            for i in self.owner.state.world.islands:
+                if self.rect.inflate(-5, -5).colliderect(i.rect.inflate(-10,-10)):
+                    if i.rect.collidepoint(self.goto):
+                        self.vertical_offset = 0
+                        self.hopping = False
+                        self.goto = None
+                        self.anchored_to = i
+                        return None
+                    else:
+                        self.hopping = True
+                        break
+            if self.hopping:
+                if self.vertical_offset < 50:
+                    self.vertical_offset += 2
+            else:
+                if self.vertical_offset > 0:
+                    self.vertical_offset -= 4
+                    if self.vertical_offset < 0:
+                        self.vertical_offset = 0
             self.pos = self.rect.center = self.get_next_pos()
 
     def render(self, screen, offset):
@@ -126,7 +153,11 @@ class Ship(object):
         x, y = self.rect.topleft
         x -= ox
         y -= oy
-        screen.blit(self.image, (x, y))
+        if self.hopping:
+            screen.blit(self.shadow, (x, y))
+        screen.blit(self.image, (x, y-self.vertical_offset))
+        if self.anchored_to:
+            screen.blit(self.anchor, (x+self.aoff[0], y+self.aoff[1]))
 
 class Resources(object):
     def __init__(self, gold, string, crew):
