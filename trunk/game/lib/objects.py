@@ -147,6 +147,9 @@ class Ship(object):
                     if self.vertical_offset < 0:
                         self.vertical_offset = 0
             self.pos = self.rect.center = self.get_next_pos()
+        else:
+            self.vertical_offset = 0
+            self.hopping = False
 
     def render(self, screen, offset):
         ox, oy = offset
