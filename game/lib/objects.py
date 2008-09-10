@@ -180,6 +180,32 @@ class Resources(object):
         self.string = string
         self.crew = crew
 
+    def __add__(self, arg):
+        self.gold += arg.gold
+        self.string += arg.string
+        self.crew += arg.crew
+
+    def __sub__(self, arg):
+        self.gold -= arg.gold
+        self.string -= arg.string
+        self.crew -= arg.crew
+
+    def __lt__(self, arg):
+        return self.gold < arg.gold or self.string < arg.string or self.crew < arg.crew
+    def __gt__(self, arg):
+        return self.gold > arg.gold or self.string > arg.string or self.crew > arg.crew
+    def __le__(self, arg):
+        print 'called le'
+        return self.gold <= arg.gold or self.string <= arg.string or self.crew <= arg.crew
+    def __ge__(self, arg):
+        print 'called ge'
+        return self.gold >= arg.gold or self.string >= arg.string or self.crew >= arg.crew
+    def __str__(self):
+        return "gold %s, string %s, crew %s" % (self.gold, self.string, self.crew)
+
+    def get_total():
+        return self.gold + self.string + self.crew
+
 class Island(object):
     def __init__(self, pos):
         self.pos = pos

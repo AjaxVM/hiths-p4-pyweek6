@@ -136,6 +136,7 @@ class Player(object):
         self.controller = controller(state, self)
         self.territories = self.state.world.mo.get_territories(self.pnum)
         self.ships = []
+        self.resources = objects.Resources(500, 800, 300)
 
     def is_turn(self):
         return self.state.uturn == self.pnum
@@ -167,8 +168,17 @@ class Player(object):
             i.update()
 
     def build_ship(self, territory, type):
+        print 'before:', self.resources
         new = objects.Ship(territory, self, type)
+        cost = objects.Resources(objects.ship_types[type]['cost'], 0, new.crew_max)
+        if self.resources <= cost:
+            print "You're too poor!"
+            # TODO: notify the player visually
+            return
+        self.resources - cost
         self.ships.append(new)
+        # TODO: allow the player to give ship some string by default?
+        print 'after:', self.resources
 
 class State(object):
     def __init__(self, world):
