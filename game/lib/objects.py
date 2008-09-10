@@ -51,7 +51,7 @@ class Ship(object):
         self.shadow = data.image("ship_shadow.png")
         self.anchor = data.image("anchor.png")
         
-        self.pos = list(self.territory.capitol.pos)
+        self.pos = self._get_spawn_pos()
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.aoff = self.rect.width - self.anchor.get_width(), self.rect.height - self.anchor.get_height()
@@ -68,7 +68,7 @@ class Ship(object):
         self.camera = self.owner.state.world.camera
         self.vertical_offset = 0
         self.hopping = False
-        self.anchored_to = None
+        self.anchored_to = territory
 
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
@@ -168,6 +168,11 @@ class Ship(object):
         screen.blit(self.image, (x, y-self.vertical_offset))
         if self.anchored_to:
             screen.blit(self.anchor, (x+self.aoff[0], y+self.aoff[1]))
+
+    def _get_spawn_pos(self):
+        r = self.territory.capitol.rect
+        choices = (r.topleft, r.topright, r.bottomright, r.bottomleft)
+        return random.choice(choices)
 
 class Resources(object):
     def __init__(self, gold, string, crew):
