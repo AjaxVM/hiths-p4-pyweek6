@@ -1,15 +1,11 @@
-import pygame
 from objects import *
 from combat import *
 
 def main():
-    pygame.init() # Make pygame happy, but don't really use it
-    screen = pygame.display.set_mode((1, 1))
-
     ships = []
     # Make some ships for testing real quick
     for i in range(2):
-        ship = Ship([0,0], i)
+        ship = Ship(None, i, 'frigate', test=True)
         ships.append(ship)
 
     turn = 0

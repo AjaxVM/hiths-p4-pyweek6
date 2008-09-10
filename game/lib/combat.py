@@ -6,10 +6,10 @@ _max_dmg = 60
 
 # Percentages of damage for each ammo type
 _dmg_table = {
-        'ball'  : {'hull' : .70, 'crew' : .25, 'speed' : .05 },
-        'chain' : {'hull' : .30, 'crew' : .30, 'speed' : .40 },
-        'grape' : {'hull' : .25, 'crew' : .70, 'speed' : .05 }
-        }
+    'ball'  : {'hull' : .70, 'crew' : .25, 'speed' : .05 },
+    'chain' : {'hull' : .30, 'crew' : .30, 'speed' : .40 },
+    'grape' : {'hull' : .25, 'crew' : .70, 'speed' : .05 }
+}
 _dmg_balance = { 'hull' : 1, 'crew' : 0.75, 'speed' : 8 }
 
 _range_modifiers = { 'long' : 0.7, 'medium' : 1, 'close' : 1.2 }
