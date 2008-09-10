@@ -23,7 +23,7 @@ ship_types = {
 
 class Ship(object):
 
-    def __init__(self, territory, owner, type='frigate', test=False): # TODO: owner should be a reference to a player
+    def __init__(self, territory, owner, type='frigate', test=False): # TODO: test should be removed
         self._alive = True
         self.owner = owner
         self.type = type
@@ -59,7 +59,7 @@ class Ship(object):
         # Total resources can only equal hold capacity
         self.hold_capacity = td['hold_capacity']
         self.resources = Resources(0, 0, 0) # Start empty
-        self.string = 300
+        self.string = 0#300
         self.distance_from_capitol = 0
 
         self.can_move = True
@@ -86,19 +86,28 @@ class Ship(object):
     def move_to(self, pos):
         if self.can_move:
             co = self.camera.get_offset()
-            distance_to_capital = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + \
-                                            (abs(pos[1]-self.territory.capitol.pos[1])**2))
-            if distance_to_capital < self.string:
-                distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
-                if not distance <= self.speed:
+            if not pos in self.territory.pixels:
+                print "outside"
+                distance_to_capital = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + \
+                                                (abs(pos[1]-self.territory.capitol.pos[1])**2))
+                if distance_to_capital < self.string:
+                    distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
+                    if not distance <= self.speed:
+                        return False
+                    self.goto = pos
+                    self.can_move = False
+                    self.distance_from_capitol = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) +\
+                                                           (abs(pos[1]-self.territory.capitol.pos[1])**2))
+                    return True
+                else:
                     return False
-                self.goto = pos
-                self.can_move = False
-                self.distance_from_capitol = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) +\
-                                                       (abs(pos[1]-self.territory.capitol.pos[1])**2))
-                return True
             else:
-                return False
+                print "inside"
+                distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
+                if distance <= self.speed:
+                    self.goto = pos
+                    self.can_move = False
+                    return True
 
     def get_next_pos(self):
         mx, my = self.goto

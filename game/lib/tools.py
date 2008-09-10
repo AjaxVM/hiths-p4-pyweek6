@@ -8,6 +8,8 @@ class ShipRangeRender(object):
         self.ship = ship
         self.player = player
         self.world = world
+
+        #create the speed image
         self.move_circle = pygame.Surface([self.ship.speed*2, self.ship.speed*2]).convert()
         pygame.draw.circle(self.move_circle, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
 
@@ -16,15 +18,35 @@ class ShipRangeRender(object):
         p1 = self.ship.territory.capitol.pos
         p2 = self.ship.rect.center
         p2dif = p2[0] - self.ship.speed, p2[1] - self.ship.speed
-##        x = p1[0] - p2[0]
-##        y = p1[1] - p2[1]
         x = p1[0] - p2dif[0]
         y = p1[1] - p2dif[1]
-        pygame.draw.circle(m2, [0, 255, 0], (x, y), self.ship.string)
+        if self.ship.string:
+            pygame.draw.circle(m2, [0, 255, 0], (x, y), self.ship.string)
         m2.set_colorkey((0, 255, 0), RLEACCEL)
         self.move_circle.blit(m2, (0,0))
 
-        self.move_circle.set_colorkey(self.move_circle.get_at((0,0)), RLEACCEL)
+
+        m3 = self.move_circle.copy()
+        m3.fill((0,0,0))
+        p = self.ship.rect.center
+        np = []
+        for i in self.ship.territory.points:
+            x, y = i
+            x -= p[0] - self.ship.speed
+            y -= p[1] - self.ship.speed
+            np.append((x, y))
+
+        pygame.draw.polygon(m3, [0, 255, 0], np)
+        m4 = m3.copy()
+        m4.fill((0,0,0))
+        pygame.draw.circle(m4, [0, 255, 0], [self.ship.speed, self.ship.speed], self.ship.speed)
+        m4.set_colorkey((0, 255, 0), RLEACCEL)
+        m3.blit(m4, (0,0))
+        m3.set_colorkey((0,0,0), RLEACCEL)
+
+        self.move_circle.blit(m3, (0,0))
+
+        self.move_circle.set_colorkey((0,0,0), RLEACCEL)
         self.move_circle.set_alpha(175)
 
         self.range_circle = pygame.Surface([self.ship.long_range*2, self.ship.long_range*2]).convert()
@@ -51,7 +73,9 @@ class ShipRangeRender(object):
             screen.blit(self.move_circle, [x - self.ship.speed, y - self.ship.speed])
         if self.ship.can_attack:
             screen.blit(self.range_circle, [x - self.ship.long_range, y - self.ship.long_range])
-        pygame.draw.line(screen, [random.randrange(255), random.randrange(255), random.randrange(255)], pos1, pos2, 3)
+
+        if not self.ship.rect.center in self.ship.territory.pixels:
+            pygame.draw.line(screen, [random.randrange(255), random.randrange(255), random.randrange(255)], pos1, pos2, 3)
 
 class TerritoryDrawer(object):
     def __init__(self, player, world):
