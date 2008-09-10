@@ -68,6 +68,7 @@ class Territory(object):
 
         self.pop_cap = 0
         self.capitol = None
+        self.resources = (0,0,0)
 
     def add_point(self, point):
         self.points.append(point)
