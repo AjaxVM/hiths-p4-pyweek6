@@ -30,8 +30,7 @@ class InputController(object):
             if event.key == K_RETURN:
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
-                new = objects.Ship(self.selected_territory, self.player)
-                self.player.ships.append(new)
+                self.player.build_ship(self.selected_territory, 'frigate')
         self.tdraw.update_event(event)
 
         if not self.tdraw.active:
@@ -166,6 +165,10 @@ class Player(object):
     def update_ships(self):
         for i in self.ships:
             i.update()
+
+    def build_ship(self, territory, type):
+        new = objects.Ship(territory, self, type)
+        self.ships.append(new)
 
 class State(object):
     def __init__(self, world):
