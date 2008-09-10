@@ -87,7 +87,6 @@ class Ship(object):
         if self.can_move:
             co = self.camera.get_offset()
             if not pos in self.territory.pixels:
-                print "outside"
                 distance_to_capital = math.sqrt((abs(pos[0]-self.territory.capitol.pos[0])**2) + \
                                                 (abs(pos[1]-self.territory.capitol.pos[1])**2))
                 if distance_to_capital < self.string:
@@ -102,7 +101,6 @@ class Ship(object):
                 else:
                     return False
             else:
-                print "inside"
                 distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
                 if distance <= self.speed:
                     self.goto = pos
