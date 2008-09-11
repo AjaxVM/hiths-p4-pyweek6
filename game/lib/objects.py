@@ -132,6 +132,16 @@ class Ship(object):
 
     def update(self):
         if self.goto:
+            if self.hopping:
+                if self.vertical_offset < 50:
+                    self.vertical_offset += 2
+            else:
+                if self.vertical_offset > 0:
+                    self.vertical_offset -= 4
+                    if self.vertical_offset < 0:
+                        self.vertical_offset = 0
+            self.pos = self.rect.center = self.get_next_pos()
+
             self.hopping = False
             self.anchored_to = None
             for i in self.owner.state.world.islands:
@@ -145,15 +155,6 @@ class Ship(object):
                     else:
                         self.hopping = True
                         break
-            if self.hopping:
-                if self.vertical_offset < 50:
-                    self.vertical_offset += 2
-            else:
-                if self.vertical_offset > 0:
-                    self.vertical_offset -= 4
-                    if self.vertical_offset < 0:
-                        self.vertical_offset = 0
-            self.pos = self.rect.center = self.get_next_pos()
         else:
             self.vertical_offset = 0
             self.hopping = False
