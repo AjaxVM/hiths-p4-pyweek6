@@ -22,6 +22,9 @@ ship_types = {
 }
 
 class Ship(object):
+    long_range = 200
+    medium_range = 150
+    close_range = 60
 
     def __init__(self, territory, owner, type='frigate', test=False): # TODO: test should be removed
         self._alive = True
@@ -41,10 +44,6 @@ class Ship(object):
         # below here.
         if test:
             return
-
-        self.long_range = 200
-        self.medium_range = 150
-        self.short_range = 60
 
         self.territory = territory
         self.image = data.image("ship.png")
@@ -169,6 +168,19 @@ class Ship(object):
         screen.blit(self.image, (x, y-self.vertical_offset))
         if self.anchored_to:
             screen.blit(self.anchor, (x+self.aoff[0], y+self.aoff[1]))
+
+    def get_range(self, target):
+        distance = math.sqrt((abs(target.pos[0]-self.pos[0])**2) 
+            + (abs(target.pos[1]-self.pos[1])**2))
+
+        if distance <= self.close_range:
+            return 'close'
+        if distance <= self.medium_range:
+            return 'medium'
+        if distance <= self.long_range:
+            return 'long'
+        else:
+            return None
 
     def _get_spawn_pos(self):
         r = self.territory.capitol.rect

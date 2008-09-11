@@ -69,15 +69,22 @@ class InputController(object):
             if event.button == 3:
                 if self.selected_unit:
                     # Check for attack
-                    for i in self.state.players:
-                        if i is self.player:
-                            continue
-                        for j in i.ships:
-                            #print 'click', p2, 'center', j.rect.center
-                            if j.rect.collidepoint(p2):
-                                # TODO: get shot type from GUI
-                                attack((self.selected_unit[0], j), 'ball')
-                                return
+                    if self.selected_unit[0].can_attack:
+                        for i in self.state.players:
+                            if i is self.player:
+                                continue
+                            for j in i.ships:
+                                #print 'click', p2, 'center', j.rect.center
+                                if j.rect.collidepoint(p2):
+                                    range = self.selected_unit[0].get_range(j)
+                                    if not range:
+                                        print 'Out of range'
+                                        return # Out of range
+
+                                    # TODO: get shot type from GUI
+                                    attack((self.selected_unit[0], j),
+                                        'ball', range)
+                                    return
 
                     # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
@@ -238,11 +245,15 @@ class State(object):
         for i in self.players:
             i.render(screen)
 
-def attack(ships, shot_type):
-    # TODO: compute range
-    range = 'medium'
+def attack(ships, shot_type, range):
+    print 'Player', ships[0].owner.pnum, ships[0].type, ' vs. ',
+    print 'Player', ships[1].owner.pnum, ships[1].type
+
     b = Battle(ships, (shot_type, range))
     b.execute()
+
+    ships[0].can_move = False
+    ships[0].can_attack = False
 
     dmg = b.results['damage']
     print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
@@ -261,4 +272,8 @@ def attack(ships, shot_type):
         print 'Winner:', b.results['winner'].owner
     elif not (ships[0].is_alive() and ships[1].is_alive()):
         print 'Both ships sank'
+
+    # TODO: if ship.is_alive() fails, remove ship from game
+    # TODO: handle 'captured' result from battle.results, i.e.: give to the
+    # other player
 
