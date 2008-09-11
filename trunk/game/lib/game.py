@@ -8,6 +8,7 @@ from state import *
 import data
 
 import random
+import gui
 
 def main():
     pygame.init()
