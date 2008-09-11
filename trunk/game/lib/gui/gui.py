@@ -138,6 +138,7 @@ class Widget(object):
 
         self.rect = pygame.Rect(0, 0, 1, 1)
         self.move()
+        self.active = True
 
     def render(self, surface):
         pass
@@ -197,6 +198,7 @@ class Label(Widget):
             self.icon = pygame.image.load(os.path.join(self.theme.theme, self.icon)).convert_alpha()
 
         self.make_image()
+        self.active = True
 
     def make_image(self):
         if self.theme and self.theme.font["font"]:
@@ -232,6 +234,8 @@ class Label(Widget):
         return None
 
     def render(self, surface):
+        if not self.active:
+            return None
         surface.blit(self.comp_image, self.rect.topleft)
         return None
 
@@ -253,6 +257,7 @@ class Button(Widget):
         self.make_image()
 
         self.__mouse_hold_me = False
+        self.active = True
 
     def not_active(self):
         self.change_image(self.regular)
@@ -338,6 +343,8 @@ class Button(Widget):
         return None
 
     def render(self, surface):
+        if not self.active:
+            return None
         surface.blit(self.image, self.rect.topleft)
         return None
 
@@ -348,6 +355,8 @@ class Button(Widget):
         return None
 
     def event(self, event):
+        if not self.active:
+            return event
         mpos = self.get_mouse_pos()
         if mpos and self.rect.collidepoint(mpos):
             if self.__mouse_hold_me:
@@ -396,6 +405,7 @@ class Area(Widget):
         self.lock_add_widgets = False
 
         self.new_widgets = True
+        self.active = True
 
     def not_active(self):
         if self.hscroll_bar:
@@ -536,6 +546,8 @@ class Area(Widget):
         return None
 
     def render(self, surface):
+        if not self.active:
+            return None
         if self.new_widgets:
             self.new_widgets = False
             self.check_borders()
@@ -564,6 +576,8 @@ class Area(Widget):
                 i.move((0, -val))
 
     def event(self, event):
+        if not self.active:
+            return event
         if self.vscroll_bar:
             e = self.vscroll_bar.event(event)
             if not e == event:
@@ -613,6 +627,7 @@ class MenuList(Widget):
         self.scroll_bar = None
 
         self.make_image()
+        self.active = True
 
     def get_mouse_pos(self):
         p = self.parent.get_mouse_pos()
@@ -698,12 +713,16 @@ class MenuList(Widget):
         self.Area.not_active()
 
     def render(self, surface):
+        if not self.active:
+            return None
         self.background.blit(self.back_copy, (0,0))
         self.Area.render(self.background)
         surface.blit(self.surface, self.rect)
         return None
 
     def event(self, event):
+        if not self.active:
+            return event
         if event.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
             mpos = self.parent.get_mouse_pos()
             if not (mpos and self.rect.collidepoint(mpos)):
@@ -738,6 +757,7 @@ class Menu(Widget):
         self.make_image()
 
         self.widget_vis = False
+        self.active = True
 
     def move_to_top(self, other):
         self.parent.move_to_top(self)
@@ -763,6 +783,8 @@ class Menu(Widget):
         pass
 
     def event(self, event):
+        if not self.active:
+            return event
         x = self.button.event(event)
         if not x == event:
             self.force_update()
@@ -799,6 +821,8 @@ class Menu(Widget):
         return event
 
     def render(self, surface):
+        if not self.active:
+            return None
         self.button.render(surface)
         if self.widget_vis:
             self.other.render(surface)
@@ -822,6 +846,7 @@ class TextInputBox(Widget):
         self.__text_pos = len(self.text)
 
         self.make_image()
+        self.active = True
 
     def not_active(self):
         if self.focused:
@@ -884,6 +909,8 @@ class TextInputBox(Widget):
         return None
 
     def render(self, surface):
+        if not self.active:
+            return None
         pos = self.rect.topleft
         surface.blit(self.surface, pos)
         surface.blit(self.tex_surface, (pos[0] + self.__surf_size[0],
@@ -891,6 +918,8 @@ class TextInputBox(Widget):
         return None
 
     def event(self, event):
+        if not self.active:
+            return event
         mpos = self.get_mouse_pos()
         if event.type == MOUSEBUTTONDOWN:
             if mpos and self.rect.collidepoint(mpos):
@@ -996,6 +1025,7 @@ class WindowBar(object):
         self.max_button.over_wdith = width
         self.min_button.make_image()
         self.max_button.make_image()
+        self.active = True
 
     def add_widget(self, other):
         pass
@@ -1013,6 +1043,8 @@ class WindowBar(object):
         return self.parent.get_mouse_pos()
 
     def event(self, event):
+        if not self.active:
+            return event
         mpos = self.get_mouse_pos()
 
         if mpos and self.bar.rect.collidepoint(mpos):
@@ -1062,6 +1094,8 @@ class WindowBar(object):
         return event
 
     def render(self, surface):
+        if not self.active:
+            return None
         self.bar.render(surface)
         if self.minimized:
             self.max_button.render(surface)
@@ -1088,6 +1122,7 @@ class Window(Widget):
         self.lock_add_widg = False
 
         self.make_image()
+        self.active = True
 
     def not_active(self):
         return self.Area.not_active()
@@ -1141,6 +1176,8 @@ class Window(Widget):
         self.force_update()
 
     def event(self, event):
+        if not self.active:
+            return event
         e = self.drag_bar.event(event)
         if not e == event:
             self.parent.move_to_top(self)
@@ -1182,6 +1219,8 @@ class Window(Widget):
         return None
 
     def render(self, surface):
+        if not self.active:
+            return None
         self.surface.fill((0,0,0,0))
         self.surface.blit(self.__old_draw_area, (0, 0))
         self.Area.render(self.surface)
@@ -1211,6 +1250,7 @@ class ScrollBar(Widget):
         self.direction = direction
 
         self.make_image()
+        self.active = True
 
     def get_pos(self):
         return self.current_value - self.start_value
@@ -1280,6 +1320,8 @@ class ScrollBar(Widget):
             self.max_value = self.area_bar.get_height() - bar_size[1] - bsize[1] * 2
 
     def render(self, surface):
+        if not self.active:
+            return None
         pos = self.rect.topleft
         self.draw_area.fill((0,0,0,0))
         self.draw_area.blit(self.__old_draw_area, (0,0))
@@ -1312,6 +1354,8 @@ class ScrollBar(Widget):
         return None
 
     def event(self, event):
+        if not self.active:
+            return event
         mpos = self.get_mouse_pos()
         if mpos and self.rect.collidepoint(mpos):
             if self.__mouse_hold_me:

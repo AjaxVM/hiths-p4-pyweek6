@@ -5,6 +5,8 @@ import constants
 import objects
 from combat import Battle
 
+from gui import gui
+
 class InputController(object):
     """A class that handles the player based on user input"""
     def __init__(self, state, player):
@@ -25,6 +27,10 @@ class InputController(object):
         self.selected_unit = None
 
     def event(self, event):
+        if event.type == gui.GUI_EVENT:
+            if event.action == gui.GUI_EVENT_CLICK:
+                if event.name == "NBB-ENDTURN":
+                    self.player.end_turn()
         if event.type == KEYDOWN:
             if event.key == K_r:
                 self.tdraw.active = True
