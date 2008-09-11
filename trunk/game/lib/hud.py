@@ -13,22 +13,22 @@ class TopBar(object):
         self.app = gui.App(pygame.Surface((640, 30)), (0,0,0))
         self.app.theme = data.theme()
 
-        self.turn_label = gui.Label(self.app, (0, 0), "Label1", " 0", icon="icon.png")
+        self.turn_label = gui.Label(self.app, (5, 5), "Label1", " 0", icon="icon.png")
         self.turn_label.over_width = 100
         self.turn_label.theme.label["text-color"] = (0, 0, 0)
 
-        self.player_label = gui.Label(self.app, (100, 0), "Label2", " 0", icon="icon.png")
+        self.player_label = gui.Label(self.app, (110, 5), "Label2", " 0", icon="icon.png")
         self.player_label.over_width = 100
 
-        self.string_label = gui.Label(self.app, (200, 0), "Label3", " 0", icon="icon.png")
+        self.string_label = gui.Label(self.app, (215, 5), "Label3", " 0", icon="string.png")
         self.string_label.over_width = 100
         self.string_label.theme.label["text-color"] = (0, 191, 255)
 
-        self.crew_label = gui.Label(self.app, (300, 0), "Label4", " 0", icon="icon.png")
+        self.crew_label = gui.Label(self.app, (320, 5), "Label4", " 0", icon="crew.png")
         self.crew_label.over_width = 100
         self.crew_label.theme.label["text-color"] = (255, 0, 0)
 
-        self.gold_label = gui.Label(self.app, (400, 0), "Label5", " 0", icon="icon-gold.png")
+        self.gold_label = gui.Label(self.app, (425, 5), "Label5", " 0", icon="gold.png")
         self.gold_label.over_width = 100
         self.turn_label.theme.label["text-color"] = (255, 215, 0)
 
