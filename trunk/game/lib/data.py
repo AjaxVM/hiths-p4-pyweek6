@@ -1,5 +1,6 @@
 import pygame
 import os, sys
+from gui import gui
 x, y = os.path.split(sys.path[0])
 if y == "lib":
     data_path = os.path.join(x, "data")
@@ -22,3 +23,6 @@ def font(name, size):
     f = pygame.font.Font(name, size)
     all_fonts[(name, size)] = f
     return f
+
+theme = gui.make_theme(os.path.join(data_path, "theme"))
+
