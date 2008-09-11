@@ -68,7 +68,7 @@ class Ship(object):
         self.camera = self.owner.state.world.camera
         self.vertical_offset = 0
         self.hopping = False
-        self.anchored_to = territory
+        self.anchored_to = territory.capitol
 
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
@@ -190,6 +190,11 @@ class Resources(object):
         self.string -= arg.string
         self.crew -= arg.crew
 
+    def clear(self):
+        self.gold = 0
+        self.string = 0
+        self.crew = 0
+
     def __lt__(self, arg):
         return self.gold < arg.gold or self.string < arg.string or self.crew < arg.crew
     def __gt__(self, arg):
@@ -212,6 +217,10 @@ class Island(object):
         self.image = random.choice([data.image("island.png"), data.image("island2.png"), data.image("island3.png")])
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.capitol = False
+        self.capitol_image = data.image("island_capitol-test.png")
+        self.cap_rect = self.capitol_image.get_rect()
+        self.cap_rect.midbottom = self.rect.center
 
         self.resources = [] #can be gold, crew and string
         self.font = data.font(None, 20)
@@ -225,6 +234,11 @@ class Island(object):
            (y < -self.rect.height) or (y >= 480 +self.rect.height):
             return None
         screen.blit(self.image, (x, y))
+        if self.capitol:
+            cx, cy = self.cap_rect.topleft
+            cx -= ox
+            cy -= oy
+            screen.blit(self.capitol_image, (cx, cy))
         off = 15
         for i in self.resources:
             screen.blit(self.font.render(i, True, [0,0,0]), (x, y - off))
