@@ -31,43 +31,46 @@ class InputController(object):
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
                 self.player.build_ship(self.selected_territory, 'frigate')
-        self.tdraw.update_event(event)
 
-        if not self.tdraw.active:
-            if event.type == MOUSEBUTTONDOWN:
-                x, y = event.pos
-                mx, my = self.state.world.camera.get_offset()
-                x += mx
-                y += my
-                x += self.state.world.camera.screen_rect.left
-                y += self.state.world.camera.screen_rect.top
-                p = (x, y)
-                x -= self.state.world.camera.screen_rect.left*2
-                y -= self.state.world.camera.screen_rect.top*2
-                p2 = (x, y)
-                if event.button == 1:
-                    if self.selected_unit:
-                        self.unselect_unit()
-                    self.selected_territory = None
+        if event.type == MOUSEBUTTONDOWN:
+            if not self.state.world.camera.screen_rect.collidepoint(event.pos):
+                return None
+            if self.tdraw.active:
+                self.tdraw.update_event(event)
+                return None
+            x, y = event.pos
+            mx, my = self.state.world.camera.get_offset()
+            x += mx
+            y += my
+            x += self.state.world.camera.screen_rect.left
+            y += self.state.world.camera.screen_rect.top
+            p = (x, y)
+            x -= self.state.world.camera.screen_rect.left*2
+            y -= self.state.world.camera.screen_rect.top*2
+            p2 = (x, y)
+            if event.button == 1:
+                if self.selected_unit:
+                    self.unselect_unit()
+                self.selected_territory = None
 
-                    for i in self.player.ships:
-                        if self.selected_unit and i == self.selected_unit[0]:
-                            continue
-                        if i.rect.collidepoint(p2):
-                            self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
-                            self.player.to_be_rendered_objects.append(self.selected_unit[1])
-                            return
+                for i in self.player.ships:
+                    if self.selected_unit and i == self.selected_unit[0]:
+                        continue
+                    if i.rect.collidepoint(p2):
+                        self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
+                        self.player.to_be_rendered_objects.append(self.selected_unit[1])
+                        return
 
-                    for i in self.player.territories:
-                        if p in i.pixels:
-                            self.selected_territory = i
-                            return
-                if event.button == 3:
-                    if self.selected_unit:
-                        x = self.selected_unit[0].move_to(p2)
-                        if x:
-                            self.player.to_be_rendered_objects.remove(self.selected_unit[1])
-                            self.selected_unit = None
+                for i in self.player.territories:
+                    if p in i.pixels:
+                        self.selected_territory = i
+                        return
+            if event.button == 3:
+                if self.selected_unit:
+                    x = self.selected_unit[0].move_to(p2)
+                    if x:
+                        self.player.to_be_rendered_objects.remove(self.selected_unit[1])
+                        self.selected_unit = None
 
     def update(self):
         pass
