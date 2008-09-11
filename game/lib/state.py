@@ -265,10 +265,20 @@ def attack(ships, shot_type, range):
     print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
           'Ship', ships[1].owner.pnum, dmg[ships[1]]
 
+    # TODO: handle 'captured' result from battle.results, i.e.: give to the
+    # other player
     if 'captured' in b.results and ships[0].is_alive() and ships[1].is_alive():
         if b.results['captured'] == 0:
+            for i in ships: # Sink both these ghost ships
+                i.owner.ships.remove(i)
             print 'Both crews were wiped out'
         else:
+            captured_ship = b.results['captured']
+            # TODO: do some stuff with transferring crew, arbitrary for now
+            captured_ship.crew = 20
+            captured_ship.owner.ships.remove(captured_ship)
+            b.results['winner'].owner.ships.append(captured_ship)
+
             print 'Ship', b.results['captured'].owner, 'was captured'
 
     print '--',
@@ -279,7 +289,8 @@ def attack(ships, shot_type, range):
     elif not (ships[0].is_alive() and ships[1].is_alive()):
         print 'Both ships sank'
 
-    # TODO: if ship.is_alive() fails, remove ship from game
-    # TODO: handle 'captured' result from battle.results, i.e.: give to the
-    # other player
+    for i in ships:
+        if not i.is_alive():
+            # Sink the ship
+            i.owner.ships.remove(i)
 
