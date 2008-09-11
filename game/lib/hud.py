@@ -50,6 +50,9 @@ class TopBar(object):
         self.turn_label.theme.label["text-color"] = (255, 215, 0)
         self.gold_label.make_image()
 
+    def render_bg(self, screen):
+        x = screen.subsurface(0,0,640,30)
+        x.fill((189, 183, 107))
 
 class NormalBottomBar(object):
     def __init__(self, state, app):
@@ -58,20 +61,26 @@ class NormalBottomBar(object):
         self.app = app
 
         self.end_turn_button = gui.Button(self.app, (640, 480), "NBB-ENDTURN", "End Turn", "bottomright")
+        self.active = True
 
     def active(self):
         self.end_turn_button.active = True
+        self.active = True
 
     def inactive(self):
         self.end_turn_button.active = False
+        self.active = False
 
+    def render_bg(self, screen):
+        x = screen.subsurface(0,380,640,100)
+        x.fill((189, 183, 107))
 
 class Hud(object):
     def __init__(self, screen, state):
         self.state = state
 
 
-        self.app = gui.App(screen, (0,0,0))
+        self.app = gui.App(screen)
         self.app.theme = data.theme()
 
         self.status_bar = TopBar(self.state, self.app)
@@ -80,6 +89,8 @@ class Hud(object):
     def event(self, event):
         return self.app.event(event)
 
-    def render(self, screen):
+    def render(self):
         self.status_bar.update()
+        self.status_bar.render_bg(self.app.surface)
+        self.normal_button_bar.render_bg(self.app.surface)
         self.app.render()
