@@ -176,7 +176,6 @@ class Player(object):
             i.update()
 
     def build_ship(self, territory, type):
-        print 'before:', self.resources
         new = objects.Ship(territory, self, type)
         cost = objects.Resources(objects.ship_types[type]['cost'], 0, new.crew_max)
         if self.resources <= cost:
@@ -186,7 +185,6 @@ class Player(object):
         self.resources - cost
         self.ships.append(new)
         # TODO: allow the player to give ship some string by default?
-        print 'after:', self.resources
 
 class State(object):
     def __init__(self, world):

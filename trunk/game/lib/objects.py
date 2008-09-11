@@ -201,10 +201,8 @@ class Resources(object):
     def __gt__(self, arg):
         return self.gold > arg.gold or self.string > arg.string or self.crew > arg.crew
     def __le__(self, arg):
-        print 'called le'
         return self.gold <= arg.gold or self.string <= arg.string or self.crew <= arg.crew
     def __ge__(self, arg):
-        print 'called ge'
         return self.gold >= arg.gold or self.string >= arg.string or self.crew >= arg.crew
     def __str__(self):
         return "gold %s, string %s, crew %s" % (self.gold, self.string, self.crew)
