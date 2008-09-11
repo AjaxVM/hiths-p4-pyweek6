@@ -25,7 +25,7 @@ def main():
     state.add_player()
     state.add_player()
 
-    gamehud = hud.Hud(state)
+    gamehud = hud.Hud(screen, state)
 
     font = data.font(None, 30)
 
