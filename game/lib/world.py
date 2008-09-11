@@ -163,6 +163,10 @@ class Camera(object):
     def get_offset(self):
         return self.rect.topleft
 
+    def center_at(self, pos):
+        self.rect.center = pos
+        self.move(0,0)
+
 
 class World(object):
     def __init__(self, screen_size=(640, 480),
