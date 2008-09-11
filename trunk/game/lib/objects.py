@@ -145,7 +145,7 @@ class Ship(object):
             self.hopping = False
             self.anchored_to = None
             for i in self.owner.state.world.islands:
-                if self.rect.inflate(-5, -5).colliderect(i.rect.inflate(-10,-10)):
+                if i.rect.collidepoint(self.rect.center):
                     if i.rect.collidepoint(self.goto):
                         self.vertical_offset = 0
                         self.hopping = False
