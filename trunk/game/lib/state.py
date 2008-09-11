@@ -3,6 +3,7 @@ from pygame.locals import *
 import tools
 import constants
 import objects
+from combat import Battle
 
 class InputController(object):
     """A class that handles the player based on user input"""
@@ -67,6 +68,18 @@ class InputController(object):
                         return
             if event.button == 3:
                 if self.selected_unit:
+                    # Check for attack
+                    for i in self.state.players:
+                        if i is self.player:
+                            continue
+                        for j in i.ships:
+                            #print 'click', p2, 'center', j.rect.center
+                            if j.rect.collidepoint(p2):
+                                # TODO: get shot type from GUI
+                                attack((self.selected_unit[0], j), 'ball')
+                                return
+
+                    # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
                     if x:
                         self.player.to_be_rendered_objects.remove(self.selected_unit[1])
@@ -224,3 +237,28 @@ class State(object):
         self.players[self.uturn].render_turn(screen)
         for i in self.players:
             i.render(screen)
+
+def attack(ships, shot_type):
+    # TODO: compute range
+    range = 'medium'
+    b = Battle(ships, (shot_type, range))
+    b.execute()
+
+    dmg = b.results['damage']
+    print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
+          'Ship', ships[1].owner.pnum, dmg[ships[1]]
+
+    if 'captured' in b.results and ships[0].is_alive() and ships[1].is_alive():
+        if b.results['captured'] == 0:
+            print 'Both crews were wiped out'
+        else:
+            print 'Ship', b.results['captured'].owner, 'was captured'
+
+    print '--',
+    print 'Ship 0:', ships[0].hull, ships[0].crew, ships[0].speed, \
+          'Ship 1:', ships[1].hull, ships[1].crew, ships[1].speed
+    if 'winner' in b.results:
+        print 'Winner:', b.results['winner'].owner
+    elif not (ships[0].is_alive() and ships[1].is_alive()):
+        print 'Both ships sank'
+
