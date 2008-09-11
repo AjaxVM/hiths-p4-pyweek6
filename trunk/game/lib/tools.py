@@ -18,7 +18,7 @@ class ShipRangeRender(object):
                             self.ship.medium_range, 3)
         pygame.draw.circle(self.range_circle, [255, 0, 0],
                            [self.ship.long_range, self.ship.long_range],
-                            self.ship.short_range, 3)
+                            self.ship.close_range, 3)
         self.range_circle.set_colorkey(self.range_circle.get_at((0,0)), RLEACCEL)
 
         self.rerender()
