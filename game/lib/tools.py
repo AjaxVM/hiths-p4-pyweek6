@@ -95,6 +95,8 @@ class TerritoryDrawer(object):
                     ox, oy = self.world.camera.get_offset()
                     x += ox
                     y += oy
+                    x -= self.world.camera.screen_rect.left
+                    y -= self.world.camera.screen_rect.top
                     pos = x, y
                     if self.world.mo.test_point(pos):
                         if not self.t:
@@ -115,6 +117,10 @@ class TerritoryDrawer(object):
     def render(self, screen):
         if self.t:
             ox, oy = self.world.camera.get_offset()
+            mx, my = pygame.mouse.get_pos()
+            mx -= self.world.camera.screen_rect.left
+            my -= self.world.camera.screen_rect.top
+            mp = (mx, my)
             np = []
             for i in self.t.points:
                 x, y = i
@@ -124,6 +130,6 @@ class TerritoryDrawer(object):
 
             if len(np) > 1:
                 pygame.draw.lines(screen, self.player.color, False, np, 1)
-            pygame.draw.line(screen, self.player.color, np[-1], pygame.mouse.get_pos(), 3)
+            pygame.draw.line(screen, self.player.color, np[-1], mp, 3)
             for i in np:
                 pygame.draw.rect(screen, self.player.color, [i[0]-10, i[1]-10, 20, 20])
