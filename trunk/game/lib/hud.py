@@ -67,11 +67,11 @@ class NormalBottomBar(object):
 
 
 class Hud(object):
-    def __init__(self, state):
+    def __init__(self, screen, state):
         self.state = state
 
 
-        self.app = gui.App(pygame.Surface((640, 480)), (0,0,0))
+        self.app = gui.App(screen, (0,0,0))
         self.app.theme = data.theme()
 
         self.status_bar = TopBar(self.state, self.app)
@@ -82,4 +82,4 @@ class Hud(object):
 
     def render(self, screen):
         self.status_bar.update()
-        screen.blit(self.app.render(), (0,0))
+        self.app.render()
