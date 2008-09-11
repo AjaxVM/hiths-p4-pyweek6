@@ -139,9 +139,10 @@ class Territory(object):
 
 
 class Camera(object):
-    def __init__(self, view, world):
+    def __init__(self, view, world, screen_rect):
         self.view = view
         self.world = world
+        self.screen_rect = screen_rect
 
         self.rect = pygame.Rect(0,0,*view)
         self.brect = pygame.Rect(0,0,*world)
@@ -165,7 +166,8 @@ class Camera(object):
 
 class World(object):
     def __init__(self, screen_size=(640, 480),
-                 world_size = (5000, 5000)):
+                 world_size = (5000, 5000),
+                 screen_rect=(640, 480)):
         self.ssize = screen_size
         self.wsize = world_size
 
@@ -174,7 +176,7 @@ class World(object):
         self.cur_timer = 0
         self.cur_cycle = 0
 
-        self.camera = Camera(self.ssize, self.wsize)
+        self.camera = Camera(self.ssize, self.wsize, screen_rect)
 
         self.islands = []
 
