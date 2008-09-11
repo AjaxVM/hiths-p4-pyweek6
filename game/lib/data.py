@@ -24,9 +24,10 @@ def font(name, size):
     all_fonts[(name, size)] = f
     return f
 
-_theme = None
+global ctheme
+ctheme = None
 def theme():
-    if not _theme:
-        _theme = gui.make_theme(os.path.join(data_path, "theme"))
-    return _theme
-
+    global ctheme
+    if not ctheme:
+        ctheme = gui.make_theme(os.path.join(data_path, "theme"))
+    return ctheme

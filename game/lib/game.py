@@ -6,6 +6,7 @@ from objects import *
 import tools
 from state import *
 import data
+import hud
 
 import random
 import gui
@@ -23,6 +24,8 @@ def main():
 
     state.add_player()
     state.add_player()
+
+    status_bar = hud.TopBar(state, state.players[0])
 
     font = data.font(None, 30)
 
@@ -51,8 +54,9 @@ def main():
 
         world.render(game_screen)
         state.render(game_screen)
-        screen.blit(font.render("turn: %s"%state.turn, 1, [0,0,0],[255,255,255]), (0,0))
-        screen.blit(font.render("player: %s"%state.uturn, 1, state.colors[state.uturn],[255,255,255]), (250,0))
+##        screen.blit(font.render("turn: %s"%state.turn, 1, [0,0,0],[255,255,255]), (0,0))
+##        screen.blit(font.render("player: %s"%state.uturn, 1, state.colors[state.uturn],[255,255,255]), (250,0))
+        status_bar.render(screen)
         pygame.display.flip()
 
 if __name__ == "__main__":

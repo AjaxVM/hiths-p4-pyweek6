@@ -203,6 +203,9 @@ class State(object):
         self.players.append(Player(self, control_type, self.pt_index))
         self.pt_index += 1
 
+    def get_current_player(self):
+        return self.players[self.uturn]
+
     def event(self, event):
         self.players[self.uturn].controller.event(event)
 
