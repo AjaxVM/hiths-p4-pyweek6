@@ -25,7 +25,7 @@ def main():
     state.add_player()
     state.add_player()
 
-    status_bar = hud.TopBar(state, state.players[0])
+    gamehud = hud.Hud(state)
 
     font = data.font(None, 30)
 
@@ -38,7 +38,8 @@ def main():
             if event.type == KEYDOWN and event.key == K_s:
                 pygame.image.save(screen, "screenie.tga")
 
-            state.event(event)
+            x = gamehud.event(event)
+            state.event(x)
 
         state.update()
 
@@ -52,11 +53,9 @@ def main():
         if y >= 475:
             world.camera.move(0, 5)
 
+        gamehud.render(screen)
         world.render(game_screen)
         state.render(game_screen)
-##        screen.blit(font.render("turn: %s"%state.turn, 1, [0,0,0],[255,255,255]), (0,0))
-##        screen.blit(font.render("player: %s"%state.uturn, 1, state.colors[state.uturn],[255,255,255]), (250,0))
-        status_bar.render(screen)
         pygame.display.flip()
 
 if __name__ == "__main__":
