@@ -13,11 +13,11 @@ class TopBar(object):
         self.app = gui.App(pygame.Surface((640, 30)), (0,0,0))
         self.app.theme = data.theme()
 
-        self.turn_label = gui.Label(self.app, (5, 5), "Label1", " 0", icon="icon.png")
+        self.turn_label = gui.Label(self.app, (5, 5), "Label1", " 0", icon="turn.png")
         self.turn_label.over_width = 100
         self.turn_label.theme.label["text-color"] = (0, 0, 0)
 
-        self.player_label = gui.Label(self.app, (110, 5), "Label2", " 0", icon="icon.png")
+        self.player_label = gui.Label(self.app, (110, 5), "Label2", " 0", icon="player.png")
         self.player_label.over_width = 100
 
         self.string_label = gui.Label(self.app, (215, 5), "Label3", " 0", icon="string.png")
