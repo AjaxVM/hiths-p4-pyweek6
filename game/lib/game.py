@@ -27,6 +27,9 @@ def main():
                 pygame.quit()
                 return None
 
+            if event.type == KEYDOWN and event.key == K_s:
+                pygame.image.save(screen, "screenie.tga")
+
             state.event(event)
 
         state.update()

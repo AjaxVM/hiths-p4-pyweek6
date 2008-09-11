@@ -80,7 +80,16 @@ class Territory(object):
 
     def get_capitol(self):
         if self.islands:
-            self.capitol = random.choice(self.islands)
+            empty = []
+            for i in self.islands:
+                if not i.resources:
+                    empty.append(i)
+            if empty:
+                self.capitol = random.choice(empty)
+            else:
+                self.capitol = random.choice(self.islands)
+            self.capitol.capitol = True
+            self.capitol.resources = []
 
     def get_pixels(self):
         lx = self.points[0][0]
