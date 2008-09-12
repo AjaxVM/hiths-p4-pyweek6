@@ -65,20 +65,26 @@ class NormalBottomBar(object):
         self.draw_button = gui.Button(self.app, (x,  y), "NBB-DRAWTERR", "Expand", "bottomright")
         self.draw_button.over_width = self.end_turn_button.rect.width
         self.draw_button.make_image()
-        self.active = True
-
-    def active(self):
-        self.end_turn_button.active = True
-        self.draw_button.active = True
-        self.active = True
-
-    def inactive(self):
-        self.end_turn_button.active = False
-        self.draw_button.active = False
-        self.active = False
 
     def render_bg(self, screen):
         screen.blit(data.image("hud_bg_bottom.png"), (0,380))
+        pygame.draw.rect(screen, [0,0,0], pygame.Rect(15, 390, 85, 85))
+
+class TerritoryBottomBar(object):
+    def __init__(self, state, app):
+        self.state = state
+
+        self.app = app
+
+        self.button1 = self.button1 = gui.Button(self.app, (125, 390), "TBB-BUILD", "Build Ship", "topleft")
+
+        self.inactive()
+
+    def active(self):
+        self.button1.active = True
+
+    def inactive(self):
+        self.button1.active = False
 
 class Hud(object):
     def __init__(self, screen, state):
@@ -91,11 +97,23 @@ class Hud(object):
         self.status_bar = TopBar(self.state, self.app)
         self.normal_button_bar = NormalBottomBar(self.state, self.app)
 
+        self.tbb = TerritoryBottomBar(self.state, self.app)
+
+        self.special_states = [self.tbb]
+
+    def set_current(self, x=None):
+        for i in self.special_states:
+            i.inactive()
+        if x:
+            x.active()
+
     def event(self, event):
-        return self.app.event(event)
+        x = self.app.event(event)
+        return x
 
     def render(self):
         self.status_bar.update()
         self.status_bar.render_bg(self.app.surface)
         self.normal_button_bar.render_bg(self.app.surface)
+
         self.app.render()

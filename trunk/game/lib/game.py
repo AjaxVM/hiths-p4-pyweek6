@@ -53,9 +53,9 @@ def main():
         if y >= 475:
             world.camera.move(0, 5)
 
-        gamehud.render()
         world.render(game_screen)
         state.render(game_screen)
+        gamehud.render()
         pygame.display.flip()
 
 if __name__ == "__main__":
