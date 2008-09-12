@@ -216,16 +216,16 @@ class BattleMiscRender(object):
         self.l1_shipt.make_image()
         cur_i += h
         self.l1_hull = gui.Label(self.window, (5, cur_i), "L1_hull",
-                                 "hull: "+str(ship1.hull)+"/"+str(ship1.hull_max))
+                                 "hull:"+str(ship1.hull)+"/"+str(ship1.hull_max))
         cur_i += h
         self.l1_crew = gui.Label(self.window, (5, cur_i), "L1_crew",
-                                 "crew: "+str(ship1.crew)+"/"+str(ship1.crew_max))
+                                 "crew:"+str(ship1.crew)+"/"+str(ship1.crew_max))
         cur_i += h
         self.l1_speed = gui.Label(self.window, (5, cur_i), "L1_speed",
-                                 "speed: "+str(ship1.speed)+"/"+str(ship1.speed_max))
+                                 "speed:"+str(ship1.speed)+"/"+str(ship1.speed_max))
         cur_i += h
         self.l1_dm = gui.Label(self.window, (5, cur_i), "L1_dm",
-                               "damage multiplier: "+str(ship1.damage_multiplier))
+                               "damage multiplier:"+str(ship1.damage_multiplier))
 
         cur_i = 75
         self.l2_shipt = gui.Label(self.window, (165, cur_i), "L1_shipt",
@@ -233,16 +233,16 @@ class BattleMiscRender(object):
         self.l2_shipt.make_image()
         cur_i += h
         self.l2_hull = gui.Label(self.window, (165, cur_i), "L1_hull",
-                                 "hull: "+str(ship2.hull)+"/"+str(ship2.hull_max))
+                                 "hull:"+str(ship2.hull)+"/"+str(ship2.hull_max))
         cur_i += h
         self.l2_crew = gui.Label(self.window, (165, cur_i), "L1_crew",
-                                 "crew: "+str(ship2.crew)+"/"+str(ship2.crew_max))
+                                 "crew:"+str(ship2.crew)+"/"+str(ship2.crew_max))
         cur_i += h
         self.l2_speed = gui.Label(self.window, (165, cur_i), "L1_speed",
-                                 "speed: "+str(ship2.speed)+"/"+str(ship2.speed_max))
+                                 "speed:"+str(ship2.speed)+"/"+str(ship2.speed_max))
         cur_i += h
         self.l2_dm = gui.Label(self.window, (165, cur_i), "L1_dm",
-                               "damage multiplier: "+str(ship2.damage_multiplier))
+                               "damage multiplier:"+str(ship2.damage_multiplier))
 
         self.widgets = [self.l1_shipt, self.l1_hull, self.l1_crew, self.l1_speed, self.l1_dm,
                         self.l2_shipt, self.l2_hull, self.l2_crew, self.l2_speed, self.l2_dm]
@@ -291,22 +291,22 @@ class BattleResultRender(object):
         cur_i += h
         surf1.blit(font.render(ship1.type, 1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("hull damage: "+str(d1[0]-ship1.hull),
+        surf1.blit(font.render("hull damage:"+str(d1[0]-ship1.hull),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("hull: "+str(ship1.hull)+"/"+str(ship1.hull_max),
+        surf1.blit(font.render("hull:"+str(ship1.hull)+"/"+str(ship1.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf1.blit(font.render("crew killed: "+str(d1[1]-ship1.crew),
+        surf1.blit(font.render("crew killed:"+str(d1[1]-ship1.crew),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("crew: "+str(ship1.crew)+"/"+str(ship1.crew_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf1.blit(font.render("speed penalty: "+str(d1[2]-ship1.speed),
+        surf1.blit(font.render("speed penalty:"+str(d1[2]-ship1.speed),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("speed: "+str(ship1.speed)+"/"+str(ship1.speed_max),
+        surf1.blit(font.render("speed:"+str(ship1.speed)+"/"+str(ship1.speed_max),
                                1, (255, 255, 255)), (5, cur_i))
 
         self.surf1 = surf1
@@ -321,22 +321,22 @@ class BattleResultRender(object):
         cur_i += h
         surf2.blit(font.render(ship2.type, 1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("hull damage: "+str(d2[0]-ship2.hull),
+        surf2.blit(font.render("hull damage:"+str(d2[0]-ship2.hull),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("hull: "+str(ship2.hull)+"/"+str(ship2.hull_max),
+        surf2.blit(font.render("hull:"+str(ship2.hull)+"/"+str(ship2.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf2.blit(font.render("crew killed: "+str(d2[1]-ship2.crew),
+        surf2.blit(font.render("crew killed:"+str(d2[1]-ship2.crew),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("crew: "+str(ship2.crew)+"/"+str(ship2.crew_max),
+        surf2.blit(font.render("crew:"+str(ship2.crew)+"/"+str(ship2.crew_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf2.blit(font.render("speed penalty: "+str(d2[2]-ship2.speed),
+        surf2.blit(font.render("speed penalty:"+str(d2[2]-ship2.speed),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("speed: "+str(ship2.speed)+"/"+str(ship2.speed_max),
+        surf2.blit(font.render("speed:"+str(ship2.speed)+"/"+str(ship2.speed_max),
                                1, (255, 255, 255)), (5, cur_i))
 
         self.surf2 = surf2
