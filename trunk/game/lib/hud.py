@@ -83,7 +83,7 @@ class NormalBottomBar(object):
 class Hud(object):
     def __init__(self, screen, state):
         self.state = state
-
+        self.state.gui = self
 
         self.app = gui.App(screen)
         self.app.theme = data.theme()
