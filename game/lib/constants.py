@@ -11,7 +11,12 @@ territory_first_name = [("Blackeyes "),
                 ("Hookhands "),
                 ("My "),
                 ("Old mans "),
-                ("Dead men ")]
+                ("Dead men "),
+                ("Mama "),
+                ("The shipwreck "),
+                ("Black Jack "),
+                ("No hand "),
+                ("Knivers ")]
 
 territory_second_name = [("Cave"),
                 ("Hide"),
