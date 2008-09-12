@@ -28,6 +28,7 @@ class InputController(object):
 
     def event(self, event):
         if event.type == gui.GUI_EVENT:
+            print event.name
             if event.action == gui.GUI_EVENT_CLICK:
                 if event.name == "NBB-ENDTURN":
                     self.player.end_turn()

@@ -39,7 +39,7 @@ def main():
                 pygame.image.save(screen, "screenie.tga")
 
             x = gamehud.event(event)
-            state.event(x)
+            if x: state.event(x)
 
         state.update()
 

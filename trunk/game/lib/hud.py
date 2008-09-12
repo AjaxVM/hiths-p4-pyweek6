@@ -51,8 +51,6 @@ class TopBar(object):
         self.gold_label.make_image()
 
     def render_bg(self, screen):
-##        x = screen.subsurface(0,0,640,30)
-##        x.fill((189, 183, 107))
         screen.blit(data.image("hud_bg_top.png"), (0,0))
 
 class NormalBottomBar(object):
@@ -62,19 +60,24 @@ class NormalBottomBar(object):
         self.app = app
 
         self.end_turn_button = gui.Button(self.app, (635, 475), "NBB-ENDTURN", "End Turn", "bottomright")
+        x, y = self.end_turn_button.rect.topright
+        y -= 5
+        self.draw_button = gui.Button(self.app, (x,  y), "NBB-DRAWTERR", "Expand", "bottomright")
+        self.draw_button.over_width = self.end_turn_button.rect.width
+        self.draw_button.make_image()
         self.active = True
 
     def active(self):
         self.end_turn_button.active = True
+        self.draw_button.active = True
         self.active = True
 
     def inactive(self):
         self.end_turn_button.active = False
+        self.draw_button.active = False
         self.active = False
 
     def render_bg(self, screen):
-##        x = screen.subsurface(0,380,640,100)
-##        x.fill((189, 183, 107))
         screen.blit(data.image("hud_bg_bottom.png"), (0,380))
 
 class Hud(object):
