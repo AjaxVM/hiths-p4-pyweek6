@@ -18,7 +18,6 @@ class HotseatUserBattle(object):
         self.win = gui.Window(self.app, (320, 50), "UB-WINDOW", "midtop",
                               (300, 300), caption="Battle!",
                               plain=True)
-##        self.win.border.set_alpha(175)
 
         self.button = gui.Button(self.win, (5, 300),
                                  "UB-Button!", "Leave", "bottomleft")
@@ -42,6 +41,13 @@ class HotseatUserBattle(object):
 
         self.gui.set_current(self.gui.bmr)
         self.gui.bmr.set_to(self.ship1, self.ship2, self.win)
+
+        self.battle_wait_timer = 0
+        self.do_battle = False
+
+    def execute(self):
+##        b = combat.Battle((self.ship1, self.ship2)
+        pass
 
     def event(self, event):
         if event.type == gui.GUI_EVENT:
@@ -74,6 +80,12 @@ class HotseatUserBattle(object):
     def kill(self):
         self.app.widgets.remove(self.win)
         self.gui.set_current()
+
+    def update(self):
+        if self.do_battle:
+            self.battle_wait_timer += 1
+            if self.battle_wait_timer >= 30:
+                self.execute()
 
 
 class SelectedTerritoryRender(object):
@@ -235,7 +247,7 @@ class Minimap(object):
         # Make a Rect 2 px smaller than render size for a nice border
         mrect = pygame.Rect(0, 0, self.rect.width - 2, self.rect.width - 2)
         map = pygame.Surface((mrect.width, mrect.height))
-        map.fill((14,98,212)) # Nice background
+        map.fill((88,171,255)) # Nice background
         ratio_x, ratio_y = (self.state.world.wsize[0] / mrect.width), \
                 (self.state.world.wsize[1] / mrect.height)
 
@@ -295,4 +307,3 @@ def scale_polygon(poly, factor):
         new_poly.append((int(x / factor), int(y / factor)))
 
     return new_poly
-
