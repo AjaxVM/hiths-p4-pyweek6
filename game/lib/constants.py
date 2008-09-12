@@ -9,10 +9,16 @@ player_colors = [(255, 0, 0),
 territory_first_name = [("Blackeyes "),
                 ("Pennies "),
                 ("Hookhands "),
-                ("My ")]
+                ("My "),
+                ("Old mans "),
+                ("Dead men ")]
 
 territory_second_name = [("Cave"),
                 ("Hide"),
                 ("Hideout"),
                 ("Hold"),
-                ("Bedroom")]
+                ("Bedroom"),
+                ("Pub"),
+                ("Island"),
+                ("Close"),
+                ("Beach")]
