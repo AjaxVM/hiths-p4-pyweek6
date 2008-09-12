@@ -61,7 +61,7 @@ class NormalBottomBar(object):
 
         self.app = app
 
-        self.end_turn_button = gui.Button(self.app, (640, 480), "NBB-ENDTURN", "End Turn", "bottomright")
+        self.end_turn_button = gui.Button(self.app, (635, 475), "NBB-ENDTURN", "End Turn", "bottomright")
         self.active = True
 
     def active(self):
