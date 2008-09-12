@@ -370,6 +370,10 @@ class Ship(object):
         else:
             return None
 
+    def sink(self):
+        """Sinks this ship taking all who crew her to the depths."""
+        self.owner.ships.remove(self)
+
     def _get_spawn_pos(self):
         r = self.territory.capitol.rect
         choices = (r.topleft, r.topright, r.bottomright, r.bottomleft)

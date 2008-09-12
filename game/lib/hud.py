@@ -272,7 +272,7 @@ class BattleResultRender(object):
         self.inactive()
 
     def set_to(self, ship1, ship2, battle, window):
-        attack_print((ship1, ship2), battle)
+        #attack_print((ship1, ship2), battle) # For debugging
         self.ship1 = ship1
         self.ship2 = ship2
         self.battle = battle
@@ -350,37 +350,36 @@ class BattleResultRender(object):
         surf3 = pygame.Surface((250, 50)).convert_alpha()
         surf3.fill((0,0,0,0))
 
-        if "captured" in battle.results and ship1.is_alive() and ship2.is_alive():
-            if battle.results['captured'] == 0:
-                ship1.owner.ships.remove(ship1)
-                ship2.owner.ships.remove(ship2)
-                surf3 = font.render("Both ships were sent to Davy Jones' locker!",
-                                    1, (255, 255, 255))
-
+        if battle.results['captured'] == 0:
+            ship1.sink()
+            ship2.sink()
+            surf3 = font.render("Both ships were sent to Davey Jones' Locker!",
+                                1, (255, 255, 255))
+        elif not ship1.is_alive() and not ship2.is_alive():
+            ship1.sink()
+            ship2.sink()
+            surf3 = font.render("Both ships were sent to Davey Jones' Locker!",
+                                1, (255, 255, 255))
+        elif "winner" in battle.results:
+            if not ship1.is_alive():
+                ship1.sink()
+                surf3 = font.render("Attacker was sent to Davey Jones' Locker!", 1, (255, 255, 255))
+            elif not ship2.is_alive():
+                ship2.sink()
+                surf3 = font.render("Defender was sent to Davey Jones' Locker!", 1, (255, 255, 255))
             else:
-                if not ship1.is_alive():
-                    ship1.owner.ships.remove(ship1)
-                    surf3 = font.render("Attacker was sent to Davy Jones' Locker", 1, (255, 255, 255))
-                elif not ship2.is_alive():
-                    surf3 = font.render("Defender was sent to Davy Jones' Locker", 1, (255, 255, 255))
-                elif not (ship1.is_alive() or ship2.is_alive()):
-                    ship1.owner.ships.remove(ship1)
-                    ship2.owner.ships.remove(ship2)
-                    surf3 = font.render("Both ships were sent to Davy Jones' locker!",
-                                        1, (255, 255, 255))
+                captured_ship = battle.results['captured']
+                captured_ship.crew = 20
+                captured_ship.owner.ships.remove(captured_ship)
+                battle.results["winner"].owner.ships.append(captured_ship)
+                if captured_ship == ship1:
+                    w = "attacking"
                 else:
-                    captured_ship = battle.results['captured']
-                    captured_ship.crew = 20
-                    captured_ship.owner.ships.remove(captured_ship)
-                    battle.results["winner"].owner.ships.append(captured_ship)
-                    if captured_ship == ship1:
-                        w = "attacking"
-                    else:
-                        w = "defending"
-                    surf3 = font.render(("The "+w+" ship was captured!"),
-                                        1, (255, 255, 255))
+                    w = "defending"
+                surf3 = font.render(("The "+w+" ship was captured!"),
+                                    1, (255, 255, 255))
         else:
-            surf3 = font.render(("The battle was inconclusive!"),
+            surf3 = font.render(("The battle was inconclusive."),
                                 1, (255, 255, 255))
         self.surf3 = surf3
         self.rect3 = surf3.get_rect()
@@ -459,7 +458,7 @@ def attack_print(ships, b):
     print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
           'Ship', ships[1].owner.pnum, dmg[ships[1]]
 
-    if 'captured' in b.results and ships[0].is_alive() and ships[1].is_alive():
+    if b.results['captured'] != None and ships[0].is_alive() and ships[1].is_alive():
         if b.results['captured'] == 0:
             print 'Both crews were wiped out'
         else:
