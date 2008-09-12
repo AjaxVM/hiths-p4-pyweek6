@@ -32,6 +32,9 @@ class InputController(object):
             if event.action == gui.GUI_EVENT_CLICK:
                 if event.name == "NBB-ENDTURN":
                     self.player.end_turn()
+                if event.name == "NBB-DRAWTERR":
+                    self.tdraw.active = True
+                    self.unselect_unit()
         if event.type == KEYDOWN:
             if event.key == K_r:
                 self.tdraw.active = True
