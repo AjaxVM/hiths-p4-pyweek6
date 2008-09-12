@@ -28,7 +28,6 @@ class InputController(object):
 
     def event(self, event):
         if event.type == gui.GUI_EVENT:
-            print event.name
             if event.action == gui.GUI_EVENT_CLICK:
                 if event.name == "NBB-ENDTURN":
                     self.player.end_turn()
@@ -73,7 +72,7 @@ class InputController(object):
                         return
 
                 for i in self.player.territories:
-                    if p in i.pixels:
+                    if p2 in i.pixels:
                         self.selected_territory = i
                         return
             if event.button == 3:
@@ -226,6 +225,8 @@ class State(object):
         self.max_players = 5 #tweak this - probably less is better though
         self.colors = constants.player_colors #this will be the color of the players -
                                           #and the color of the flags by the ships
+
+        self.gui = None
 
     def add_player(self, control_type=InputController):
         self.players.append(Player(self, control_type, self.pt_index))
