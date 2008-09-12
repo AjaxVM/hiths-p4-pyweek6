@@ -1,3 +1,4 @@
+import sys
 import pygame
 from pygame.locals import *
 import tools
@@ -50,6 +51,8 @@ class InputController(object):
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
                 self.player.build_ship(self.selected_territory, 'frigate')
+            if event.key == K_ESCAPE:
+                sys.exit()
 
         if event.type == MOUSEBUTTONDOWN:
             if not self.state.world.camera.screen_rect.collidepoint(event.pos):
