@@ -20,6 +20,8 @@ def font(name, size):
     if (name, size) in all_fonts:
         return all_fonts[(name, size)]
 
+    if name:
+        name = os.path.join(data_path, name)
     f = pygame.font.Font(name, size)
     all_fonts[(name, size)] = f
     return f

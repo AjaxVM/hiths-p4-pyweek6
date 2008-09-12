@@ -11,6 +11,43 @@ Pymike -- Code, art
 Unnheulu/john -- Art, documenting
 Nihilocrat -- music
 
-Code and assets are all licensed under the GNU General Public License version 3,
-or any later version at the user's discretion. Please see GPLv3.txt for details.
+All game code and content licensed under the GPLv3, except:
+"Pieces-of-Eight.ttf" Font is from "http://www.dafont.com/pieces-of-eight.font".
+ 
+ 	
+ 
+ 
+ 	 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 	
+ 	
+ 	
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 16
+ 
+ 
+ 	"Pieces of Eight.ttf" Font is from "http://www.dafont.com/pieces-of-eight.font".
 
