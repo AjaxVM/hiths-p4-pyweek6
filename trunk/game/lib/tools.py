@@ -4,6 +4,7 @@ from world import Territory
 
 from gui import gui
 import combat
+import constants
 
 
 class HotseatUserBattle(object):
@@ -224,7 +225,7 @@ class TerritoryDrawer(object):
                         if not self.t:
                             self.t = Territory(self.player)
                             self.t.add_point(pos)
-                            self.t.create_name()
+                            self.t.create_name(constants.territory_first_name, constants.territory_second_name)
                         else:
                             if self.t.within_range(pos):
                                 if len(self.t.points) == 1:
