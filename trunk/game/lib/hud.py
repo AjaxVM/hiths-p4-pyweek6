@@ -298,19 +298,19 @@ class BattleResultRender(object):
         surf1.blit(font.render("hull damage:"+str(d1[0]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("hull:"+str(ship1.hull)+"/"+str(ship1.hull_max),
+        surf1.blit(font.render("hull:"+self._fix_zero(str(ship1.hull)+"/"+str(ship1.hull_max)),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
         surf1.blit(font.render("crew lost:"+str(d1[1]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("crew: "+str(ship1.crew)+"/"+str(ship1.crew_max),
+        surf1.blit(font.render("crew: "+self._fix_zero(str(ship1.crew)+"/"+str(ship1.crew_max)),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
         surf1.blit(font.render("speed penalty:"+str(d1[2]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("speed:"+str(ship1.speed)+"/"+str(ship1.speed_max),
+        surf1.blit(font.render("speed:"+self._fix_zero(str(ship1.speed)+"/"+str(ship1.speed_max)),
                                1, (255, 255, 255)), (5, cur_i))
 
         self.surf1 = surf1
@@ -328,19 +328,19 @@ class BattleResultRender(object):
         surf2.blit(font.render("hull damage:"+str(d2[0]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("hull:"+str(ship2.hull)+"/"+str(ship2.hull_max),
+        surf2.blit(font.render("hull:"+self._fix_zero(str(ship2.hull)+"/"+str(ship2.hull_max)),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
         surf2.blit(font.render("crew lost:"+str(d2[1]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("crew:"+str(ship2.crew)+"/"+str(ship2.crew_max),
+        surf2.blit(font.render("crew:"+self._fix_zero(str(ship2.crew)+"/"+str(ship2.crew_max)),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
         surf2.blit(font.render("speed penalty:"+str(d2[2]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("speed:"+str(ship2.speed)+"/"+str(ship2.speed_max),
+        surf2.blit(font.render("speed:"+self._fix_zero(str(ship2.speed)+"/"+str(ship2.speed_max)),
                                1, (255, 255, 255)), (5, cur_i))
 
         self.surf2 = surf2
@@ -403,6 +403,12 @@ class BattleResultRender(object):
             screen.blit(self.surf1, self.rect1)
             screen.blit(self.surf2, self.rect2)
             screen.blit(self.surf3, self.rect3)
+
+    def _fix_zero(self, str):
+        """Fixes up strings that are zero with just '*', which looks better in
+        our font."""
+        if str.startswith('0'): return '*'
+        else: return str
         
 
 class Hud(object):
