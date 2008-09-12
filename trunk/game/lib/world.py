@@ -69,6 +69,13 @@ class Territory(object):
         self.pop_cap = 0
         self.capitol = None
         self.resources = (0,0,0)
+        
+        self.name = None
+
+    def create_name(self):
+        territory_first_name = [("Name1"),("Name2")]
+        territory_second_name = [("Secondname1"),("Secondname2")]
+        self.name = territory_first_name[len(territory_first_name)-1] + territory_second_name[len(territory_second_name)-1]
 
     def add_point(self, point):
         self.points.append(point)
