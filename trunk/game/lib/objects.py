@@ -46,8 +46,8 @@ class Ship(object):
             return
 
         self.territory = territory
-        self.image = data.image("ship.png")
-        self.shadow = data.image("ship_shadow.png")
+        self.image = data.image(self.type+".png")
+        self.shadow = data.image(self.type+"_shadow.png")
         self.anchor = data.image("anchor.png")
         
         self.pos = self._get_spawn_pos()
@@ -100,6 +100,9 @@ class Ship(object):
                 else:
                     return False
             else:
+                if self.anchored_to:
+                    if self.anchored_to.rect.collidepoint(pos):
+                        return False
                 distance = math.sqrt((abs(pos[0]-self.pos[0])**2) + (abs(pos[1]-self.pos[1])**2))
                 if distance <= self.speed:
                     self.goto = pos
@@ -131,12 +134,6 @@ class Ship(object):
 
     def update(self):
         if self.goto:
-            ci = None
-            for i in self.owner.state.world.islands:
-                if i.rect.collidepoint(self.rect.center):
-                    ci = i
-                    break
-
             if self.hopping:
                 if self.vertical_offset < 50:
                     self.vertical_offset += 2
@@ -145,20 +142,21 @@ class Ship(object):
                     self.vertical_offset -= 4
                     if self.vertical_offset < 0:
                         self.vertical_offset = 0
-            if not ci:
-                self.pos = self.rect.center = self.get_next_pos()
+            self.pos = self.rect.center = self.get_next_pos()
 
             self.hopping = False
             self.anchored_to = None
-            if ci:
-                self.vertical_offset = 0
-                self.hopping = False
-                self.goto = None
-                self.anchored_to = i
-                return None
-            else:
-                self.hopping = True
-                return None
+            for i in self.owner.state.world.islands:
+                if i.rect.collidepoint(self.rect.center):
+                    if i.rect.collidepoint(self.goto):
+                        self.vertical_offset = 0
+                        self.hopping = False
+                        self.goto = None
+                        self.anchored_to = i
+                        return None
+                    else:
+                        self.hopping = True
+                        break
         else:
             self.vertical_offset = 0
             self.hopping = False
