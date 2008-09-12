@@ -283,9 +283,6 @@ class Ship(object):
                     self.goto = pos
                     self.can_move = False
                     return True
-        else:
-            self.can_move = False
-            self.goto = pos
 
     def get_next_pos(self):
         mx, my = self.goto
