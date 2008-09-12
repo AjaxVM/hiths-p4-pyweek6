@@ -304,8 +304,8 @@ class State(object):
             i.render(screen)
 
 def attack(ships, shot_type, range):
-    print 'Player', ships[0].owner.pnum, ships[0].type, ' vs. ',
-    print 'Player', ships[1].owner.pnum, ships[1].type
+##    print 'Player', ships[0].owner.pnum, ships[0].type, ' vs. ',
+##    print 'Player', ships[1].owner.pnum, ships[1].type
 
     b = Battle(ships, (shot_type, range))
     b.execute()
@@ -314,8 +314,8 @@ def attack(ships, shot_type, range):
     ships[0].can_attack = False
 
     dmg = b.results['damage']
-    print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
-          'Ship', ships[1].owner.pnum, dmg[ships[1]]
+##    print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
+##          'Ship', ships[1].owner.pnum, dmg[ships[1]]
 
     # TODO: handle 'captured' result from battle.results, i.e.: give to the
     # other player
@@ -323,7 +323,7 @@ def attack(ships, shot_type, range):
         if b.results['captured'] == 0:
             for i in ships: # Sink both these ghost ships
                 i.owner.ships.remove(i)
-            print 'Both crews were wiped out'
+##            print 'Both crews were wiped out'
         else:
             captured_ship = b.results['captured']
             # TODO: do some stuff with transferring crew, arbitrary for now
@@ -331,18 +331,18 @@ def attack(ships, shot_type, range):
             captured_ship.owner.ships.remove(captured_ship)
             b.results['winner'].owner.ships.append(captured_ship)
 
-            print 'Ship', b.results['captured'].owner, 'was captured'
+##            print 'Ship', b.results['captured'].owner, 'was captured'
 
-    print '--',
-    print 'Ship 0:', ships[0].hull, ships[0].crew, ships[0].speed, \
-          'Ship 1:', ships[1].hull, ships[1].crew, ships[1].speed
-    if 'winner' in b.results:
-        print 'Winner:', b.results['winner'].owner
-    elif not (ships[0].is_alive() and ships[1].is_alive()):
-        print 'Both ships sank'
+##    print '--',
+##    print 'Ship 0:', ships[0].hull, ships[0].crew, ships[0].speed, \
+##          'Ship 1:', ships[1].hull, ships[1].crew, ships[1].speed
+##    if 'winner' in b.results:
+##        print 'Winner:', b.results['winner'].owner
+##    elif not (ships[0].is_alive() and ships[1].is_alive()):
+##        print 'Both ships sank'
 
-    for i in ships:
-        if not i.is_alive():
-            # Sink the ship
-            i.owner.ships.remove(i)
+##    for i in ships:
+##        if not i.is_alive():
+##            # Sink the ship
+##            i.owner.ships.remove(i)
 
