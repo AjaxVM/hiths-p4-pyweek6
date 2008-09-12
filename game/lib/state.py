@@ -26,6 +26,12 @@ class InputController(object):
             pass
         self.selected_unit = None
 
+    def unselect_terr(self):
+        self.selected_territory = None
+        for i in self.player.to_be_rendered_objects:
+            if isinstance(i, tools.SelectedTerritoryRender):
+                self.player.to_be_rendered_objects.remove(i)
+
     def event(self, event):
         if event.type == gui.GUI_EVENT:
             if event.action == gui.GUI_EVENT_CLICK:
@@ -34,9 +40,12 @@ class InputController(object):
                 if event.name == "NBB-DRAWTERR":
                     self.tdraw.active = True
                     self.unselect_unit()
+                    self.unselect_terr()
         if event.type == KEYDOWN:
             if event.key == K_r:
                 self.tdraw.active = True
+                self.unselect_unit()
+                self.unselect_terr()
             if event.key == K_RETURN:
                 self.player.end_turn()
             if event.key == K_SPACE and self.selected_territory:
@@ -48,6 +57,7 @@ class InputController(object):
             if self.tdraw.active:
                 self.tdraw.update_event(event)
                 return None
+            self.unselect_terr()
             x, y = event.pos
             mx, my = self.state.world.camera.get_offset()
             x += mx
@@ -61,10 +71,6 @@ class InputController(object):
             if event.button == 1:
                 if self.selected_unit:
                     self.unselect_unit()
-                self.selected_territory = None
-                for i in self.player.to_be_rendered_objects:
-                    if isinstance(i, tools.SelectedTerritoryRender):
-                        self.player.to_be_rendered_objects.remove(i)
 
                 for i in self.player.ships:
                     if self.selected_unit and i == self.selected_unit[0]:
@@ -107,7 +113,10 @@ class InputController(object):
                         self.selected_unit = None
 
     def update(self):
-        pass
+        if self.selected_territory:
+            self.state.gui.set_current(self.state.gui.tbb)
+        else:
+            self.state.gui.set_current()
 
     def start_turn(self):
         self.tdraw.t = None
