@@ -2,6 +2,79 @@ import pygame, random
 from pygame.locals import *
 from world import Territory
 
+from gui import gui
+import combat
+
+
+class HotseatUserBattle(object):
+    def __init__(self, ship1, ship2, mgui):
+        self.ship1 = ship1
+        self.ship2 = ship2
+
+        self.finished = False
+
+        self.gui = mgui
+        self.app = self.gui.app
+        self.win = gui.Window(self.app, (320, 50), "UB-WINDOW", "midtop",
+                              (300, 300), caption="Battle!",
+                              plain=True)
+##        self.win.border.set_alpha(175)
+
+        self.button = gui.Button(self.win, (5, 300),
+                                 "UB-Button!", "Leave", "bottomleft")
+        self.button2 = gui.Button(self.win, (295, 300),
+                                 "UB-Button2!", "Fire!", "bottomright")
+
+        attack_options = {"long": ["ball", "chain"],
+                          "medium": ["ball", "chain", "grape"],
+                          "close": ["ball", "chain", "grape", "board"]}
+        self.range = ship1.get_range(ship2)
+        if not self.range:
+            self.finished = True
+
+        self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5), "UB-Menu1", "Select Cannonball",
+                                   attack_options[self.range], widget_pos="bottomleft")
+        self.p2_attackc = gui.Menu(self.win, (295, self.button.rect.top-5), "UB-Menu2", "Select Cannonball",
+                                   attack_options[self.range], widget_pos="bottomright")
+
+        self.p1_choice = None
+        self.p2_choice = None
+
+        self.gui.set_current(self.gui.bmr)
+        self.gui.bmr.set_to(self.ship1, self.ship2, self.win)
+
+    def event(self, event):
+        if event.type == gui.GUI_EVENT:
+            if event.widget == gui.Window:
+                if event.name == "UB-WINDOW":
+                    event = event.subevent
+                    if event.action == gui.GUI_EVENT_CLICK:
+                        if event.name == "UB-Button!":
+                            self.finished = True
+                        if event.name == "UB-Button2!":
+                            if self.p1_choice and self.p2_choice:
+                                print "attack"
+                                #do attack code!
+                        if event.widget == gui.Menu:
+                            if event.name == "UB-Menu1":
+                                self.p1_choice = event.entry
+                                self.p1_attackc.text = event.entry
+                                ov = self.p1_attackc.button.rect.width
+                                self.p1_attackc.make_image()
+                                self.p1_attackc.button.over_width = ov
+                                self.p1_attackc.button.make_image()
+                            if event.name == "UB-Menu2":
+                                self.p2_choice = event.entry
+                                self.p2_attackc.text = event.entry
+                                ov = self.p2_attackc.button.rect.width
+                                self.p2_attackc.make_image()
+                                self.p2_attackc.button.over_width = ov
+                                self.p2_attackc.button.make_image()
+
+    def kill(self):
+        self.app.widgets.remove(self.win)
+        self.gui.set_current()
+
 
 class SelectedTerritoryRender(object):
     def __init__(self, player, territory, world):

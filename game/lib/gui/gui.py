@@ -784,38 +784,39 @@ class Menu(Widget):
     def event(self, event):
         if not self.active:
             return event
-        x = self.button.event(event)
-        if not x == event:
-            self.force_update()
-            if x:
-                if x.type == GUI_EVENT:
-                    if x.widget == Button:
-                        if x.action == GUI_EVENT_CLICK:
-                            self.parent.move_to_top(self)
-                            self.widget_vis = not self.widget_vis
-            return x
-        else:
-            if self.widget_vis:
-                x = self.other.event(event)
-                if not x == event:
-                    self.force_update()
-                    if x:
-                        if x.menu_action == "close":
+
+        if self.widget_vis:
+            x = self.other.event(event)
+            if not x == event:
+                self.force_update()
+                if x:
+                    if x.menu_action == "close":
+                        self.widget_vis = False
+                        self.force_update()
+                    x.widget = Menu
+                    x.name = self.name
+                event = x
+            else:
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mpos = self.get_mouse_pos()
+                        if not (mpos and self.other.rect.collidepoint(mpos)):
                             self.widget_vis = False
                             self.force_update()
-                        x.widget = Menu
-                        x.name = self.name
-                    event = x
-                else:
-                    if event.type == MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            mpos = self.get_mouse_pos()
-                            if not (mpos and self.other.rect.collidepoint(mpos)):
-                                self.widget_vis = False
-                                self.force_update()
-                                return event
-                            else:
-                                event = None
+                            return event
+                        else:
+                            event = None
+        else:
+            x = self.button.event(event)
+            if not x == event:
+                self.force_update()
+                if x:
+                    if x.type == GUI_EVENT:
+                        if x.widget == Button:
+                            if x.action == GUI_EVENT_CLICK:
+                                self.parent.move_to_top(self)
+                                self.widget_vis = not self.widget_vis
+                return x
 
         return event
 
@@ -998,7 +999,7 @@ class TextInputBox(Widget):
 
 class WindowBar(object):
     def __init__(self, parent, pos, width=None,
-                 caption="", icon=None, attach_to=None):
+                 caption="", icon=None, attach_to=None, plain=False):
 
         self.parent = parent
         self.theme = copy.copy(self.parent.theme)
@@ -1007,6 +1008,7 @@ class WindowBar(object):
         self.bar = Button(self, pos, "", caption, "midbottom", icon=icon)
         self.bar.over_width = width
         self.bar.make_image()
+        self.plain = plain
 
         self.__mouse_hold_me=False
 
@@ -1042,6 +1044,8 @@ class WindowBar(object):
         return self.parent.get_mouse_pos()
 
     def event(self, event):
+        if self.plain:
+            return event
         if not self.active:
             return event
         mpos = self.get_mouse_pos()
@@ -1093,6 +1097,8 @@ class WindowBar(object):
         return event
 
     def render(self, surface):
+        if self.plain:
+            return None
         if not self.active:
             return None
         self.bar.render(surface)
@@ -1105,7 +1111,7 @@ class WindowBar(object):
 class Window(Widget):
     def __init__(self, parent, pos, name, widget_pos="topleft",
                  size=(50, 50), caption="",
-                 icon=None):
+                 icon=None, plain=False):
         Widget.__init__(self, parent, pos, name, widget_pos)
 
         self.size = size
@@ -1113,6 +1119,7 @@ class Window(Widget):
         self.icon = icon
 
         self.caption = caption
+        self.plain = plain
 
         self.widgets = []
 
@@ -1171,7 +1178,8 @@ class Window(Widget):
 
         self.drag_bar = WindowBar(self.parent, self.rect.midtop,
                                   self.rect.width, self.caption,
-                                  self.icon, self)
+                                  self.icon, self,
+                                  plain=self.plain)
         self.force_update()
 
     def event(self, event):
