@@ -205,6 +205,7 @@ class TerritoryDrawer(object):
                         if not self.t:
                             self.t = Territory(self.player)
                             self.t.add_point(pos)
+                            self.t.create_name()
                         else:
                             if self.t.within_range(pos):
                                 if len(self.t.points) == 1:
