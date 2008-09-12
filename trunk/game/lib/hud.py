@@ -47,12 +47,13 @@ class TopBar(object):
         self.crew_label.make_image()
 
         self.gold_label.text = " "+str(player.resources.gold)
-        self.turn_label.theme.label["text-color"] = (255, 215, 0)
+        self.turn_label.theme.label["text-color"] = (200, 175, 0)
         self.gold_label.make_image()
 
     def render_bg(self, screen):
-        x = screen.subsurface(0,0,640,30)
-        x.fill((189, 183, 107))
+##        x = screen.subsurface(0,0,640,30)
+##        x.fill((189, 183, 107))
+        screen.blit(data.image("hud_bg_top.png"), (0,0))
 
 class NormalBottomBar(object):
     def __init__(self, state, app):
@@ -72,8 +73,9 @@ class NormalBottomBar(object):
         self.active = False
 
     def render_bg(self, screen):
-        x = screen.subsurface(0,380,640,100)
-        x.fill((189, 183, 107))
+##        x = screen.subsurface(0,380,640,100)
+##        x.fill((189, 183, 107))
+        screen.blit(data.image("hud_bg_bottom.png"), (0,380))
 
 class Hud(object):
     def __init__(self, screen, state):
