@@ -144,6 +144,11 @@ class Ship(object):
                         self.vertical_offset = 0
             self.pos = self.rect.center = self.get_next_pos()
 
+            if not self.goto:
+                self.vertical_offset = 0
+                self.hopping = False
+                return None
+
             self.hopping = False
             self.anchored_to = None
             for i in self.owner.state.world.islands:
