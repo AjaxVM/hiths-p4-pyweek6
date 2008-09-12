@@ -45,7 +45,6 @@ class InputController(object):
                     self.unselect_terr()
                     self.state.gui.set_current()
                 if event.name == "TBB-BUILD":
-                    self.tdraw.active = False
                     self.unselect_unit()
                     self.state.gui.set_current(self.state.gui.tbbB)
                 if event.name.startswith("TBBB-"):
@@ -62,7 +61,6 @@ class InputController(object):
                 self.player.end_turn()
                 self.state.gui.set_current()
             if event.key == K_SPACE and self.selected_territory:
-##                self.player.build_ship(self.selected_territory, 'frigate')
                 self.state.gui.set_current(self.state.gui.tbbB)
             if event.key == K_ESCAPE:
                 sys.exit()
@@ -93,7 +91,7 @@ class InputController(object):
                     if i.rect.collidepoint(p2):
                         self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
                         self.player.to_be_rendered_objects.append(self.selected_unit[1])
-                        self.state.gui
+                        self.state.gui.set_current()
                         self.unselect_terr()
                         return
 
