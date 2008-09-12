@@ -75,6 +75,10 @@ class InputController(object):
                 self.state.gui.set_current(self.state.gui.tbbB)
             if event.key == K_ESCAPE:
                 sys.exit()
+            if event.key == K_g:
+                if self.selected_unit:
+                    self.selected_unit[0].am_gathering = True
+                    self.unselect_unit()
 
         if event.type == MOUSEBUTTONDOWN:
             if not self.state.world.camera.screen_rect.collidepoint(event.pos):
@@ -219,6 +223,8 @@ class Player(object):
         self.territories = self.state.world.mo.get_territories(self.pnum)
         self.ships = []
         self.resources = objects.Resources(500, 800, 300)
+
+        self.gather_targets = (33, 33, 34)
 
     def is_human(self):
         return isinstance(self.controller, InputController)
