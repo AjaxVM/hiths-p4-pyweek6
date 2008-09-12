@@ -60,6 +60,10 @@ class Ship(object):
         self.resources = Resources(0, 0, 0) # Start empty
         self.string = 0#300
         self.distance_from_capitol = 0
+        self.am_gathering = False
+        self.gather_target = "gold"
+        self.gather_island = None
+        self.gather_moveto = None
 
         self.can_move = True
         self.can_attack = True
@@ -81,6 +85,177 @@ class Ship(object):
     def end_turn(self):
         self.can_move = True
         self.can_attack = True
+
+    def get_goto_spot(self, final):
+        mx, my = final
+        x, y = self.pos
+        x -= mx
+        y -= my
+
+        angle = math.atan2(y, x)
+        if angle:
+            mangle = int(270.0 - (angle * 180) / math.pi)
+        else:
+            mangle = 0
+
+        x, y = self.pos
+        x += int(math.sin(math.radians(mangle))*self.speed)
+        y += int(math.cos(math.radians(mangle))*self.speed)
+
+        return x, y
+
+    def get_gather_island(self):
+        islands = self.territory.islands
+        tot = self.owner.resources.get_total()
+        have_percents = [int(tot*1.0/self.owner.resources.gold*10),
+                         int(tot*1.0/self.owner.resources.string*10),
+                         int(tot*1.0/self.owner.resources.crew*10)]
+        difs = [self.owner.gather_targets[0] - have_percents[0],
+                self.owner.gather_targets[1] - have_percents[1],
+                self.owner.gather_targets[2] - have_percents[2]]
+
+        print have_percents, self.owner.gather_targets, difs
+
+        ptarget = min(difs)
+        gtarget = ["gold", "string", "crew"][difs.index(ptarget)]
+
+        cur = None
+
+        for i in islands:
+            if gtarget in i.resources:
+                if not cur:
+                    cur = i
+                    continue
+                if self.get_range(i) < self.get_range(cur):
+                    cur = i
+                    continue
+
+        while not cur:
+            if not difs:
+                break
+            difs.remove(ptarget)
+            ptarget = min(difs)
+            ntarget = ["gold", "string", "crew"]
+            ntarget.remove(gtarget)
+            gtarget = ntarget[difs.index(ptarget)]
+
+            for i in islands:
+                if gtarget in i.resources:
+                    if not cur:
+                        cur = i
+                        continue
+                    if self.get_range(i) < self.get_range(cur):
+                        cur = i
+                        continue
+
+        return cur, gtarget
+
+    def do_gather(self):
+        if not self.resources.get_total():
+            if self.gather_moveto:
+                if self.rect.colliderect(self.gather_island.rect):
+                    self.gather_moveto = None
+                    self.anchored_to = self.gather_island
+                    self.resources.fill_by_type(self.gather_target, self.hold_capacity)
+                    self.can_move = False
+                    print str(self.resources)
+                    return None
+                if self.hopping:
+                    if self.vertical_offset < 50:
+                        self.vertical_offset += 2
+                else:
+                    if self.vertical_offset > 0:
+                        self.vertical_offset -= 4
+                        if self.vertical_offset < 0:
+                            self.vertical_offset = 0
+                self.goto = self.gather_moveto
+                self.pos = self.rect.center = self.get_next_pos()
+                if not self.goto:
+                    self.gather_moveto = None
+                    self.vertical_offset = 0
+                    self.hopping = False
+                    self.can_move = False
+                    return None
+                self.goto = None
+
+                self.hopping = False
+                self.anchored_to = None
+                for i in self.territory.islands:
+                    if i.rect.collidepoint(self.rect.center):
+                        if i.rect.collidepoint(self.gather_moveto):
+                            if i == self.gather_island:
+                                self.resources.fill_by_type(self.gather_target, self.hold_capacity)
+                                print str(self.resources)
+                            self.vertical_offset = 0
+                            self.hopping = False
+                            self.gather_moveto = None
+                            self.anchored_to = i
+                            self.can_move = False
+                            return None
+                        else:
+                            self.hopping = True
+                        break
+            else:
+                if self.can_move and self.owner.is_turn():
+                    goto, t = self.get_gather_island()
+                    self.gather_moveto = self.get_goto_spot(goto.pos)
+                    self.gather_island = goto
+                    self.gather_target = t
+        else:
+            if self.gather_moveto:
+                if self.territory.capitol.rect.collidepoint(self.rect.center):
+                    self.gather_moveto = None
+                    self.anchored_to = self.territory.capitol
+                    self.owner.resources + self.resources
+                    self.resources.clear()
+                    self.can_move = False
+                    return None
+                if self.hopping:
+                    if self.vertical_offset < 50:
+                        self.vertical_offset += 2
+                else:
+                    if self.vertical_offset > 0:
+                        self.vertical_offset -= 4
+                        if self.vertical_offset < 0:
+                            self.vertical_offset = 0
+                self.goto = self.gather_moveto
+                self.pos = self.rect.center = self.get_next_pos()
+                if not self.goto:
+                    self.gather_moveto = None
+                    self.vertical_offset = 0
+                    self.hopping = False
+                    self.can_move = False
+                    return None
+                self.goto = None
+
+                self.hopping = False
+                self.anchored_to = None
+
+                if self.territory.capitol.rect.collidepoint(self.rect.center):
+                    self.gather_moveto = None
+                    self.anchored_to = self.territory.capitol
+                    self.owner.resources + self.resources
+                    self.resources.clear()
+
+                    self.vertical_offset = 0
+                    self.hopping = False
+                    self.can_move = False
+                    return None
+
+                for i in self.territory.islands:
+                    if i.rect.collidepoint(self.rect.center):
+                        if i.rect.collidepoint(self.gather_moveto):
+                            self.vertical_offset = 0
+                            self.hopping = False
+                            self.gather_moveto = None
+                            self.anchored_to = i
+                            self.can_move = False
+                            return None
+                        else:
+                            self.hopping = True
+                        break
+            elif self.can_move and self.owner.is_turn():
+                self.gather_moveto = self.get_goto_spot(self.territory.capitol.pos)
 
     def move_to(self, pos):
         if self.can_move:
@@ -108,6 +283,9 @@ class Ship(object):
                     self.goto = pos
                     self.can_move = False
                     return True
+        else:
+            self.can_move = False
+            self.goto = pos
 
     def get_next_pos(self):
         mx, my = self.goto
@@ -133,7 +311,9 @@ class Ship(object):
         return x, y
 
     def update(self):
-        if self.goto:
+        if self.am_gathering:
+            self.do_gather()
+        elif self.goto:
             if self.hopping:
                 if self.vertical_offset < 50:
                     self.vertical_offset += 2
@@ -201,6 +381,13 @@ class Resources(object):
         self.string = string
         self.crew = crew
 
+    def fill_by_type(self, name, amount):
+        self.clear()
+        setattr(self, name, amount)
+
+    def add_by_type(self, name, amount):
+        setattr(self, name, getattr(self, name)+amount)
+
     def __add__(self, arg):
         self.gold += arg.gold
         self.string += arg.string
@@ -227,7 +414,7 @@ class Resources(object):
     def __str__(self):
         return "gold %s, string %s, crew %s" % (self.gold, self.string, self.crew)
 
-    def get_total():
+    def get_total(self):
         return self.gold + self.string + self.crew
 
 class Island(object):
@@ -265,7 +452,7 @@ class Island(object):
 
     def get_random_resources(self):
         choices = ["gold", "string", "crew"]
-        num = random.randint(0,3)
+        num = random.randint(1,3)
         for i in xrange(num):
             x = random.choice(choices)
             choices.remove(x)
