@@ -252,6 +252,8 @@ class Player(object):
 
     def start_turn(self):
         self.controller.start_turn()
+        for i in self.territories:
+            self.resources + objects.Resources(5, 5, 5) #so we can at least get something in these capitols!
         pass
 
     def update_ships(self):

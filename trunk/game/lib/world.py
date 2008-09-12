@@ -38,7 +38,9 @@ class MapObject(object):
 
         islands = []
         for i in self.world.islands:
-            if terr.rect.colliderect(i.rect) and terr.poly.colliderect(i.rect):
+            r = pygame.Rect(0,0,7,7)
+            r.center = i.rect.center
+            if terr.rect.colliderect(r) and terr.poly.colliderect(r):
                 islands.append(i)
         if not islands:
             return False
@@ -86,8 +88,12 @@ class Territory(object):
 
     def get_capitol(self):
         if self.islands:
+            x = list(self.islands)
             empty = []
-            for i in self.islands:
+            for i in x:
+                if i.capitol:
+                    x.remove(i)
+                    continue
                 if not i.resources:
                     empty.append(i)
             if empty:
