@@ -62,7 +62,6 @@ class HotseatUserBattle(object):
         b.execute()
         self.gui.set_current(self.gui.brr)
         self.gui.brr.set_to(self.ship1, self.ship2, b, self.win)
-        print b.results
 
     def event(self, event):
         if event.type == gui.GUI_EVENT:
@@ -204,6 +203,7 @@ class ShipRangeRender(object):
 
 class TerritoryDrawer(object):
     def __init__(self, player, world):
+        print "woot!"
         self.player = player
         self.world = world
 
