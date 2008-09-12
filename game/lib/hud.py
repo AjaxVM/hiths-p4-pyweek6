@@ -190,7 +190,10 @@ class SelectShip(object):
             screen.blit(self.ship.image, (125, 390))
 
 class BattleMiscRender(object):
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
+        self.widgets = []
+        self.window = None
         self.inactive()
 
     def set_to(self, ship1, ship2, window):
@@ -205,49 +208,179 @@ class BattleMiscRender(object):
         values = ("hull", "crew", "speed", "damage_multiplier")
         nh = h * 6
 
-        cur_i = 5
+        cur_i = 75
 
+        self.l1_shipt = gui.Label(self.window, (5, cur_i), "L1_shipt",
+                                 ship1.type)
+        self.l1_shipt.theme.label["text-color"] = (255, 255, 255)
+        self.l1_shipt.make_image()
+        cur_i += h
+        self.l1_hull = gui.Label(self.window, (5, cur_i), "L1_hull",
+                                 "hull: "+str(ship1.hull)+"/"+str(ship1.hull_max))
+        cur_i += h
+        self.l1_crew = gui.Label(self.window, (5, cur_i), "L1_crew",
+                                 "crew: "+str(ship1.crew)+"/"+str(ship1.crew_max))
+        cur_i += h
+        self.l1_speed = gui.Label(self.window, (5, cur_i), "L1_speed",
+                                 "speed: "+str(ship1.speed)+"/"+str(ship1.speed_max))
+        cur_i += h
+        self.l1_dm = gui.Label(self.window, (5, cur_i), "L1_dm",
+                               "damage multiplier: "+str(ship1.damage_multiplier))
+
+        cur_i = 75
+        self.l2_shipt = gui.Label(self.window, (165, cur_i), "L1_shipt",
+                                 ship2.type)
+        self.l2_shipt.make_image()
+        cur_i += h
+        self.l2_hull = gui.Label(self.window, (165, cur_i), "L1_hull",
+                                 "hull: "+str(ship2.hull)+"/"+str(ship2.hull_max))
+        cur_i += h
+        self.l2_crew = gui.Label(self.window, (165, cur_i), "L1_crew",
+                                 "crew: "+str(ship2.crew)+"/"+str(ship2.crew_max))
+        cur_i += h
+        self.l2_speed = gui.Label(self.window, (165, cur_i), "L1_speed",
+                                 "speed: "+str(ship2.speed)+"/"+str(ship2.speed_max))
+        cur_i += h
+        self.l2_dm = gui.Label(self.window, (165, cur_i), "L1_dm",
+                               "damage multiplier: "+str(ship2.damage_multiplier))
+
+        self.widgets = [self.l1_shipt, self.l1_hull, self.l1_crew, self.l1_speed, self.l1_dm,
+                        self.l2_shipt, self.l2_hull, self.l2_crew, self.l2_speed, self.l2_dm]
+
+    def active(self):
+        self._active = True
+
+    def inactive(self):
+        for i in self.widgets:
+            i.active = False
+        self._active = False
+
+    def isactive(self):
+        return self._active
+
+    def render(self, screen):
+        if self.window and self.ship1 and self.ship2:
+            x, y = self.window.rect.topleft
+            screen.blit(self.ship1.image, (10+x, 10+y))
+            screen.blit(self.ship2.image, (self.window.rect.width-10+x-self.ship2.rect.width, 10+y))
+
+class BattleResultRender(object):
+    def __init__(self):
+        self.inactive()
+
+    def set_to(self, ship1, ship2, battle, window):
+        self.ship1 = ship1
+        self.ship2 = ship2
+        self.battle = battle
+        self.window = window
+
+        d1 = battle.results['damage'][ship1]
+        d2 = battle.results['damage'][ship2]
+
+        x, y = self.window.rect.topleft
+
+        font = data.font("Pieces-of-Eight.ttf", 18)
+        h = font.get_height()
+        values = ("hull", "crew", "speed")
+        nh = h * 9
+
+        cur_i = 5
         surf1 = pygame.Surface((150, nh)).convert_alpha()
         surf1.fill((0,0,0,0))
+        surf1.blit(font.render("Attacker", 1, (255, 255, 255)), (5, cur_i))
+        cur_i += h
         surf1.blit(font.render(ship1.type, 1, (255, 255, 255)), (5, cur_i))
+        cur_i += h
+        surf1.blit(font.render("hull damage: "+str(d1[0]-ship1.hull),
+                               1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("hull: "+str(ship1.hull)+"/"+str(ship1.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
+        cur_i += h+5
+        surf1.blit(font.render("crew killed: "+str(d1[1]-ship1.crew),
+                               1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("crw: "+str(ship1.crew)+"/"+str(ship1.crew_max),
+        surf1.blit(font.render("crew: "+str(ship1.crew)+"/"+str(ship1.crew_max),
+                               1, (255, 255, 255)), (5, cur_i))
+        cur_i += h+5
+        surf1.blit(font.render("speed penalty: "+str(d1[2]-ship1.speed),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("speed: "+str(ship1.speed)+"/"+str(ship1.speed_max),
                                1, (255, 255, 255)), (5, cur_i))
-        cur_i += h
-        surf1.blit(font.render("damage multiplier: "+str(ship1.damage_multiplier),
-                               1, (255, 255, 255)), (5, cur_i))
 
         self.surf1 = surf1
         self.rect1 = surf1.get_rect()
-        self.rect1.topleft = (3+x, 75+y)
+        self.rect1.topleft = (3+x, 50+y)
 
 
         cur_i = 5
         surf2 = pygame.Surface((150, nh)).convert_alpha()
         surf2.fill((0,0,0,0))
+        surf2.blit(font.render("Defender", 1, (255, 255, 255)), (5, cur_i))
+        cur_i += h
         surf2.blit(font.render(ship2.type, 1, (255, 255, 255)), (5, cur_i))
+        cur_i += h
+        surf2.blit(font.render("hull damage: "+str(d2[0]-ship2.hull),
+                               1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf2.blit(font.render("hull: "+str(ship2.hull)+"/"+str(ship2.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
+        cur_i += h+5
+        surf2.blit(font.render("crew killed: "+str(d2[1]-ship2.crew),
+                               1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("crw: "+str(ship2.crew)+"/"+str(ship2.crew_max),
+        surf2.blit(font.render("crew: "+str(ship2.crew)+"/"+str(ship2.crew_max),
+                               1, (255, 255, 255)), (5, cur_i))
+        cur_i += h+5
+        surf2.blit(font.render("speed penalty: "+str(d2[2]-ship2.speed),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf2.blit(font.render("speed: "+str(ship2.speed)+"/"+str(ship2.speed_max),
                                1, (255, 255, 255)), (5, cur_i))
-        cur_i += h
-        surf2.blit(font.render("damage multiplier: "+str(ship2.damage_multiplier),
-                               1, (255, 255, 255)), (5, cur_i))
 
         self.surf2 = surf2
         self.rect2 = surf2.get_rect()
-        self.rect2.topright = (307+x, 75+y)
+        self.rect2.topright = (307+x, 50+y)
+
+        surf3 = pygame.Surface((250, 50)).convert_alpha()
+        surf3.fill((0,0,0,0))
+
+        if "captured" in battle.results and ship1.is_alive() and ship2.is_alive():
+            if battle.results['captured'] == 0:
+                ship1.owner.ships.remove(ship1)
+                ship2.owner.ships.remove(ship2)
+                surf3 = font.render("Both ships were sent to Davy Jones locker!",
+                                    1, (255, 255, 255))
+
+            else:
+                if not ship1.is_alive():
+                    ship1.owner.ships.remove(ship1)
+                    surf3 = font.render("Attacker was sent to Davy Jones' Locker", 1, (255, 255, 255))
+                elif not ship2.is_alive():
+                    surf3 = font.render("Defender was sent to Davy Jones' Locker", 1, (255, 255, 255))
+                elif not (ship1.is_alive() or ship2.is_alive()):
+                    ship1.owner.ships.remove(ship1)
+                    ship2.owner.ships.remove(ship2)
+                    surf3 = font.render("Both ships were sent to Davy Jones locker!",
+                                        1, (255, 255, 255))
+                else:
+                    captured_ship = battle.results['captured']
+                    captured_ship.crew = 20
+                    captured_ship.owner.ships.remove(captured_ship)
+                    battle.results["winner"].owner.ships.append(captured_ship)
+                    if captured_ship == ship1:
+                        w = "attacking"
+                    else:
+                        w = "defending"
+                    surf3 = font.render(("The "+w+" ship was captured!"),
+                                        1, (255, 255, 255))
+        else:
+            surf3 = font.render(("The battle was inconclusive!"),
+                                1, (255, 255, 255))
+        self.surf3 = surf3
+        self.rect3 = surf3.get_rect()
+        self.rect3.center = (150+x, 260+y)
 
     def active(self):
         self._active = True
@@ -259,12 +392,13 @@ class BattleMiscRender(object):
         return self._active
 
     def render(self, screen):
-        if self.window and self.ship1 and self.ship2:
+        if self.window and self.ship1 and self.ship2 and self.battle:
             x, y = self.window.rect.topleft
             screen.blit(self.ship1.image, (10+x, 10+y))
             screen.blit(self.ship2.image, (self.window.rect.width-10+x-self.ship2.rect.width, 10+y))
             screen.blit(self.surf1, self.rect1)
             screen.blit(self.surf2, self.rect2)
+            screen.blit(self.surf3, self.rect3)
         
 
 class Hud(object):
@@ -281,9 +415,10 @@ class Hud(object):
         self.tbb = TerritoryBottomBar(self.state, self.app)
         self.tbbB = TerritoryBottomBarBUILD(self.state, self.app)
         self.ss = SelectShip(self.state, self.app)
-        self.bmr = BattleMiscRender()
+        self.bmr = BattleMiscRender(self.app)
+        self.brr = BattleResultRender()
 
-        self.special_states = [self.tbb, self.tbbB, self.ss, self.bmr]
+        self.special_states = [self.tbb, self.tbbB, self.ss, self.bmr, self.brr]
 
     def set_current(self, x=None):
         for i in self.special_states:
