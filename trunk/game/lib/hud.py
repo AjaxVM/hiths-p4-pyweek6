@@ -3,6 +3,7 @@ from pygame.locals import *
 
 from gui import gui
 import data, objects
+from tools import Minimap
 
 
 class TopBar(object):
@@ -66,9 +67,12 @@ class NormalBottomBar(object):
         self.draw_button.over_width = self.end_turn_button.rect.width
         self.draw_button.make_image()
 
+        self.minimap = Minimap(state, pygame.Rect(15, 390, 82, 82))
+
     def render_bg(self, screen):
         screen.blit(data.image("hud_bg_bottom.png"), (0,380))
-        pygame.draw.rect(screen, [0,0,0], pygame.Rect(15, 390, 85, 85))
+        map = self.minimap.update()
+        screen.blit(map, self.minimap.rect)
 
 class TerritoryBottomBar(object):
     def __init__(self, state, app):

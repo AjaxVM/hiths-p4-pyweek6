@@ -15,7 +15,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     game_size = (640, 350)
-    map_size = (1500, 1500)
+    map_size = (1600, 1600) # Best as a multiple of 82 (or minimap size)
     screen_rect = pygame.Rect(0, 30, 640, 350)
     game_screen = screen.subsurface(screen_rect)
 

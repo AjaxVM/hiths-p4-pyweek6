@@ -151,3 +151,43 @@ class TerritoryDrawer(object):
             pygame.draw.line(screen, self.player.color, np[-1], mp, 3)
             for i in np:
                 pygame.draw.rect(screen, self.player.color, [i[0]-10, i[1]-10, 20, 20])
+
+class Minimap(object):
+    def __init__(self, state, rect):
+        self.state = state
+        self.rect = rect
+
+    def update(self):
+        """Renders a minimap image and returns it."""
+        # Make a Rect 2 px smaller than render size for a nice border
+        mrect = pygame.Rect(0, 0, self.rect.width-2, self.rect.width-2)
+        map = pygame.Surface((mrect.width, mrect.height))
+        map.fill((14,98,212)) # Nice background
+        ratio_x, ratio_y = (self.state.world.wsize[0] / mrect.width), \
+                (self.state.world.wsize[1] / mrect.height)
+
+        # render islands
+        pygame.draw.circle(map, (255,0,0), mrect.center, 5)
+        # render territories
+        # render ships with appropriate color
+
+        # render map view frame
+        mx, my = self.state.world.camera.get_offset()
+        view_rect = Rect(mx / ratio_x, my / ratio_y, \
+                self.state.world.ssize[0] / ratio_x, \
+                self.state.world.ssize[1] / ratio_y)
+        pygame.draw.rect(map, (180,180,180), view_rect, 1)
+
+        # Prepare final surface
+        final_map = pygame.Surface((self.rect.width, self.rect.height))
+        final_map.fill((0,0,0))
+        final_map.blit(map, (1,1))
+        return final_map
+
+    def map_click(self, click_pos):
+        """Called when the user has clicked somewhere on the minimap. Returns 
+        coordinates on which the game screen should center."""
+# get click
+# update map view frame (necessary?)
+        return (200,200)
+
