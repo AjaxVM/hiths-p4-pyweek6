@@ -19,6 +19,7 @@ class InputController(object):
 
         self.selected_territory = None
         self.selected_unit = None
+        self.battle_win = None
 
     def unselect_unit(self):
         try:
@@ -34,6 +35,12 @@ class InputController(object):
                 self.player.to_be_rendered_objects.remove(i)
 
     def event(self, event):
+        if self.battle_win:
+            self.battle_win.event(event)
+            if self.battle_win.finished:
+                self.battle_win.kill()
+                self.battle_win = None
+            return None
         if event.type == gui.GUI_EVENT:
             if event.action == gui.GUI_EVENT_CLICK:
                 if event.name == "NBB-ENDTURN":
@@ -122,9 +129,14 @@ class InputController(object):
                                         return # Out of range
 
                                     # TODO: get shot type from GUI
-                                    attack((self.selected_unit[0], j),
-                                        'ball', range)
-                                    return
+##                                    attack((self.selected_unit[0], j),
+##                                        'ball', range)
+##                                    return
+                                    x = self.selected_unit[0]
+                                    if x.owner.is_human() and j.owner.is_human():
+                                        self.battle_win = tools.HotseatUserBattle(
+                                            self.selected_unit[0], j,
+                                            self.state.gui)
 
                     # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
@@ -176,7 +188,7 @@ class NetworkController(object):
        Maybe if we make it so that each controller action is then announced to
        all other controllers - then that can be sent across the network.
        Also, then this controller will have functions callable by a client, but will only
-       listen if it this players turn.
+       listen if it is this players turn.
        Thoughts?"""
     def __init__(self, state, player):
         self.state = state
@@ -206,6 +218,9 @@ class Player(object):
         self.territories = self.state.world.mo.get_territories(self.pnum)
         self.ships = []
         self.resources = objects.Resources(500, 800, 300)
+
+    def is_human(self):
+        return isinstance(self.controller, InputController)
 
     def is_turn(self):
         return self.state.uturn == self.pnum

@@ -1,10 +1,10 @@
 #the basic theme
 
-Label("noimage", (255, 0, 0))
+Label("noimage", (255, 255, 255))
 Button("button.png", "button.png", "button-selected.png", (255, 255, 255))
 Font("Pieces-of-Eight.ttf", 20, 1)
 Menu("button.png", "button.png", "button.png", "button-selected.png", (255, 255, 255))
-Input("label.png", (0, 0, 0))
-WindowBar("label.png", "label.png", "label.png", (255, 255, 0))
-Window("label.png")
-ScrollBar("label.png", "label.png", "label.png", "label.png")
+Input("button.png", (255, 255, 255))
+WindowBar("button.png", "button.png", "button-selected.png", (255, 255, 0))
+Window("button.png")
+ScrollBar("button.png", "button.png", "button.png", "button-selected.png")
