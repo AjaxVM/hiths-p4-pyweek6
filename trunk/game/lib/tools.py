@@ -203,7 +203,6 @@ class ShipRangeRender(object):
 
 class TerritoryDrawer(object):
     def __init__(self, player, world):
-        print "woot!"
         self.player = player
         self.world = world
 
@@ -328,3 +327,4 @@ def scale_polygon(poly, factor):
         new_poly.append((int(x / factor), int(y / factor)))
 
     return new_poly
+

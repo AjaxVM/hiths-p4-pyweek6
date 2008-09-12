@@ -272,6 +272,7 @@ class BattleResultRender(object):
         self.inactive()
 
     def set_to(self, ship1, ship2, battle, window):
+        attack_print((ship1, ship2), battle)
         self.ship1 = ship1
         self.ship2 = ship2
         self.battle = battle
@@ -294,19 +295,19 @@ class BattleResultRender(object):
         cur_i += h
         surf1.blit(font.render(ship1.type, 1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf1.blit(font.render("hull damage:"+str(d1[0]-ship1.hull),
+        surf1.blit(font.render("hull damage:"+str(d1[0]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("hull:"+str(ship1.hull)+"/"+str(ship1.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf1.blit(font.render("crew killed:"+str(d1[1]-ship1.crew),
+        surf1.blit(font.render("crew lost:"+str(d1[1]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("crew: "+str(ship1.crew)+"/"+str(ship1.crew_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf1.blit(font.render("speed penalty:"+str(d1[2]-ship1.speed),
+        surf1.blit(font.render("speed penalty:"+str(d1[2]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf1.blit(font.render("speed:"+str(ship1.speed)+"/"+str(ship1.speed_max),
@@ -324,19 +325,19 @@ class BattleResultRender(object):
         cur_i += h
         surf2.blit(font.render(ship2.type, 1, (255, 255, 255)), (5, cur_i))
         cur_i += h
-        surf2.blit(font.render("hull damage:"+str(d2[0]-ship2.hull),
+        surf2.blit(font.render("hull damage:"+str(d2[0]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf2.blit(font.render("hull:"+str(ship2.hull)+"/"+str(ship2.hull_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf2.blit(font.render("crew killed:"+str(d2[1]-ship2.crew),
+        surf2.blit(font.render("crew lost:"+str(d2[1]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf2.blit(font.render("crew:"+str(ship2.crew)+"/"+str(ship2.crew_max),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h+5
-        surf2.blit(font.render("speed penalty:"+str(d2[2]-ship2.speed),
+        surf2.blit(font.render("speed penalty:"+str(d2[2]),
                                1, (255, 255, 255)), (5, cur_i))
         cur_i += h
         surf2.blit(font.render("speed:"+str(ship2.speed)+"/"+str(ship2.speed_max),
@@ -353,7 +354,7 @@ class BattleResultRender(object):
             if battle.results['captured'] == 0:
                 ship1.owner.ships.remove(ship1)
                 ship2.owner.ships.remove(ship2)
-                surf3 = font.render("Both ships were sent to Davy Jones locker!",
+                surf3 = font.render("Both ships were sent to Davy Jones' locker!",
                                     1, (255, 255, 255))
 
             else:
@@ -365,7 +366,7 @@ class BattleResultRender(object):
                 elif not (ship1.is_alive() or ship2.is_alive()):
                     ship1.owner.ships.remove(ship1)
                     ship2.owner.ships.remove(ship2)
-                    surf3 = font.render("Both ships were sent to Davy Jones locker!",
+                    surf3 = font.render("Both ships were sent to Davy Jones' locker!",
                                         1, (255, 255, 255))
                 else:
                     captured_ship = battle.results['captured']
@@ -443,3 +444,26 @@ class Hud(object):
         for i in self.special_states:
             if i.isactive():
                 i.render(self.app.surface)
+
+def attack_print(ships, b):
+    print 'Player', ships[0].owner.pnum, ships[0].type, ' vs. ',
+    print 'Player', ships[1].owner.pnum, ships[1].type
+
+    dmg = b.results['damage']
+    print 'Damage: Ship', ships[0].owner.pnum, dmg[ships[0]], \
+          'Ship', ships[1].owner.pnum, dmg[ships[1]]
+
+    if 'captured' in b.results and ships[0].is_alive() and ships[1].is_alive():
+        if b.results['captured'] == 0:
+            print 'Both crews were wiped out'
+        else:
+            print 'Ship', b.results['captured'].owner, 'was captured'
+
+    print '--',
+    print 'Ship 0:', ships[0].hull, ships[0].crew, ships[0].speed, \
+          'Ship 1:', ships[1].hull, ships[1].crew, ships[1].speed
+    if 'winner' in b.results:
+        print 'Winner:', b.results['winner'].owner
+    elif not (ships[0].is_alive() and ships[1].is_alive()):
+        print 'Both ships sank'
+
