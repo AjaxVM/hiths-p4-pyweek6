@@ -64,6 +64,9 @@ class Battle:
         elif self.opponents[1].crew <= 0:
             self.results['captured'] = self.opponents[1]
 
+        # For prettying up the results, comment out for real stats
+        self._fix_stats()
+
         # Check ship status and set winner
         if not self.opponents[0].is_alive():
             self.results['winner'] = self.opponents[1] # Assume the other ship won
@@ -135,4 +138,13 @@ class Battle:
             return int((ship.crew_max - ship.crew) * _low_crew_penalty)
         else:
             return 0
+
+    def _fix_stats(self):
+        for i in self.opponents:
+            if i.hull < 0:
+                i.hull = 0
+            if i.crew < 0:
+                i.crew = 0
+            if i.speed < 5:
+                i.speed = 5
 
