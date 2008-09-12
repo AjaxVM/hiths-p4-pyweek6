@@ -1,8 +1,8 @@
 import random
 
 # Minimum and maximum damage
-_min_dmg = 20
-_max_dmg = 60
+_min_dmg = 25
+_max_dmg = 80
 
 # Percentages of damage for each ammo type
 _dmg_table = {
@@ -61,8 +61,12 @@ class Battle:
             self.results['captured'] = 0
         elif self.opponents[0].crew <= 0:
             self.results['captured'] = self.opponents[0]
+            self.results['winner'] = self.opponents[1]
         elif self.opponents[1].crew <= 0:
             self.results['captured'] = self.opponents[1]
+            self.results['winner'] = self.opponents[0]
+        else:
+            self.results['captured'] = None # Make sure this exists in results
 
         # For prettying up the results, comment out for real stats
         self._fix_stats()
