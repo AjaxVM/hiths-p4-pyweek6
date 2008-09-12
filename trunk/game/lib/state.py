@@ -4,6 +4,7 @@ from pygame.locals import *
 import tools
 import constants
 import objects
+import data
 from combat import Battle
 
 from gui import gui
@@ -159,6 +160,8 @@ class InputController(object):
         if self.selected_unit:
             self.unselect_unit()
         self.player.to_be_rendered_objects = []
+
+        data.sound("endturn.wav").play()
 
 
 class AIController(object):
