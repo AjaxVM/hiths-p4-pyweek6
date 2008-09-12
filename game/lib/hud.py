@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from gui import gui
-import data
+import data, objects
 
 
 class TopBar(object):
@@ -76,15 +76,92 @@ class TerritoryBottomBar(object):
 
         self.app = app
 
-        self.button1 = self.button1 = gui.Button(self.app, (125, 390), "TBB-BUILD", "Build Ship", "topleft")
+        self.button1 = gui.Button(self.app, (125, 390), "TBB-BUILD", "Build Ship", "topleft")
 
         self.inactive()
 
     def active(self):
         self.button1.active = True
+        self._active = True
 
     def inactive(self):
         self.button1.active = False
+        self._active = False
+
+    def isactive(self): return self._active
+    def render(self, screen): pass
+
+class TerritoryBottomBarBUILD(object):
+    def __init__(self, state, app):
+        self.state = state
+
+        self.app = app
+
+        self.buttons = []
+
+        button1 = gui.Button(self.app, (125, 390),
+                             "TBBB-junk", "junk", "topleft",
+                             icon="junk.png")
+        button2 = gui.Button(self.app, (125, button1.rect.bottom+5),
+                             "TBBB-frigate", "frigate", "topleft",
+                             icon="frigate.png")
+        button3 = gui.Button(self.app, (button1.rect.right+5, 390),
+                             "TBBB-juggernaut", "juggernaut", "topleft",
+                             icon="juggernaut.png")
+        button1.over_width = button3.rect.width
+        button1.make_image()
+        button2.over_width = button3.rect.width
+        button2.make_image()
+        button3.rect.left = button1.rect.right + 5
+
+        self.buttons.append(button1)
+        self.buttons.append(button2)
+        self.buttons.append(button3)
+
+        font = data.font("Pieces-of-Eight.ttf", 18)
+        h = font.get_height()
+
+        values = ("hull", "crew", "speed", "hold_capacity", "damage_multiplier", "cost")
+        nh = h * (len(values) + 2)
+
+        surfs = {}
+        for i in objects.ship_types:
+            if i in ["junk", "frigate", "juggernaut"]: #hack, remove once we have all the ships in!!!
+                new = pygame.Surface((250, nh)).convert()
+                cur_i = 5
+                new.blit(font.render("name: "+i, 1, (255, 255, 255)), (5, cur_i))
+                cur_i += h
+                for x in values:
+                    new.blit(font.render(x.replace("_", " ")+": "+str(objects.ship_types[i][x]),
+                                         1, (255, 255, 255)), (5, cur_i))
+                    cur_i += h
+                new.set_alpha(150)
+                surfs[i] = new
+
+        self.r = pygame.Rect(0,0,250,nh)
+        self.r.bottom = 380
+        self.s = surfs
+
+        self.inactive()
+
+    def active(self):
+        for i in self.buttons:
+            i.active = True
+        self._active = True
+
+    def inactive(self):
+        for i in self.buttons:
+            i.active = False
+        self._active = False
+
+    def isactive(self): return self._active
+
+    def render(self, screen):
+        mpos = pygame.mouse.get_pos()
+        for i in self.buttons:
+            if i.rect.collidepoint(mpos):
+                screen.blit(self.s[i.text], self.r)
+                
 
 class Hud(object):
     def __init__(self, screen, state):
@@ -98,22 +175,27 @@ class Hud(object):
         self.normal_button_bar = NormalBottomBar(self.state, self.app)
 
         self.tbb = TerritoryBottomBar(self.state, self.app)
+        self.tbbB = TerritoryBottomBarBUILD(self.state, self.app)
 
-        self.special_states = [self.tbb]
+        self.special_states = [self.tbb, self.tbbB]
 
     def set_current(self, x=None):
         for i in self.special_states:
-            i.inactive()
-        if x:
-            x.active()
+            if i is x:
+                i.active()
+            else:
+                i.inactive()
 
     def event(self, event):
-        x = self.app.event(event)
-        return x
+        return self.app.event(event)
 
     def render(self):
         self.status_bar.update()
         self.status_bar.render_bg(self.app.surface)
         self.normal_button_bar.render_bg(self.app.surface)
+
+        for i in self.special_states:
+            if i.isactive():
+                i.render(self.app.surface)
 
         self.app.render()

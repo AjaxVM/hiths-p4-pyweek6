@@ -38,19 +38,32 @@ class InputController(object):
             if event.action == gui.GUI_EVENT_CLICK:
                 if event.name == "NBB-ENDTURN":
                     self.player.end_turn()
+                    self.state.gui.set_current()
                 if event.name == "NBB-DRAWTERR":
                     self.tdraw.active = True
                     self.unselect_unit()
                     self.unselect_terr()
+                    self.state.gui.set_current()
+                if event.name == "TBB-BUILD":
+                    self.tdraw.active = False
+                    self.unselect_unit()
+                    self.state.gui.set_current(self.state.gui.tbbB)
+                if event.name.startswith("TBBB-"):
+                    self.player.build_ship(self.selected_territory, event.name[5::])
+                    self.state.gui.set_current(self.state.gui.tbb)
+
         if event.type == KEYDOWN:
             if event.key == K_r:
                 self.tdraw.active = True
                 self.unselect_unit()
                 self.unselect_terr()
+                self.state.gui.set_current()
             if event.key == K_RETURN:
                 self.player.end_turn()
+                self.state.gui.set_current()
             if event.key == K_SPACE and self.selected_territory:
-                self.player.build_ship(self.selected_territory, 'frigate')
+##                self.player.build_ship(self.selected_territory, 'frigate')
+                self.state.gui.set_current(self.state.gui.tbbB)
             if event.key == K_ESCAPE:
                 sys.exit()
 
@@ -81,6 +94,7 @@ class InputController(object):
                     if i.rect.collidepoint(p2):
                         self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
                         self.player.to_be_rendered_objects.append(self.selected_unit[1])
+                        self.state.gui
                         return
 
                 for i in self.player.territories:
@@ -88,7 +102,9 @@ class InputController(object):
                         self.selected_territory = i
                         self.player.to_be_rendered_objects.append(
                             tools.SelectedTerritoryRender(self.player, i, self.state.world))
+                        self.state.gui.set_current(self.state.gui.tbb)
                         return
+                self.state.gui.set_current()
             if event.button == 3:
                 if self.selected_unit:
                     # Check for attack
@@ -116,10 +132,7 @@ class InputController(object):
                         self.selected_unit = None
 
     def update(self):
-        if self.selected_territory:
-            self.state.gui.set_current(self.state.gui.tbb)
-        else:
-            self.state.gui.set_current()
+        pass
 
     def start_turn(self):
         self.tdraw.t = None
