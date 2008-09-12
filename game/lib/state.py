@@ -77,7 +77,8 @@ class InputController(object):
                 for i in self.player.territories:
                     if p2 in i.pixels:
                         self.selected_territory = i
-                        self.player.to_be_rendered_objects.append(tools.SelectedTerritoryRender(i, self.state.world))
+                        self.player.to_be_rendered_objects.append(
+                            tools.SelectedTerritoryRender(self.player, i, self.state.world))
                         return
             if event.button == 3:
                 if self.selected_unit:
@@ -119,6 +120,7 @@ class InputController(object):
             i.end_turn()
         if self.selected_unit:
             self.unselect_unit()
+        self.player.to_be_rendered_objects = []
 
 
 class AIController(object):

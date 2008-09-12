@@ -4,9 +4,10 @@ from world import Territory
 
 
 class SelectedTerritoryRender(object):
-    def __init__(self, territory, world):
+    def __init__(self, player, territory, world):
         self.territory = territory
         self.world = world
+        self.player = player
 
     def render(self, screen):
         x, y = self.world.camera.get_offset()
@@ -16,7 +17,8 @@ class SelectedTerritoryRender(object):
             px -= x
             py -= y
             np.append((px, py))
-        pygame.draw.polygon(screen, (255, 255, 0), np, 5)
+        pygame.draw.polygon(screen, (255,255,0), np, 7)
+        pygame.draw.polygon(screen, self.player.color, np, 3)
 
 
 class ShipRangeRender(object):
