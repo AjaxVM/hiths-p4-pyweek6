@@ -7,6 +7,45 @@ if y == "lib":
 else:
     data_path = "data"
 
+class DummySound(object):
+    def __init__(self):
+        pass
+
+    def play(self, loops=0, maxtime=0, fade_ms=0):
+        pass
+
+    def stop(self):
+        pass
+
+    def fadeout(self, t):
+        pass
+
+    def set_volume(self, value):
+        pass
+
+    def get_volume(self):
+        return 1
+
+    def get_num_channels(self):
+        return 0
+
+    def get_length(self):
+        return 0
+
+    def get_buffer(self):
+        return None
+
+all_sound = {}
+def sound(name):
+    if name in all_sound:
+        return all_sound[name]
+    try:
+        s = pygame.mixer.Sound(os.path.join(data_path, name))
+    except:
+        s = DummySound()
+    all_sound[name] = s
+    return s
+
 all_images = {}
 def image(name):
     if name in all_images:
