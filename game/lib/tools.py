@@ -3,6 +3,22 @@ from pygame.locals import *
 from world import Territory
 
 
+class SelectedTerritoryRender(object):
+    def __init__(self, territory, world):
+        self.territory = territory
+        self.world = world
+
+    def render(self, screen):
+        x, y = self.world.camera.get_offset()
+        np = []
+        for p in self.territory.points:
+            px, py = p
+            px -= x
+            py -= y
+            np.append((px, py))
+        pygame.draw.polygon(screen, (255, 255, 0), np, 5)
+
+
 class ShipRangeRender(object):
     def __init__(self, ship, player, world):
         self.ship = ship

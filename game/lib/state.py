@@ -62,6 +62,9 @@ class InputController(object):
                 if self.selected_unit:
                     self.unselect_unit()
                 self.selected_territory = None
+                for i in self.player.to_be_rendered_objects:
+                    if isinstance(i, tools.SelectedTerritoryRender):
+                        self.player.to_be_rendered_objects.remove(i)
 
                 for i in self.player.ships:
                     if self.selected_unit and i == self.selected_unit[0]:
@@ -74,6 +77,7 @@ class InputController(object):
                 for i in self.player.territories:
                     if p2 in i.pixels:
                         self.selected_territory = i
+                        self.player.to_be_rendered_objects.append(tools.SelectedTerritoryRender(i, self.state.world))
                         return
             if event.button == 3:
                 if self.selected_unit:
