@@ -11,19 +11,19 @@ class TopBar(object):
 
         self.app = app
 
-        self.turn_label = gui.Label(self.app, (5, 2), "Topbar-Label1", " 0", icon="turn.png")
+        self.turn_label = gui.Label(self.app, (5, 3), "Topbar-Label1", " 0", icon="turn.png")
         self.turn_label.over_width = 100
 
-        self.player_label = gui.Label(self.app, (110, 2), "Topbar-Label2", " 0", icon="player.png")
+        self.player_label = gui.Label(self.app, (110, 3), "Topbar-Label2", " 0", icon="player.png")
         self.player_label.over_width = 100
 
-        self.string_label = gui.Label(self.app, (215, 2), "Topbar-Label3", " 0", icon="string.png")
+        self.string_label = gui.Label(self.app, (215, 3), "Topbar-Label3", " 0", icon="string.png")
         self.string_label.over_width = 100
 
-        self.crew_label = gui.Label(self.app, (320, 2), "Topbar-Label4", " 0", icon="crew.png")
+        self.crew_label = gui.Label(self.app, (320, 3), "Topbar-Label4", " 0", icon="crew.png")
         self.crew_label.over_width = 100
 
-        self.gold_label = gui.Label(self.app, (425, 2), "Topbar-Label5", " 0", icon="gold.png")
+        self.gold_label = gui.Label(self.app, (425, 3), "Topbar-Label5", " 0", icon="gold.png")
         self.gold_label.over_width = 100
 
         self.update()
