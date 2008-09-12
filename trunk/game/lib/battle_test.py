@@ -9,9 +9,12 @@ def main():
         ships.append(ship)
 
     turn = 0
+    print 'Player', ships[0].owner, ships[0].type, ' vs. ',
+    print 'Player', ships[1].owner, ships[1].type
+
     while ships[0].is_alive() and ships[1].is_alive():
         print '-- Turn', turn,
-        b = Battle((ships[0], ships[1]), ('ball', 'medium'))
+        b = Battle((ships[0], ships[1]), ('ball', 'medium'), 'ball')
         b.execute()
         dmg = b.results['damage']
         print 'Damage: Ship', ships[0].owner, dmg[ships[0]], \
