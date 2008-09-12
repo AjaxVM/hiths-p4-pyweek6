@@ -233,14 +233,18 @@ class Minimap(object):
     def update(self):
         """Renders a minimap image and returns it."""
         # Make a Rect 2 px smaller than render size for a nice border
-        mrect = pygame.Rect(0, 0, self.rect.width-2, self.rect.width-2)
+        mrect = pygame.Rect(0, 0, self.rect.width - 2, self.rect.width - 2)
         map = pygame.Surface((mrect.width, mrect.height))
         map.fill((14,98,212)) # Nice background
         ratio_x, ratio_y = (self.state.world.wsize[0] / mrect.width), \
                 (self.state.world.wsize[1] / mrect.height)
 
         # render islands
-        pygame.draw.circle(map, (255,0,0), mrect.center, 5)
+        for i in self.state.world.islands:
+            pygame.draw.circle(map, (0,255,0), \
+                    (i.rect.center[0] / ratio_x, i.rect.center[1] / ratio_y), \
+                    i.rect.height / ratio_x)
+
         # render territories
         # render ships with appropriate color
 
