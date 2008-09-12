@@ -241,12 +241,22 @@ class Minimap(object):
 
         # render islands
         for i in self.state.world.islands:
-            pygame.draw.circle(map, (0,255,0), \
+            pygame.draw.circle(map, (70,80,70), \
                     (i.rect.center[0] / ratio_x, i.rect.center[1] / ratio_y), \
                     i.rect.height / ratio_x)
 
         # render territories
+        for p in self.state.players:
+            for i in p.territories:
+                pygame.draw.polygon(map, self._dim_color(p.color, 50), \
+                        scale_polygon(i.points, ratio_x), 1)
+
         # render ships with appropriate color
+        for p in self.state.players:
+            for i in p.ships:
+                #map.set_at((i.rect.center[0] / ratio_x, i.rect.center[1] / ratio_y), p.color)
+                pygame.draw.circle(map, p.color, \
+                        (i.rect.center[0] / ratio_x, i.rect.center[1] / ratio_y), 1)
 
         # render map view frame
         mx, my = self.state.world.camera.get_offset()
@@ -264,7 +274,25 @@ class Minimap(object):
     def map_click(self, click_pos):
         """Called when the user has clicked somewhere on the minimap. Returns 
         coordinates on which the game screen should center."""
-# get click
-# update map view frame (necessary?)
-        return (200,200)
+        ratio_x, ratio_y = (self.state.world.wsize[0] / mrect.width), \
+                (self.state.world.wsize[1] / mrect.height)
+        return click_pos[0] / ratio_x, click_pos[1]
+
+    def _dim_color(self, color, amount):
+        new_color = []
+        for i in color:
+            i -= amount
+            if i < 0:
+                i = 0
+            new_color.append(i)
+
+        return new_color
+
+def scale_polygon(poly, factor):
+    """Scales a polygon by factor and returns it."""
+    new_poly = []
+    for x, y in poly:
+        new_poly.append((int(x / factor), int(y / factor)))
+
+    return new_poly
 
