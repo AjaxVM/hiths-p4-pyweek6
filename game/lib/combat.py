@@ -24,7 +24,8 @@ _board_min_factor = 0.2
 class Battle:
     """Represents a single battle between two ships. The two opponents should
     be passed as a tuple. The attack_type is a tuple of (shot_type, range)."""
-    def __init__(self, opponents, attack_type):
+    def __init__(self, opponents, attack_type, defend_shot_type):
+        # TODO: do something with defend_shot_type
         self.opponents = opponents
         self.results = {}
         self.results['damage'] = {}
