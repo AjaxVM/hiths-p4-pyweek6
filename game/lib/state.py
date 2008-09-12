@@ -73,7 +73,6 @@ class InputController(object):
             if self.tdraw.active:
                 self.tdraw.update_event(event)
                 return None
-            self.unselect_terr()
             x, y = event.pos
             mx, my = self.state.world.camera.get_offset()
             x += mx
@@ -95,15 +94,18 @@ class InputController(object):
                         self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
                         self.player.to_be_rendered_objects.append(self.selected_unit[1])
                         self.state.gui
+                        self.unselect_terr()
                         return
 
                 for i in self.player.territories:
                     if p2 in i.pixels:
+                        self.unselect_terr()
                         self.selected_territory = i
                         self.player.to_be_rendered_objects.append(
                             tools.SelectedTerritoryRender(self.player, i, self.state.world))
                         self.state.gui.set_current(self.state.gui.tbb)
                         return
+                self.unselect_terr()
                 self.state.gui.set_current()
             if event.button == 3:
                 if self.selected_unit:
