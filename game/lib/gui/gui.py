@@ -48,14 +48,13 @@ class App(object):
 
     def event(self, event):
         for widg in self.widgets:
-                a = self.dirty
-                ret = widg.event(event)
-                if ret:
-                    return ret
+            ret = widg.event(event)
+            if not ret is event:
+                return ret
+        return ret
 
     def get_events(self):
         return_events = []
-
         for event in pygame.event.get():
             return_events.append(self.event(event))
         return return_events
