@@ -36,7 +36,7 @@ class InputController(object):
                 self.player.to_be_rendered_objects.remove(i)
 
     def event(self, event):
-        if self.battle_win:
+        if not self.battle_win == None:
             self.battle_win.event(event)
             if self.battle_win.finished:
                 self.battle_win.kill()
@@ -48,6 +48,9 @@ class InputController(object):
                     self.player.end_turn()
                     self.state.gui.set_current()
                 if event.name == "NBB-DRAWTERR":
+                    if self.battle_win:
+                        self.battle_win.kill()
+                    self.battle_win = None
                     self.tdraw.active = True
                     self.unselect_unit()
                     self.unselect_terr()
@@ -154,7 +157,7 @@ class InputController(object):
             i.end_turn()
         if self.selected_unit:
             self.unselect_unit()
-        self.player.to_be_rendered_objects = []
+        self.player.to_be_rendered_objects = [self.tdraw]
 
         data.sound("endturn.wav").play()
 
