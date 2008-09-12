@@ -161,7 +161,29 @@ class TerritoryBottomBarBUILD(object):
         for i in self.buttons:
             if i.rect.collidepoint(mpos):
                 screen.blit(self.s[i.text], self.r)
-                
+
+
+class SelectShip(object):
+    def __init__(self, state, app):
+        self.state = state
+
+        self.app = app
+        self.ship = None
+
+        self.inactive()
+
+    def active(self):
+        self._active = True
+
+    def inactive(self):
+        self._active = False
+
+    def isactive(self):
+        return self._active
+
+    def render(self, screen):
+        if self.ship:
+            screen.blit(self.ship.image, (125, 390))
 
 class Hud(object):
     def __init__(self, screen, state):
@@ -176,8 +198,9 @@ class Hud(object):
 
         self.tbb = TerritoryBottomBar(self.state, self.app)
         self.tbbB = TerritoryBottomBarBUILD(self.state, self.app)
+        self.ss = SelectShip(self.state, self.app)
 
-        self.special_states = [self.tbb, self.tbbB]
+        self.special_states = [self.tbb, self.tbbB, self.ss]
 
     def set_current(self, x=None):
         for i in self.special_states:

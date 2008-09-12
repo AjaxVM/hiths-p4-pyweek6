@@ -91,7 +91,8 @@ class InputController(object):
                     if i.rect.collidepoint(p2):
                         self.selected_unit = [i, tools.ShipRangeRender(i, self.player, self.state.world)]
                         self.player.to_be_rendered_objects.append(self.selected_unit[1])
-                        self.state.gui.set_current()
+                        self.state.gui.ss.ship = i
+                        self.state.gui.set_current(self.state.gui.ss)
                         self.unselect_terr()
                         return
 
