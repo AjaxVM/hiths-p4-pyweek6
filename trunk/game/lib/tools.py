@@ -16,13 +16,16 @@ class HotseatUserBattle(object):
         self.gui = mgui
         self.app = self.gui.app
         self.win = gui.Window(self.app, (320, 50), "UB-WINDOW", "midtop",
-                              (300, 300), caption="Battle!",
+                              (325, 300), caption="Battle!",
                               plain=True)
 
         self.button = gui.Button(self.win, (5, 300),
                                  "UB-Button!", "Leave", "bottomleft")
-        self.button2 = gui.Button(self.win, (295, 300),
+        self.button2 = gui.Button(self.win, (320, 300),
                                  "UB-Button2!", "Fire!", "bottomright")
+        self.button3 = gui.Button(self.win, (162, 300),
+                                 "UB-Button3!", "Done", "midbottom")
+        self.button3.active = False
 
         attack_options = {"long": ["ball", "chain"],
                           "medium": ["ball", "chain", "grape"],
@@ -33,7 +36,7 @@ class HotseatUserBattle(object):
 
         self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5), "UB-Menu1", "Select Cannonball",
                                    attack_options[self.range], widget_pos="bottomleft")
-        self.p2_attackc = gui.Menu(self.win, (295, self.button.rect.top-5), "UB-Menu2", "Select Cannonball",
+        self.p2_attackc = gui.Menu(self.win, (320, self.button.rect.top-5), "UB-Menu2", "Select Cannonball",
                                    attack_options[self.range], widget_pos="bottomright")
 
         self.p1_choice = None
@@ -46,8 +49,19 @@ class HotseatUserBattle(object):
         self.do_battle = False
 
     def execute(self):
-##        b = combat.Battle((self.ship1, self.ship2)
-        pass
+        self.win.active = True
+        self.p1_attackc.active = False
+        self.p2_attackc.active = False
+        self.button.active = False
+        self.button2.active = False
+        self.button3.active = True
+        b = combat.Battle((self.ship1, self.ship2),
+                          (self.p1_choice, self.range),
+                          self.p2_choice)
+        b.execute()
+        self.gui.set_current(self.gui.brr)
+        self.gui.brr.set_to(self.ship1, self.ship2, b, self.win)
+        print b.results
 
     def event(self, event):
         if event.type == gui.GUI_EVENT:
@@ -59,8 +73,11 @@ class HotseatUserBattle(object):
                             self.finished = True
                         if event.name == "UB-Button2!":
                             if self.p1_choice and self.p2_choice:
-                                print "attack"
-                                #do attack code!
+                                self.do_battle = True
+                                self.ship1.can_move = False
+                                self.gui.set_current()
+                        if event.name == "UB-Button3!":
+                            self.finished = True
                         if event.widget == gui.Menu:
                             if event.name == "UB-Menu1":
                                 self.p1_choice = event.entry
@@ -83,9 +100,11 @@ class HotseatUserBattle(object):
 
     def update(self):
         if self.do_battle:
+            self.win.active = False
             self.battle_wait_timer += 1
             if self.battle_wait_timer >= 30:
                 self.execute()
+                self.do_battle = False
 
 
 class SelectedTerritoryRender(object):

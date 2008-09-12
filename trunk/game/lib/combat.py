@@ -32,15 +32,16 @@ class Battle:
         self.range = attack_type[1]
 
         # Set up defender shot type, range is fixed
-        d_shot_type = ''
-        rand = random.randint(0, 10)
-        if rand <= 7 or self.range == 'long':
-            d_shot_type = 'ball'
-        else:
-            d_shot_type = 'grape'
-        print "Attack types: 0 - %s, 1 - %s, %s range." % (attack_type[0], d_shot_type, attack_type[1])
-
-        self.shot_types = (attack_type[0], d_shot_type)
+##        d_shot_type = ''
+##        rand = random.randint(0, 10)
+##        if rand <= 7 or self.range == 'long':
+##            d_shot_type = 'ball'
+##        else:
+##            d_shot_type = 'grape'
+##        print "Attack types: 0 - %s, 1 - %s, %s range." % (attack_type[0], d_shot_type, attack_type[1])
+##
+##        self.shot_types = (attack_type[0], d_shot_type)
+        self.shot_types = attack_type[0], defend_shot_type
 
     def execute(self):
         """Calculate battle results."""
@@ -105,7 +106,7 @@ class Battle:
         # Use min factor to only slightly affect the numbers
         crew0_attack = random.randint(_board_min, _board_max) * _board_min_factor
         crew1_attack = random.randint(_board_min, _board_max) * _board_min_factor
-        print 'crew attack', crew0_attack, crew1_attack
+##        print 'crew attack', crew0_attack, crew1_attack
 
         crew0_dmg = int(self.opponents[1].crew * crew1_attack)
         crew1_dmg = int(self.opponents[0].crew * crew0_attack)
@@ -130,7 +131,7 @@ class Battle:
         """Get the penalty for having less than 50% crew. The penalty is
         relative to the number of missing crew."""
         if ship.crew <= (ship.crew_max / 2):
-            print 'Ship', ship.owner, 'suffering crew penalty'
+##            print 'Ship', ship.owner, 'suffering crew penalty'
             return int((ship.crew_max - ship.crew) * _low_crew_penalty)
         else:
             return 0

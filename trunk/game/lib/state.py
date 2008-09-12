@@ -126,13 +126,7 @@ class InputController(object):
                                 if j.rect.collidepoint(p2):
                                     range = self.selected_unit[0].get_range(j)
                                     if not range:
-                                        print 'Out of range'
                                         return # Out of range
-
-                                    # TODO: get shot type from GUI
-##                                    attack((self.selected_unit[0], j),
-##                                        'ball', range)
-##                                    return
                                     x = self.selected_unit[0]
                                     if x.owner.is_human() and j.owner.is_human():
                                         self.battle_win = tools.HotseatUserBattle(
@@ -146,7 +140,8 @@ class InputController(object):
                         self.selected_unit = None
 
     def update(self):
-        pass
+        if self.battle_win:
+            self.battle_win.update()
 
     def start_turn(self):
         self.tdraw.t = None
