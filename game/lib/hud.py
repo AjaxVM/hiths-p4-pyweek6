@@ -36,7 +36,10 @@ class TopBar(object):
         self.turn_label.make_image()
 
         self.player_label.text = " "+str(self.state.uturn)
-        self.player_label.theme.label["text-color"] = self.state.get_current_player().color
+        color = self.state.get_current_player().color
+        if color == (0, 255, 0):
+            color = (0, 200, 0)
+        self.player_label.theme.label["text-color"] = color
         self.player_label.make_image()
 
         self.string_label.text = " "+str(player.resources.string)
@@ -48,7 +51,7 @@ class TopBar(object):
         self.crew_label.make_image()
 
         self.gold_label.text = " "+str(player.resources.gold)
-        self.turn_label.theme.label["text-color"] = (200, 175, 0)
+        self.turn_label.theme.label["text-color"] = (90, 90, 0)
         self.gold_label.make_image()
 
     def render_bg(self, screen):
