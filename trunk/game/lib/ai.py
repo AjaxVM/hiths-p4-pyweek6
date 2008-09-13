@@ -80,6 +80,7 @@ class AI(object):
         self.build_up = 0
         pt, m_size = self.get_best_territory()
         t = Territory(self.player)
+        t.create_name(constants.territory_first_name, constants.territory_second_name)
         for i in [pt.topleft, pt.topright,
                   pt.bottomright, pt.bottomleft]:
             t.add_point(i)
