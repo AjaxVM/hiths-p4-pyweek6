@@ -197,8 +197,6 @@ class AIController(object):
 
     def update(self):
         self.think()
-        if self.ai.finished:
-            self.player.end_turn()
 
     def update_ships(self):
         self.busy = False
@@ -218,7 +216,6 @@ class AIController(object):
     def end_turn(self):
         for i in self.player.ships:
             i.end_turn()
-        self.ai.finished = False
 
 
 class NetworkController(object):
@@ -266,6 +263,7 @@ class Player(object):
         return self.state.uturn == self.pnum
 
     def end_turn(self):
+        print "called!"
         self.state.next_player_turn()
 
     def do_end_turn(self):
