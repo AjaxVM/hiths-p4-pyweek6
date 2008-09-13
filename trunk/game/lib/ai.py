@@ -81,7 +81,7 @@ class AI(object):
         self.build_up = 0
         pt, m_size = self.get_best_territory()
         t = Territory(self.player)
-        t.create_name(constants.territory_first_name, constants.territory_second_name)
+        
         for i in [pt.topleft, pt.topright,
                   pt.bottomright, pt.bottomleft]:
             t.add_point(i)
@@ -89,6 +89,7 @@ class AI(object):
         t.finish()
         if self.state.world.mo.test_territory(t):
             self.state.world.mo.add(t)
+            t.create_name(constants.territory_first_name, constants.territory_second_name)
             self.player.resources.string -= m_size
             return True
 
