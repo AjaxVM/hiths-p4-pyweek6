@@ -15,11 +15,31 @@ class TerritoryShips(object):
         self.terr = terr
         self.ships = []
 
+class BrainShip(object):
+    def __init__(self, ship):
+        self.ship = ship
+        self.assigned = False
+
+        self.state = "gather"
+
+    def need_work(self):
+        if self.state == "gather":
+            if not self.ship.am_gathering:
+                return True
+
+    def set_state(self, state):
+        self.state = state
+        if state == "gather":
+            self.ship.am_gathering = True
+
 class AI(object):
     def __init__(self, state, player):
         self.state = state
         self.player = player
         self.build_up = 0
+
+        self.bships = []
+        self.finished = False
 
     def gbtt_r(self, r, islands):
         agg = []
@@ -172,22 +192,22 @@ class AI(object):
         if x:
             t = random.choice(x)
             self.player.build_ship(terr, t)
+            self.bships.append(BrainShip(self.player.ships[-1]))
             return True
         return False
 
     def move_units_default(self):
-        for i in self.player.ships:
-            if i.can_move: #special case defensive/aggressive or resource movement done first
-                i.am_gathering = True
+        for i in self.bships:
+            if i.need_work():
+                i.set_state("gather")
 
     def end_turn(self):
         self.player.end_turn()
 
     def think(self):
+        print [[self.player.is_turn()]]
         # this goes first for these little stinkers!
-##        self.move_units_default()
-        for i in self.player.ships:
-            i.am_gathering = True
+        self.move_units_default()
 
         if self.need_territory() and self.make_territory():
             return None
@@ -196,4 +216,4 @@ class AI(object):
         if x and self.make_ship(x):
             return None
 
-        self.end_turn()
+        self.finished = True
