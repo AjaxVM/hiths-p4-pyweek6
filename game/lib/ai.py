@@ -383,7 +383,7 @@ class AI(object):
         if x and self.make_ship(x):
             return None
 
-        self.ready_to_war()
+##        self.ready_to_war()
 
         if self.player.have_lost():
             print "Died!"
