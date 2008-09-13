@@ -201,6 +201,7 @@ class World(object):
         self.make_islands()
 
         self.font = data.font(None, 30)
+        self.font2 = data.font("Pieces-of-Eight.ttf", 25)
         
         self.screen = screen
 
@@ -240,8 +241,11 @@ class World(object):
                 
                 for j in np:
                     self.screen.blit(self.rock,(j[0]-16,j[1]+8))
-
-
+            ox, oy = self.camera.get_offset()
+            ren = self.font2.render(i.name, 1, (0, 0, 0))
+            self.screen.blit(ren, (i.capitol.pos[0]-ren.get_width()/2 - ox + 1, i.capitol.pos[1] + 50 - oy + 1))
+            ren = self.font2.render(i.name, 1, (255, 255, 0))
+            self.screen.blit(ren, (i.capitol.pos[0]-ren.get_width()/2 - ox, i.capitol.pos[1] + 50 - oy))
 
         for i in self.islands:
             if i.rect.colliderect(self.camera.rect.inflate(45, 45)):
