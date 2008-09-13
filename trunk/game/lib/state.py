@@ -144,6 +144,7 @@ class InputController(object):
                                         self.battle_win = tools.HotseatUserBattle(
                                             self.selected_unit[0], j,
                                             self.state.gui)
+                                        return # Don't move
 
                     # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
