@@ -326,8 +326,7 @@ class State(object):
         return self.players[self.uturn]
 
     def event(self, event):
-        if not self.players[self.uturn-1].controller.busy:
-            self.players[self.uturn].controller.event(event)
+        self.players[self.uturn].controller.event(event)
 
     def update(self):
         for i in self.players:

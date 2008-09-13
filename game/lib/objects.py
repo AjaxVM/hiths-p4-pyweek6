@@ -75,7 +75,7 @@ class Ship(object):
         else:
             self.resources = Resources(0, 0, 0) # Start empty
 
-        self.string = 0#300
+        self.string = 300#0
         self.distance_from_capitol = 0
         self.am_gathering = False
         self.gather_target = "gold"
@@ -133,8 +133,6 @@ class Ship(object):
         difs = [self.owner.gather_targets[0] - have_percents[0],
                 self.owner.gather_targets[1] - have_percents[1],
                 self.owner.gather_targets[2] - have_percents[2]]
-
-        print have_percents, self.owner.gather_targets, difs
 
         ptarget = min(difs)
         gtarget = ["gold", "string", "crew"][difs.index(ptarget)]

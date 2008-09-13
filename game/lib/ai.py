@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 from world import Territory
 import constants
@@ -20,19 +21,28 @@ class BrainShip(object):
         self.ship = ship
         self.assigned = False
 
-        self.state = "gather"
+        self.state = None
         self.target_pos = None #ship gather code handles this, movement won't.
         self.pstates = ["gather", "defend", "invade", "retreat"] #everything it can do!
 
     def need_work(self):
-        if self.state == "gather":
+        if not self.state in self.pstates:
             if not self.ship.am_gathering:
                 return True
 
-    def set_state(self, state):
+    def set_state(self, state, xtra=None):
         self.state = state
         if state == "gather":
             self.ship.am_gathering = True
+        if state == "defend":
+            self.target_pos = xtra
+
+    def update(self):
+        if self.ship.can_move:
+            if self.target_pos:
+                if self.target_pos == self.ship.rect.center:
+                    self.target_pos = None
+                self.ship.move_to(self.ship.goto_spot(self.target_pos))
 
 class AI(object):
     def __init__(self, state, player):
@@ -162,7 +172,8 @@ class AI(object):
             terr[i] = TerritoryShips(i)
 
         for i in self.player.ships:
-            terr[i.territory].ships.append(i)
+            if i.territory.poly.colliderect(i.rect):
+                terr[i.territory].ships.append(i)
 
         least = None
         for i in terr:
@@ -209,11 +220,49 @@ class AI(object):
     def ready_attack(self):
         return False
 
+    def get_closest(self, dif, terr, ignore):
+        x1, y1 = terr.rect.center
+        cur = {}
+        for i in self.bships:
+            if not (i in ignore) or (i.state == "defend"):
+                x2, y2 = i.ship.rect.center
+                dis = math.sqrt(abs(x2-x1)**2 + abs(y2-y1)**2)
+                if cur:
+                    n = max(cur)
+                    if dis < n:
+                        del cur[n]
+                        cur[dis] = i
+                else:
+                    cur[dis] = i
+
+        new = []
+        for i in xrange(dif):
+            if cur:
+                s = min(cur)
+                new.append(cur[s])
+                del cur[s]
+            else:
+                break
+
+        return new
+
+    def force_defend(self, a):
+        for t in a:
+            print t
+            dif = len(t.ships) - len(t.pships)
+
+            s = self.get_closest(dif, t.terr, t.pships)
+
+            for i in s:
+                i.state = "defend"
+
     def think(self):
+        x = self.need_defend()
+        if x:
+            self.force_defend(x)
+            return None
         # this goes first for these little stinkers!
         self.move_units_default()
-
-        
 
         if self.need_territory() and self.make_territory():
             return None
