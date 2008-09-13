@@ -78,7 +78,12 @@ class NormalBottomBar(object):
         screen.blit(map, self.minimap.rect)
 
     def update(self):
-        pass
+        if pygame.mouse.get_pressed()[0]:
+            pos = pygame.mouse.get_pos()
+            if self.minimap.rect.collidepoint(pos):
+                # Localize passed click..
+                self.minimap.map_click((pos[0] - self.minimap.rect.left,
+                    pos[1] - self.minimap.rect.top))
 
 class TerritoryBottomBar(object):
     def __init__(self, state, app):
