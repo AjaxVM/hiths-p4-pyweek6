@@ -188,9 +188,7 @@ class AI(object):
                 if len(terr[i].ships) + random.randint(-2, 2) < len(terr[least].ships):
                     least = i
 
-        if nd or len(self.player.ships) < len(self.player.territories) * 3:
-            return least
-        return None
+        return least
 
     def make_ship(self, terr):
         x = []
