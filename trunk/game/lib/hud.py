@@ -148,7 +148,7 @@ class TerritoryBottomBarBUILD(object):
 
         surfs = {}
         for i in objects.ship_types:
-            if i in ["junk", "frigate", "juggernaut"]: #hack, remove once we have all the ships in!!!
+            if i in ["junk", "frigate", "juggernaut", "flyingdutchman"]: #hack, remove once we have all the ships in!!!
                 new = pygame.Surface((250, nh)).convert()
                 cur_i = 5
                 new.blit(font.render("name: "+i, 1, (255, 255, 255)), (5, cur_i))
