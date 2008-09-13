@@ -207,13 +207,14 @@ class SelectShip(object):
     def render(self, screen):
         if self.ship:
             font = data.font("Pieces-of-Eight.ttf", 18)
-            screen.blit(self.ship.image, (125, 390))
-            new = pygame.Surface((300, 75)).convert_alpha()
-            new.fill((0,0,0))
+            screen.blit(font.render(objects.ship_types[self.ship.type]["fancy"], 1, (0,0,0)), (105, 380))
+            screen.blit(self.ship.image, (110, 400))
+            new = pygame.Surface((300, 100)).convert_alpha()
+            new.fill((0,0,0,0))
 
-            vals = []
-            rs = []
+            overs = []
             cur_x = 0
+            cur_y = 5
             for i in ["Hull: %s/%s"%(self.ship.hull, self.ship.hull_max),
                       "Crew: %s/%s"%(self.ship.crew, self.ship.crew_max),
                       "Speed: %s/%s"%(self.ship.speed, self.ship.speed_max),
@@ -223,7 +224,19 @@ class SelectShip(object):
                       "Gold: %s"%self.ship.resources.gold,
                       "Crew: %s"%self.ship.resources.crew,
                       "String: %s"%self.ship.resources.string]:
-                n = font.render(i, 1, (255, 255, 255))
+                if i == "BR":
+                    cur_x = max(overs)+15
+                    cur_y = 5
+                    continue
+                v = font.render(i, 1, (0, 0, 0))
+                overs.append(v.get_rect().width)
+                r = v.get_rect()
+                r.left = cur_x
+                r.top = cur_y
+                cur_y += r.height
+                new.blit(v, r)
+            screen.blit(new, (190, 390))
+                
 
 class BattleExplosionRender(object):
     def __init__(self):
