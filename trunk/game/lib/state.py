@@ -312,6 +312,23 @@ class Player(object):
         return True
         # TODO: allow the player to give ship some string by default?
 
+    def get_all_empty_islands(self):
+        i = list(self.state.world.islands)
+        for x in self.state.world.mo.territories:
+            for s in x.islands:
+                if s in i:
+                    i.remove(s)
+        return i
+            
+
+    def have_lost(self):
+        if not self.territories:
+            if not self.get_all_empty_islands:
+                return True
+            if self.resources.string < 100:
+                return True
+        return False
+
 class State(object):
     def __init__(self, world):
         self.world = world

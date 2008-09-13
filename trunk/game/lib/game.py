@@ -45,7 +45,7 @@ def main():
             x = gamehud.event(event)
             if x: state.event(x)
 
-        self.hud.update()
+        gamehud.update()
         state.update()
 
         x, y = pygame.mouse.get_pos()
