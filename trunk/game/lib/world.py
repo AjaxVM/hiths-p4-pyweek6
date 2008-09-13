@@ -246,8 +246,8 @@ class World(object):
         for x in xrange(int(len(grid)/3)):
             x, y = random.choice(grid)
             grid.remove((x, y))
-            offx = random.randint(0,50)
-            offy = random.randint(0,50)
+            offx = random.randint(-25,50)
+            offy = random.randint(-25,50)
             i = Island((x*125+offx, y*125+offy))
             i.get_random_resources()
             self.islands.append(i)
