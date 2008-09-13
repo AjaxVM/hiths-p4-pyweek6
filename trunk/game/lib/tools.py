@@ -23,14 +23,6 @@ class BattleDialog(object):
                               (325, 300), caption="Battle!",
                               plain=True)
 
-        self.button = gui.Button(self.win, (5, 300),
-                                 "UB-Button!", "Leave", "bottomleft")
-        self.button2 = gui.Button(self.win, (320, 300),
-                                 "UB-Button2!", "Fire!", "bottomright")
-        self.button3 = gui.Button(self.win, (162, 300),
-                                 "UB-Button3!", "Done", "midbottom")
-        self.button3.active = False
-
         attack_options = {"long": ["ball", "chain"],
                           "medium": ["ball", "chain", "grape"],
                           "close": ["ball", "chain", "grape", "board"]}
@@ -44,11 +36,15 @@ class BattleDialog(object):
         self.p2_attackc = None
 
         if ship1.owner.is_human():
+            self.button = gui.Button(self.win, (5, 300),
+                                 "UB-Button!", "Leave", "bottomleft")
             self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5),
                     "UB-Menu1", "ball             ", attack_options[self.range],
                     widget_pos="bottomleft")
         else:
             self.p1_choice = ship1.owner.controller.ai.select_attack_type(ship1, ship2)
+            self.button = gui.Button(self.win, (5, -300),
+                                 "UB-Button!", "Leave", "bottomleft")
         if ship2.owner.is_human():
             self.p2_attackc = gui.Menu(self.win, (320, self.button.rect.top-5), 
                     "UB-Menu2", "ball             ", attack_options[self.range],
@@ -56,16 +52,23 @@ class BattleDialog(object):
         else:
             self.p2_choice = ship2.owner.controller.ai.select_attack_type(ship2, ship1)
 
+        self.button2 = gui.Button(self.win, (320, 300),
+                                 "UB-Button2!", "Fire!", "bottomright")
+        self.button3 = gui.Button(self.win, (162, 300),
+                                 "UB-Button3!", "Done", "midbottom")
+        self.button3.active = False
+
         self.gui.set_current(self.gui.bmr)
         self.gui.bmr.set_to(self.ship1, self.ship2, self.win)
 
-        self.battle_wait_timer = 0
         self.do_battle = False
-        self.explosions = []
 
         # Both players are AI, skip this dialog business
         if (not ship1.owner.is_human()) and (not ship2.owner.is_human()):
             self.execute()
+
+        self.exp1 = Explosion(self.ship1.owner, self.ship1.rect.center)
+        self.exp2 = Explosion(self.ship1.owner, self.ship2.rect.center)
 
     def execute(self):
         self.win.active = True
@@ -119,21 +122,18 @@ class BattleDialog(object):
         self.gui.set_current()
 
     def update(self):
-        for e in self.explosions:
-            e.update()
         if self.do_battle:
-            Explosion(self.ship1.pos, self.explosions)
-            Explosion(self.ship2.pos, self.explosions)
+            self.exp1.update()
+            self.exp2.update()
             self.win.active = False
-            self.battle_wait_timer += 1
-            if self.battle_wait_timer >= 30:
+            if self.exp1.dead:
                 self.execute()
                 self.do_battle = False
 
     def render(self, screen):
-        offset = self.ship1.player.state.world.camera.get_offset()
-        for e in self.explosions:
-            e.draw(screen, offset)
+        offset = self.ship1.owner.state.world.camera.get_offset()
+        self.exp1.render(screen)
+        self.exp2.render(screen)
 
 class SelectedTerritoryRender(object):
     def __init__(self, player, territory, world):

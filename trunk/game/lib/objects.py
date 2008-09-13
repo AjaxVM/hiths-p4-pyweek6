@@ -510,28 +510,35 @@ class Island(object):
             self.resources.append(x)
 
 class Explosion(object):
-    def __init__(self, pos, group):
-        self.group = group
-        self.group.append(self)
+    def __init__(self, owner, pos):
+        self.owner = owner
+        self.owner.priority_to_be_rendered_objects.append(self)
         self.pos = list(pos)
-        self.image = pygame.Surface((32, 32))
-        self.image.set_colorkey((0, 0, 0), RLEACCEL)
-        self.radius = 2
-        self.alpha = 255
+        self.images = [data.image("exp1.png"),
+                       data.image("exp2.png"),
+                       data.image("exp3.png"),
+                       data.image("exp4.png"),
+                       data.image("exp5.png"),
+                       data.image("exp6.png"),
+                       data.image("exp7.png"),
+                       data.image("exp8.png")]
+        self.r = self.images[0].get_rect()
+        self.r.center = self.pos
+        self.counter = 0
+        self.cur = 0
+        self.dead = False
     def update(self):
-        if self.radius < 16:
-            self.radius += 2
-        else:
-            self.alpha -= 5
-            if self.alpha <= 0:
-                self.kill()
-            self.image.set_alpha(self.alpha)
-        pygame.draw.circle(self.image, [255, 255, 0], [16, 16], self.radius)
-    def draw(self, surf, offset):
-        p = [0, 0]
-        p[0] = self.pos[0] + offset[0]
-        p[1] = self.pos[1] + offset[1]
-        surf.blit(self.image, p)
-    def kill(self):
-        if self in self.group:
-            self.group.remove(self)
+        self.counter += 1
+        if self.counter >= 5:
+            self.cur += 1
+            self.counter = 0
+            if self.cur == len(self.images):
+                self.dead = True
+                self.owner.priority_to_be_rendered_objects.remove(self)
+
+    def render(self, surf):
+        offset = self.owner.state.world.camera.get_offset()
+        x, y = self.r.topleft
+        x += offset[0]
+        y += offset[1]
+        surf.blit(self.images[self.cur], (x, y))
