@@ -375,10 +375,11 @@ class State(object):
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()
-        self.uturn += 1
-        if self.uturn == len(self.players):
+##        self.uturn += 1
+        if self.uturn == len(self.players)-1:
             self.waiting = True
             return None
+        self.uturn += 1
         self.players[self.uturn].start_turn()
 
     def render(self, screen):
