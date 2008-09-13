@@ -206,11 +206,27 @@ class SelectShip(object):
 
     def render(self, screen):
         if self.ship:
+            font = data.font("Pieces-of-Eight.ttf", 18)
             screen.blit(self.ship.image, (125, 390))
+            new = pygame.Surface((300, 75)).convert_alpha()
+            new.fill((0,0,0))
+
+            vals = []
+            rs = []
+            cur_x = 0
+            for i in ["Hull: %s/%s"%(self.ship.hull, self.ship.hull_max),
+                      "Crew: %s/%s"%(self.ship.crew, self.ship.crew_max),
+                      "Speed: %s/%s"%(self.ship.speed, self.ship.speed_max),
+                      "String: %s"%(self.ship.string),
+                      "BR",
+                      "Hold:",
+                      "Gold: %s"%self.ship.resources.gold,
+                      "Crew: %s"%self.ship.resources.crew,
+                      "String: %s"%self.ship.resources.string]:
+                n = font.render(i, 1, (255, 255, 255))
 
 class BattleExplosionRender(object):
-    def __init__(self, app):
-        self.app = app
+    def __init__(self):
         self.controller = None
 
     def active(self):
