@@ -369,13 +369,12 @@ class BattleResultRender(object):
                 surf3 = font.render("Defender was sent to Davey Jones' Locker!", 1, (255, 255, 255))
             else:
                 captured_ship = battle.results['captured']
-                captured_ship.crew = 20
-                captured_ship.owner.ships.remove(captured_ship)
-                battle.results["winner"].owner.ships.append(captured_ship)
                 if captured_ship == ship1:
                     w = "attacking"
+                    ship2.take_ship(ship1)
                 else:
                     w = "defending"
+                    ship1.take_ship(ship2)
                 surf3 = font.render(("The "+w+" ship was captured!"),
                                     1, (255, 255, 255))
         else:

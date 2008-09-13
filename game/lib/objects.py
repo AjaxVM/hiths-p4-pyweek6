@@ -26,7 +26,7 @@ class Ship(object):
     medium_range = 150
     close_range = 60
 
-    def __init__(self, territory, owner, type='frigate', test=False): # TODO: test should be removed
+    def __init__(self, territory, owner, type='frigate', test=False):
         self._alive = True
         self.owner = owner
         self.type = type
@@ -370,6 +370,15 @@ class Ship(object):
     def sink(self):
         """Sinks this ship taking all who crew her to the depths."""
         self.owner.ships.remove(self)
+
+    def take_ship(self, ship):
+        """Captures an enemy ship and "does the right thing" with all its 
+        data"""
+        ship.owner.ships.remove(ship)
+        self.owner.ships.append(ship)
+        ship.crew = 20
+        ship.territory = self.territory
+        ship.owner = self.owner
 
     def _get_spawn_pos(self):
         r = self.territory.capitol.rect
