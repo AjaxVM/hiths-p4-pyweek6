@@ -72,22 +72,23 @@ class AI(object):
             agg.append([])
             for x in islands:
                 if not i == x: #this might get slowish...
-                    if x.rect.colliderect(r):
+                    if x.rect.colliderect(r.inflate(-10, -10)):
                         if not x in agg[-1]:
                             agg[-1].append(x)
+            if not agg[-1]:
+                agg.pop()
 
         cur_largest = agg[0]
-        for i in agg[1::]:
+        for i in agg:
             if len(i) > len(cur_largest):
                 cur_largest = i
 
-
+        r.topleft = cur_largest[0].rect.topleft
         for i in cur_largest:
             if i.rect.top < r.top:
                 r.top = i.rect.top
             if i.rect.left < r.left:
                 r.left = i.rect.left
-
         return r
 
     def get_best_territory(self):
@@ -246,7 +247,7 @@ class AI(object):
 
     def force_defend(self, a):
         for t in a:
-            print t
+            print [[(t,)]]
             dif = len(t.ships) - len(t.pships)
 
             s = self.get_closest(dif, t.terr, t.pships)

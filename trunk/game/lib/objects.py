@@ -126,13 +126,15 @@ class Ship(object):
 
     def get_gather_island(self):
         islands = self.territory.islands
-        tot = self.owner.resources.get_total()
-        have_percents = [int(safe_div(tot*1.0, self.owner.resources.gold*10)),
-                         int(safe_div(tot*1.0, self.owner.resources.string*10)),
-                         int(safe_div(tot*1.0, self.owner.resources.crew*10))]
-        difs = [self.owner.gather_targets[0] - have_percents[0],
-                self.owner.gather_targets[1] - have_percents[1],
-                self.owner.gather_targets[2] - have_percents[2]]
+##        tot = self.owner.resources.get_total()
+##        have_percents = [int(safe_div(tot*1.0, self.owner.resources.gold*10)),
+##                         int(safe_div(tot*1.0, self.owner.resources.string*10)),
+##                         int(safe_div(tot*1.0, self.owner.resources.crew*10))]
+##        difs = [self.owner.gather_targets[0] - have_percents[0],
+##                self.owner.gather_targets[1] - have_percents[1],
+##                self.owner.gather_targets[2] - have_percents[2]]
+
+        difs = self.owner.resources.tolist()
 
         ptarget = min(difs)
         gtarget = ["gold", "string", "crew"][difs.index(ptarget)]
@@ -446,6 +448,8 @@ class Resources(object):
         return self.gold >= arg.gold or self.string >= arg.string or self.crew >= arg.crew
     def __str__(self):
         return "gold %s, string %s, crew %s" % (self.gold, self.string, self.crew)
+    def tolist(self):
+        return [self.gold, self.string, self.crew]
 
     def get_total(self):
         return self.gold + self.string + self.crew

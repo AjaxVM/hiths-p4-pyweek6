@@ -259,8 +259,6 @@ class Player(object):
         self.ships = []
         self.resources = objects.Resources(500, 800, 300)
 
-        self.gather_targets = (33, 33, 34)
-
     def is_human(self):
         return isinstance(self.controller, InputController)
 
@@ -298,14 +296,22 @@ class Player(object):
         self.controller.update_ships()
 
     def build_ship(self, territory, type):
+        x = []
+        for i in self.ships:
+            if i.territory == territory:
+                x.append(i)
+        if len(x) >= territory.pop_cap:
+            print "too many ships here!"
+            return None
         new = objects.Ship(territory, self, type)
         cost = objects.Resources(objects.ship_types[type]['cost'], 0, new.crew_max)
         if self.resources < cost:
             print "You're too poor!"
             # TODO: notify the player visually
-            return
+            return None
         self.resources - cost
         self.ships.append(new)
+        return True
         # TODO: allow the player to give ship some string by default?
 
 class State(object):
