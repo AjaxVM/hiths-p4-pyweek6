@@ -70,6 +70,11 @@ class InputController(object):
                         if self.player.resources.string >= 50:
                             self.player.resources.string -= 50
                             self.selected_unit[0].string += 50
+                            self.player.to_be_rendered_objects.remove(self.selected_unit[1])
+                            self.player.to_be_rendered_objects.append(
+                                tools.ShipRangeRender(self.selected_unit[0], self.player,
+                                                      self.state.world))
+                            self.selected_unit[1] = self.player.to_be_rendered_objects[-1]
                     else:
                         self.state.gui.set_current()
 
@@ -198,9 +203,15 @@ class AIController(object):
 
         self.ai = ai.AI(state, player)
         self.busy = True
+##        self.battle_win = None
 
     def event(self, event):
         pass
+##        if self.battle_win:
+##            self.battle_win.event(event)
+##            if self.battle_win.finished:
+##                self.battle_win.kill()
+##                self.battle_win = None
 
     def update(self):
         self.think()

@@ -42,7 +42,7 @@ class BattleDialog(object):
                     "UB-Menu1", "ball             ", attack_options[self.range],
                     widget_pos="bottomleft")
         else:
-            self.p1_choice = ship1.owner.controller.ai.select_attack_type(ship1, ship2)
+            self.p1_choice = ship1.owner.controller.ai.select_attack_type(ship1, ship2, self.range)
             self.button = gui.Button(self.win, (5, -300),
                                  "UB-Button!", "Leave", "bottomleft")
         if ship2.owner.is_human():
@@ -50,7 +50,7 @@ class BattleDialog(object):
                     "UB-Menu2", "ball             ", attack_options[self.range],
                     widget_pos="bottomright")
         else:
-            self.p2_choice = ship2.owner.controller.ai.select_attack_type(ship2, ship1)
+            self.p2_choice = ship2.owner.controller.ai.select_attack_type(ship2, ship1, self.range)
 
         self.button2 = gui.Button(self.win, (320, 300),
                                  "UB-Button2!", "Fire!", "bottomright")
@@ -71,6 +71,7 @@ class BattleDialog(object):
         self.exp2 = Explosion(self.ship1.owner, self.ship2.rect.center)
 
     def execute(self):
+        print "exedc!!!!!!!"
         self.win.active = True
         if self.p1_attackc:
             self.p1_attackc.active = False

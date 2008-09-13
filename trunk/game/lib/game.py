@@ -11,6 +11,12 @@ import hud
 import random
 import gui
 
+try:
+    import psyco
+    psyco.background()
+except:
+    pass
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
@@ -23,7 +29,6 @@ def main():
     state = State(world)
 
     state.add_player()
-    state.add_player(AIController)
     state.add_player(AIController)
 
     gamehud = hud.Hud(screen, state)
