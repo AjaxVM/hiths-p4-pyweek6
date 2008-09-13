@@ -390,3 +390,6 @@ class AI(object):
 
         self.player.end_turn()
         self.have_defended = False
+
+    def select_attack_type(self, myship, enemy):
+        return 'ball'
