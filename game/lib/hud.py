@@ -297,8 +297,11 @@ class BattleMiscRender(object):
         self.l2_dm = gui.Label(self.window, (165, cur_i), "L1_dm",
                                "damage multiplier:"+str(ship2.damage_multiplier))
 
+        self.select_type_msg = gui.Label(self.window, (75, 190), "attack_type",
+                                 "Select attack type!")
         self.widgets = [self.l1_shipt, self.l1_hull, self.l1_crew, self.l1_speed, self.l1_dm,
-                        self.l2_shipt, self.l2_hull, self.l2_crew, self.l2_speed, self.l2_dm]
+                        self.l2_shipt, self.l2_hull, self.l2_crew, self.l2_speed, self.l2_dm,
+                        self.select_type_msg]
 
     def active(self):
         self._active = True
