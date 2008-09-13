@@ -18,6 +18,7 @@ class AI(object):
     def __init__(self, state, player):
         self.state = state
         self.player = player
+        self.build_up = 0
 
     def gbtt_r(self, r, islands):
         agg = []
@@ -76,6 +77,7 @@ class AI(object):
         
 
     def make_territory(self):
+        self.build_up = 0
         pt, m_size = self.get_best_territory()
         t = Territory(self.player)
         for i in [pt.topleft, pt.topright,
@@ -89,11 +91,18 @@ class AI(object):
 
 
     def need_territory(self):
-        print self.player.territories
         if self.player.territories == []: #first, find a good starting territory!
             return True
-        if self.player.resources.string >= 800:
-            return True
+        if self.player.resources.string >= 250:
+            for i in self.state.players:
+                if i == self.player: continue
+                if len(i.territories) > len(self.player.territories):
+                    return True
+
+            if not self.build_up:
+                self.build_up = random.randint(250, 500)
+            if self.player.resources.string >= 500 + self.build_up:
+                return True
 
     def need_defend(self):
         t = []
@@ -164,14 +173,13 @@ class AI(object):
         self.player.end_turn()
 
     def think(self):
-        if self.need_territory:
-            print 1
+        print str(self.player.resources)
+        if self.need_territory():
             self.make_territory()
             return None
 
         x = self.need_ships()
         if x:
-            print 2
             self.make_ship(x)
             return None
 
