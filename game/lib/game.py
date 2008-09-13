@@ -38,6 +38,10 @@ def main():
             if event.type == KEYDOWN and event.key == K_s:
                 pygame.image.save(screen, "screenie.tga")
 
+            if event.type == KEYDOWN and event.key == K_ESCAPE:
+                pygame.quit()
+                return None
+
             x = gamehud.event(event)
             if x: state.event(x)
 

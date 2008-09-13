@@ -75,8 +75,6 @@ class InputController(object):
                 self.state.gui.set_current()
             if event.key == K_SPACE and self.selected_territory:
                 self.state.gui.set_current(self.state.gui.tbbB)
-            if event.key == K_ESCAPE:
-                sys.exit()
             if event.key == K_g:
                 if self.selected_unit:
                     self.selected_unit[0].am_gathering = True
