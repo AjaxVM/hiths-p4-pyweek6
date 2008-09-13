@@ -57,8 +57,7 @@ class HotseatUserBattle(object):
         self.button2.active = False
         self.button3.active = True
         b = combat.Battle((self.ship1, self.ship2),
-                          (self.p1_choice, self.range),
-                          self.p2_choice)
+                          self.p1_choice, self.p2_choice, self.range)
         b.execute()
         self.gui.set_current(self.gui.brr)
         self.gui.brr.set_to(self.ship1, self.ship2, b, self.win)
