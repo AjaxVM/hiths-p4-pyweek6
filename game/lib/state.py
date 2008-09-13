@@ -271,7 +271,7 @@ class Player(object):
     def build_ship(self, territory, type):
         new = objects.Ship(territory, self, type)
         cost = objects.Resources(objects.ship_types[type]['cost'], 0, new.crew_max)
-        if self.resources <= cost:
+        if self.resources < cost:
             print "You're too poor!"
             # TODO: notify the player visually
             return
