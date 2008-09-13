@@ -26,18 +26,25 @@ class Ship(object):
     medium_range = 150
     close_range = 60
 
-    def __init__(self, territory, owner, type='frigate', test=False):
+    def __init__(self, territory, owner, type='frigate', oldship=None, test=False):
         self._alive = True
         self.owner = owner
         self.type = type
 
         td = ship_types[type]
         self.hull_max = td['hull']
-        self.hull = self.hull_max
         self.crew_max = td['crew']
-        self.crew = self.crew_max
         self.speed_max = td['speed']
-        self.speed = self.speed_max
+
+        if oldship:
+            self.hull = oldship.hull
+            self.crew = oldship.crew
+            self.speed = oldship.speed
+        else:
+            self.hull = self.hull_max
+            self.crew = self.crew_max
+            self.speed = self.speed_max
+
         self.damage_multiplier = td['damage_multiplier']
 
         # Keep compatibility with battle_test, all new variables need to go
@@ -57,7 +64,12 @@ class Ship(object):
 
         # Total resources can only equal hold capacity
         self.hold_capacity = td['hold_capacity']
-        self.resources = Resources(0, 0, 0) # Start empty
+
+        if oldship:
+            self.resources = oldship.resources
+        else:
+            self.resources = Resources(0, 0, 0) # Start empty
+
         self.string = 0#300
         self.distance_from_capitol = 0
         self.am_gathering = False
@@ -371,14 +383,15 @@ class Ship(object):
         """Sinks this ship taking all who crew her to the depths."""
         self.owner.ships.remove(self)
 
-    def take_ship(self, ship):
+    def take_ship(self, oldship):
         """Captures an enemy ship and "does the right thing" with all its 
         data"""
-        ship.owner.ships.remove(ship)
-        self.owner.ships.append(ship)
+        oldship.owner.ships.remove(oldship)
+        ship = Ship(self.territory, self.owner, oldship.type, oldship=oldship)
+        ship.pos = oldship.pos
+        ship.goto = self.pos
         ship.crew = 20
-        ship.territory = self.territory
-        ship.owner = self.owner
+        self.owner.ships.append(ship)
 
     def _get_spawn_pos(self):
         r = self.territory.capitol.rect
