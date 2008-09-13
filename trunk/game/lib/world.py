@@ -225,17 +225,19 @@ class World(object):
                                               iy*25+toy+self.cur_cycle))
 
         for i in self.mo.territories:
-            np = []
-            for p in i.points:
-                px, py = p
-                px -= x
-                py -= y
-                np.append((px, py))
-            pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
+            if i.poly.colliderect(self.camera.rect.inflate(45, 45)):
+                np = []
+                for p in i.points:
+                    px, py = p
+                    px -= x
+                    py -= y
+                    np.append((px, py))
+                pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
 
 
         for i in self.islands:
-            i.render(screen, (x, y))
+            if i.rect.colliderect(self.camera.rect.inflate(45, 45)):
+                i.render(screen, (x, y))
 
     def make_islands(self):
         grid = []
