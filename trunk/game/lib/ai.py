@@ -21,6 +21,8 @@ class BrainShip(object):
         self.assigned = False
 
         self.state = "gather"
+        self.target_pos = None #ship gather code handles this, movement won't.
+        self.pstates = ["gather", "defend", "invade", "retreat"] #everything it can do!
 
     def need_work(self):
         if self.state == "gather":
@@ -204,10 +206,14 @@ class AI(object):
     def end_turn(self):
         self.player.end_turn()
 
+    def ready_attack(self):
+        return False
+
     def think(self):
-        print [[self.player.is_turn()]]
         # this goes first for these little stinkers!
         self.move_units_default()
+
+        
 
         if self.need_territory() and self.make_territory():
             return None
