@@ -130,31 +130,31 @@ class AI(object):
         return t
 
     def need_ships(self):
-        if self.player.resources.string >= 50: #make sure we can at least afford "a" ship!
-            for i in self.state.players:
-                if not i == self.player:
-                    if len(i.ships) > len(self.player.ships):
-                        nd = self.need_defend()
-                        terr = {}
-                        for i in self.player.territories:
-                            terr[i] = TerritoryShips(i)
+##        if self.player.resources.string >= 50: #make sure we can at least afford "a" ship!
+##        for i in self.state.players:
+##            if not i == self.player:
+##                if len(i.ships) > len(self.player.ships):
+        nd = self.need_defend()
+        terr = {}
+        for i in self.player.territories:
+            terr[i] = TerritoryShips(i)
 
-                        for i in self.player.ships:
-                            terr[i.territory].ships.append(i)
+        for i in self.player.ships:
+            terr[i.territory].ships.append(i)
 
-                        least = None
-                        for i in terr:
-                            if not least:
-                                least = i
-                            else:
-                                if i in nd and (not least in nd):
-                                    least = i
-                                    continue
-                                if least in nd and (not i in nd):
-                                    continue
-                                if len(terr[i].ships) + random.randint(-2, 2) < len(terr[least].ships):
-                                    least = i
-                        return least
+        least = None
+        for i in terr:
+            if not least:
+                least = i
+            else:
+                if i in nd and (not least in nd):
+                    least = i
+                    continue
+                if least in nd and (not i in nd):
+                    continue
+                if len(terr[i].ships) + random.randint(-2, 2) < len(terr[least].ships):
+                    least = i
+        return least
 
     def make_ship(self, terr):
         x = []
@@ -165,9 +165,12 @@ class AI(object):
             x.extend(["frigate"]*15)
         if r.crew >= 100 and r.gold >= 250:
             x.extend(["juggernaut"]*7)
-        t = random.choice(x)
 
-        self.player.build_ship(terr, t)
+        if x:
+            t = random.choice(x)
+            self.player.build_ship(terr, t)
+            return True
+        return False
 
     def end_turn(self):
         self.player.end_turn()
@@ -179,8 +182,7 @@ class AI(object):
             return None
 
         x = self.need_ships()
-        if x:
-            self.make_ship(x)
+        if x and self.make_ship(x):
             return None
 
         self.end_turn()
