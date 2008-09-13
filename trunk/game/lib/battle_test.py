@@ -14,13 +14,13 @@ def main():
 
     while ships[0].is_alive() and ships[1].is_alive():
         print '-- Turn', turn,
-        b = Battle((ships[0], ships[1]), ('ball', 'medium'), 'ball')
+        b = Battle((ships[0], ships[1]), 'ball', 'ball', 'medium')
         b.execute()
         dmg = b.results['damage']
         print 'Damage: Ship', ships[0].owner, dmg[ships[0]], \
               'Ship', ships[1].owner, dmg[ships[1]]
 
-        if 'captured' in b.results:
+        if b.results['captured'] != None:
             if b.results['captured'] == 0:
                 print 'Both crews were wiped out'
             else:

@@ -23,29 +23,18 @@ _board_min_factor = 0.2
 
 class Battle:
     """Represents a single battle between two ships. The two opponents should
-    be passed as a tuple. The attack_type is a tuple of (shot_type, range)."""
-    def __init__(self, opponents, attack_type, defend_shot_type):
-        # TODO: do something with defend_shot_type
+    be passed as a tuple. The remaining variables should all be strings that
+    are valid for what they are."""
+    def __init__(self, opponents, attack_shot_type, defend_shot_type, range):
         self.opponents = opponents
         self.results = {}
         self.results['damage'] = {}
-        self.range = attack_type[1]
-
-        # Set up defender shot type, range is fixed
-##        d_shot_type = ''
-##        rand = random.randint(0, 10)
-##        if rand <= 7 or self.range == 'long':
-##            d_shot_type = 'ball'
-##        else:
-##            d_shot_type = 'grape'
-##        print "Attack types: 0 - %s, 1 - %s, %s range." % (attack_type[0], d_shot_type, attack_type[1])
-##
-##        self.shot_types = (attack_type[0], d_shot_type)
-        self.shot_types = attack_type[0], defend_shot_type
+        self.range = range
+        self.shot_types = attack_shot_type, defend_shot_type
 
     def execute(self):
         """Calculate battle results."""
-        if self.shot_types[0] == 'board':
+        if self.shot_types[0] == 'board' or self.shot_types[1]:
             self._calculate_boarding()
         else:
             # Ships attack eachother simultaneously
