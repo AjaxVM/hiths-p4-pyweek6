@@ -239,11 +239,11 @@ class World(object):
 
     def make_islands(self):
         grid = []
-        for x in xrange(1,self.wsize[0]/125-2):
-            for y in xrange(1,self.wsize[1]/125-2):
+        for x in xrange(1,int(self.wsize[0]/125)):
+            for y in xrange(1,int(self.wsize[1]/125)):
                 grid.append((x, y))
         self.islands = []
-        for x in xrange(len(grid)/random.randint(3,5)):
+        for x in xrange(int(len(grid)/3)):
             x, y = random.choice(grid)
             grid.remove((x, y))
             offx = random.randint(0,50)
