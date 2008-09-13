@@ -76,7 +76,6 @@ class Territory(object):
 
     def create_name(self, first_name, second_name):
         self.name = first_name[random.randint(0,len(first_name)-1)] + second_name[random.randint(0,len(second_name)-1)]
-        print self.name
 
     def add_point(self, point):
         self.points.append(point)
