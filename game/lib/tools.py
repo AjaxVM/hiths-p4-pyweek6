@@ -291,7 +291,7 @@ class TerritoryDrawer(object):
             for i in np:
                 pygame.draw.rect(screen, self.player.color, [i[0]-10, i[1]-10, 20, 20])
 
-            ga, gg = self.get_acceptable(mp)
+            ga, gg = self.get_acceptable((mp[0]+ox, mp[1]+oy))
             if gg:
                 color = (0, 0, 255)
             else:
