@@ -34,7 +34,7 @@ class Battle:
 
     def execute(self):
         """Calculate battle results."""
-        if self.shot_types[0] == 'board' or self.shot_types[1]:
+        if self.shot_types[0] == 'board' or self.shot_types[1] == 'board':
             self._calculate_boarding()
         else:
             # Ships attack eachother simultaneously
@@ -74,8 +74,8 @@ class Battle:
         ship = self.opponents[giver]
         crew_penalty = self._get_crew_penalty(ship)
 
-        # Grape is useless at long range
         range_modifier = _range_modifiers[self.range] 
+        # Grape is useless at long range
         if self.range == 'long' and self.shot_types[giver] == 'grape':
             range_modifier = 0
 
