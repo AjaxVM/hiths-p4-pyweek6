@@ -66,41 +66,49 @@ class AI(object):
 
     def gbtt_r(self, r, islands):
         agg = []
-        for i in islands:
-            r.topleft = i.rect.topleft
-            p = True
+        r.inflate_ip(10, 10)
+        while 1:
+            r.inflate_ip(-10, -10)
+            if r.width <= 40:
+                return False
+            for i in islands:
+                r.topleft = i.rect.topleft
+                p = True
 
-            for c in self.state.players:
-                if not p:
-                    break
-                for t in c.territories:
-                    if t.poly.colliderect(r):
-                        p = False
+                for c in self.state.players:
+                    if not p:
                         break
-            if not p:
+                    for t in c.territories:
+                        if t.poly.colliderect(r):
+                            p = False
+                            break
+                if not p:
+                    continue
+
+                agg.append([])
+                for x in islands:
+                    if not i == x: #this might get slowish...
+                        if x.rect.colliderect(r.inflate(-10, -10)):
+                            if not x in agg[-1]:
+                                agg[-1].append(x)
+                if not agg[-1]:
+                    agg.pop()
+
+            if not agg:
                 continue
 
-            agg.append([])
-            for x in islands:
-                if not i == x: #this might get slowish...
-                    if x.rect.colliderect(r.inflate(-10, -10)):
-                        if not x in agg[-1]:
-                            agg[-1].append(x)
-            if not agg[-1]:
-                agg.pop()
+            cur_largest = agg[0]
+            for i in agg:
+                if len(i) > len(cur_largest):
+                    cur_largest = i
 
-        cur_largest = agg[0]
-        for i in agg:
-            if len(i) > len(cur_largest):
-                cur_largest = i
-
-        r.topleft = cur_largest[0].rect.topleft
-        for i in cur_largest:
-            if i.rect.top < r.top:
-                r.top = i.rect.top
-            if i.rect.left < r.left:
-                r.left = i.rect.left
-        return r
+            r.topleft = cur_largest[0].rect.topleft
+            for i in cur_largest:
+                if i.rect.top < r.top:
+                    r.top = i.rect.top
+                if i.rect.left < r.left:
+                    r.left = i.rect.left
+            return r, (r.width+r.height)*2
 
     def get_best_territory(self):
         islands = list(self.state.world.islands)
@@ -118,12 +126,15 @@ class AI(object):
 
         r = pygame.Rect(0,0,m_size, m_size)
 
-        return self.gbtt_r(r, islands), m_size*4
+        return self.gbtt_r(r, islands)
         
 
     def make_territory(self):
         self.build_up = 0
-        pt, m_size = self.get_best_territory()
+        x = self.get_best_territory()
+        if not x:
+            return False
+        pt, m_size = x
         t = Territory(self.player)
         
         for i in [pt.topleft, pt.topright,
