@@ -348,9 +348,12 @@ class Minimap(object):
     def map_click(self, click_pos):
         """Called when the user has clicked somewhere on the minimap. Returns 
         coordinates on which the game screen should center."""
+        # Tiny bit of inaccuracy here because mrect is smaller than rect..
+        mrect = pygame.Rect(0, 0, self.rect.width - 2, self.rect.width - 2)
         ratio_x, ratio_y = (self.state.world.wsize[0] / mrect.width), \
                 (self.state.world.wsize[1] / mrect.height)
-        return click_pos[0] / ratio_x, click_pos[1]
+        pos = (click_pos[0] * ratio_x, click_pos[1] * ratio_y)
+        self.state.world.camera.center_at(pos)
 
     def _dim_color(self, color, amount):
         new_color = []
