@@ -485,7 +485,7 @@ class Island(object):
 
     def get_random_resources(self):
         choices = ["gold", "string", "crew"]
-        num = random.randint(1,3)
+        num = random.choice([1]*50+[2]*15)
         for i in xrange(num):
             x = random.choice(choices)
             choices.remove(x)

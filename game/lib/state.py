@@ -24,7 +24,7 @@ class InputController(object):
         self.selected_unit = None
         self.battle_win = None
 
-        self.busy = False
+        self.busy = True
 
     def unselect_unit(self):
         try:
@@ -158,13 +158,15 @@ class InputController(object):
         if self.battle_win:
             self.battle_win.update()
 
+    def update_ships(self):
         self.busy = False
         for i in self.player.ships:
             if i.moving():
                 self.busy = True
-                break
+                return
 
     def start_turn(self):
+        self.can_end_turn = False
         self.tdraw.t = None
         self.tdraw.active = False
         for i in self.player.ships:
@@ -188,7 +190,7 @@ class AIController(object):
         self.player = player
 
         self.ai = ai.AI(state, player)
-        self.busy = False
+        self.busy = True
 
     def event(self, event):
         pass
@@ -197,6 +199,13 @@ class AIController(object):
         self.think()
         if self.ai.finished:
             self.player.end_turn()
+
+    def update_ships(self):
+        self.busy = False
+        for i in self.player.ships:
+            if i.moving():
+                self.busy = True
+                return
 
     def think(self):
         print "thinking..."
@@ -286,6 +295,7 @@ class Player(object):
     def update_ships(self):
         for i in self.ships:
             i.update()
+        self.controller.update_ships()
 
     def build_ship(self, territory, type):
         new = objects.Ship(territory, self, type)
@@ -310,42 +320,49 @@ class State(object):
                                           #and the color of the flags by the ships
 
         self.gui = None
+        self.waiting = False
 
     def add_player(self, control_type=InputController):
         self.players.append(Player(self, control_type, self.pt_index))
         self.pt_index += 1
 
-    def get_uturn(self):
-        if self.players[self.uturn-1].controller.busy:
-            x = self.uturn - 1
-            if x < 0: x = len(self.players)-1
-            return x
-        return self.uturn
-
     def get_current_player(self):
-        return self.players[self.uturn]
+        if not self.waiting:
+            return self.players[self.uturn]
+        return self.players[-1]
 
     def event(self, event):
-        self.players[self.uturn].controller.event(event)
+        if not self.waiting:
+            self.players[self.uturn].controller.event(event)
 
     def update(self):
+        if self.waiting:
+            good = True
+            for i in self.players:
+                if i.controller.busy:
+                    good = False
+                    break
+            if good:
+                self.uturn = 0
+                self.turn += 1
+                self.players[0].start_turn()
+                self.waiting = False
         for i in self.players:
             i.update_ships()
-        if not self.players[self.uturn-1].controller.busy:
+        if not self.waiting:
             self.players[self.uturn].controller.update()
-        else:
-            self.players[self.uturn-1].controller.update()
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()
         self.uturn += 1
         if self.uturn == len(self.players):
-            self.uturn = 0
-            self.turn += 1
+            self.waiting = True
+            return None
         self.players[self.uturn].start_turn()
 
     def render(self, screen):
-        self.players[self.uturn].render_turn(screen)
+        if not self.waiting:
+            self.players[self.uturn].render_turn(screen)
         for i in self.players:
             i.render(screen)
 
