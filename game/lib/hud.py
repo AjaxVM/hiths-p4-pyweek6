@@ -43,7 +43,7 @@ class TopBar(object):
         self.player_label.make_image()
 
         self.string_label.text = " "+str(player.resources.string)
-        self.string_label.theme.label["text-color"] = (0, 191, 255)
+        self.string_label.theme.label["text-color"] = (0, 100, 255)
         self.string_label.make_image()
 
         self.crew_label.text = " "+str(player.resources.crew)
