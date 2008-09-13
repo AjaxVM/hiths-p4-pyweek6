@@ -137,7 +137,7 @@ class TerritoryBottomBarBUILD(object):
         h = font.get_height()
 
         values = ("hull", "crew", "speed", "hold_capacity", "damage_multiplier", "cost")
-        nh = h * (len(values) + 2)
+        nh = h * (len(values) + 3)
 
         surfs = {}
         for i in objects.ship_types:
@@ -150,6 +150,7 @@ class TerritoryBottomBarBUILD(object):
                     new.blit(font.render(x.replace("_", " ")+": "+str(objects.ship_types[i][x]),
                                          1, (255, 255, 255)), (5, cur_i))
                     cur_i += h
+                new.blit(font.render("crew cost: "+str(objects.ship_types[i]["crew"]), 1, (255, 255, 255)), (5, cur_i))
                 new.set_alpha(150)
                 surfs[i] = new
 
