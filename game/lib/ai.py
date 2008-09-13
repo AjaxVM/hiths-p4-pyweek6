@@ -30,8 +30,9 @@ class BrainShip(object):
             if not self.ship.am_gathering:
                 return True
 
-    def set_state(self, state, xtra=None):
+    def set_state(self, state=None, xtra=None):
         self.state = state
+        self.target_pos = None
         if state == "gather":
             self.ship.am_gathering = True
         if state == "defend":
@@ -41,12 +42,16 @@ class BrainShip(object):
     def update(self):
         if self.ship.can_move:
             if self.target_pos:
-                if self.ship.territory.capitol.rect.collidepoint(self.ship.rect.center):
-                    self.target_pos = None
+                if self.target_pos.capitol.rect.collidepoint(self.ship.rect.center):
                     return None
-                x = self.ship.move_to(self.target_pos)
+                x = self.ship.move_to(self.target_pos.capitol.pos)
                 if not x:
-                    self.ship.move_to(self.ship.get_goto_spot(self.target_pos))
+                    self.ship.move_to(self.ship.get_goto_spot(self.target_pos.capitol.pos))
+
+class DefenseGroup(object):
+    def __init__(self, terr, myships):
+        self.terr = terr
+        self.ships = myships
 
 class AI(object):
     def __init__(self, state, player):
@@ -57,6 +62,7 @@ class AI(object):
         self.bships = []
         self.finished = False
         self.have_defended = False
+        self.defense_groups = []
 
     def gbtt_r(self, r, islands):
         agg = []
@@ -267,7 +273,25 @@ class AI(object):
                         n.append(x)
 
             for i in n:
-                i.set_state("defend", t.terr.capitol.rect.center)
+                i.set_state("defend", t.terr)
+            self.defense_groups.append(DefenseGroup(t.terr, n))
+
+    def check_def_groups(self):
+        for i in self.defense_groups:
+            good = True
+            for x in self.state.players:
+                if not x == self.player:
+                    for s in x.ships:
+                        if i.terr.rect.colliderect(s.rect) and i.terr.poly.colliderect(s.rect):
+                            good = False
+                            break
+                if not good:
+                    break
+
+            if good:
+                for s in i.ships:
+                    s.set_state()
+                self.defense_groups.remove(i)
 
     def think(self):
         for i in self.bships:
@@ -278,6 +302,8 @@ class AI(object):
                 self.force_defend(x)
                 self.have_defended = True
                 return None
+
+        self.check_def_groups()
 
         # this goes first for these little stinkers!
         self.move_units_default()
