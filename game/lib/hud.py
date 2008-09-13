@@ -241,15 +241,16 @@ class SelectShip(object):
 class BattleExplosionRender(object):
     def __init__(self):
         self.controller = None
+        self._active = False
 
     def active(self):
-        pass
+        self._active = True
 
     def inactive(self):
-        pass
+        self._active = False
 
     def isactive(self):
-        pass
+        return self._active
 
     def render(self, screen):
         if self.controller:

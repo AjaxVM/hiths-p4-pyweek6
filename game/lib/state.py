@@ -250,6 +250,7 @@ class Player(object):
         self.color = self.state.colors[self.pnum]
 
         self.to_be_rendered_objects = []
+        self.priority_to_be_rendered_objects = []
 
         self.controller = controller(state, self)
         self.territories = self.state.world.mo.get_territories(self.pnum)
@@ -277,6 +278,8 @@ class Player(object):
         for i in self.ships:
             if i.rect.colliderect(self.state.world.camera.rect.inflate(45, 45)):
                 i.render(screen, pos)
+        for i in self.priority_to_be_rendered_objects:
+            i.render(screen)
 
     def render_turn(self, screen):
         for i in self.to_be_rendered_objects:
