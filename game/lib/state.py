@@ -100,6 +100,7 @@ class InputController(object):
                 if self.selected_unit:
                     self.unselect_unit()
 
+                self.player.ships.reverse()
                 for i in self.player.ships:
                     if self.selected_unit and i == self.selected_unit[0]:
                         continue
@@ -109,7 +110,9 @@ class InputController(object):
                         self.state.gui.ss.ship = i
                         self.state.gui.set_current(self.state.gui.ss)
                         self.unselect_terr()
+                        self.player.ships.reverse()
                         return
+                self.player.ships.reverse()
 
                 for i in self.player.territories:
                     if p2 in i.pixels:
@@ -256,7 +259,8 @@ class Player(object):
         #it is highly dependant on turn and other user actions.
         pos = self.state.world.camera.get_offset()
         for i in self.ships:
-            i.render(screen, pos)
+            if i.rect.colliderect(self.state.world.camera.rect.inflate(45, 45)):
+                i.render(screen, pos)
 
     def render_turn(self, screen):
         for i in self.to_be_rendered_objects:
