@@ -151,7 +151,7 @@ class TerritoryBottomBarBUILD(object):
             if i in ["junk", "frigate", "juggernaut", "flyingdutchman"]: #hack, remove once we have all the ships in!!!
                 new = pygame.Surface((250, nh)).convert()
                 cur_i = 5
-                new.blit(font.render("name: "+i, 1, (255, 255, 255)), (5, cur_i))
+                new.blit(font.render("name: "+objects.ship_types[i]["fancy"], 1, (255, 255, 255)), (5, cur_i))
                 cur_i += h
                 for x in values:
                     new.blit(font.render(x.replace("_", " ")+": "+str(objects.ship_types[i][x]),
@@ -459,7 +459,7 @@ class Hud(object):
         self.ss = SelectShip(self.state, self.app)
         self.bmr = BattleMiscRender(self.app)
         self.brr = BattleResultRender()
-        self.ber = BattleResultRender()
+        self.ber = BattleExplosionRender()
 
         self.special_states = [self.tbb, self.tbbB, self.ss, self.bmr, self.brr, self.ber]
 
