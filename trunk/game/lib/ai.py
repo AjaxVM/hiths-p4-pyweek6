@@ -61,10 +61,10 @@ class AI(object):
 
         r = pygame.Rect(0,0,m_size, m_size)
 
-        return self.gbtt_r(r, islands)
+        return self.gbtt_r(r, islands), m_size*4
         
 
-    def make_territory(self, pt):
+    def make_territory(self, pt, m_size):
         t = Territory(self.player)
         for i in [pt.topleft, pt.topright,
                   pt.bottomright, pt.bottomleft]:
@@ -73,9 +73,8 @@ class AI(object):
         t.finish()
         if self.state.world.mo.test_territory(t):
             self.state.world.mo.add(t)
-        else:
-            print "bad!", pt
+            self.player.resources.string -= m_size
 
     def think(self):
         if not self.player.territories: #first, find a good starting territory!
-            self.make_territory(self.get_best_territory())
+            self.make_territory(*self.get_best_territory())

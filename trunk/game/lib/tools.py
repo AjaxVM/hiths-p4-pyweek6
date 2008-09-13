@@ -5,6 +5,9 @@ from world import Territory
 from gui import gui
 import combat
 import constants
+import data
+
+import math
 
 
 class HotseatUserBattle(object):
@@ -205,6 +208,8 @@ class TerritoryDrawer(object):
         self.player = player
         self.world = world
 
+        self.font = data.font("Pieces-of-Eight.ttf", 18)
+
         self.t = None
         self.active = False
 
@@ -219,6 +224,9 @@ class TerritoryDrawer(object):
                     x -= self.world.camera.screen_rect.left
                     y -= self.world.camera.screen_rect.top
                     pos = x, y
+                    ax, lol = self.get_acceptable(pos)
+                    if ax > self.player.resources.string:
+                        return
                     if self.world.mo.test_point(pos):
                         if not self.t:
                             self.t = Territory(self.player)
@@ -231,10 +239,37 @@ class TerritoryDrawer(object):
                                 self.t.finish()
                                 if self.world.mo.test_territory(self.t):
                                     self.world.mo.add(self.t)
+                                    self.player.resources.string -= ax
                                 self.t = None
                                 self.active = False
                             else:
                                 self.t.add_point(pos)
+                if event.button == 3:
+                    self.t = None
+                    self.active = False
+
+    def get_acceptable(self, mpos):
+        if not self.t:
+            return 0, self.player.resources.string > 0
+        if len(self.t.points) >= 2:
+            dis = 0
+            for i in xrange(len(self.t.points)):
+                x1, y1 = self.t.points[i]
+                try:
+                    x2, y2 = self.t.points[i+1]
+                except:
+                    x2, y2 = mpos
+                dis += math.sqrt((abs(x1 - x2) ** 2) +\
+                                 (abs(y1 - y2) ** 2))
+            return int(dis), self.player.resources.string >= dis
+        if len(self.t.points) == 1:
+            x1, y1 = self.t.points[0]
+            x2, y2 = mpos
+            dis = math.sqrt((abs(x1 - x2) ** 2) +\
+                            (abs(y1 - y2) ** 2))
+            return int(dis), self.player.resources.string >= dis
+        else:
+            return 0, self.player.resources.string > 0
 
     def render(self, screen):
         if self.t:
@@ -255,6 +290,14 @@ class TerritoryDrawer(object):
             pygame.draw.line(screen, self.player.color, np[-1], mp, 3)
             for i in np:
                 pygame.draw.rect(screen, self.player.color, [i[0]-10, i[1]-10, 20, 20])
+
+            ga, gg = self.get_acceptable(mp)
+            if gg:
+                color = (0, 0, 255)
+            else:
+                color = (255, 0, 0)
+            screen.blit(self.font.render(str(ga), 1, color), (mx, my+20))
+            
 
 class Minimap(object):
     def __init__(self, state, rect):
