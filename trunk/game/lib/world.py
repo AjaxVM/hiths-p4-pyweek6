@@ -241,15 +241,17 @@ class World(object):
                 
                 for j in np:
                     self.screen.blit(self.rock,(j[0]-16,j[1]+8))
+          
+        for i in self.islands:
+            if i.rect.colliderect(self.camera.rect.inflate(45, 45)):
+                i.render(screen, (x, y))
+
+        for i in self.mo.territories:
             ox, oy = self.camera.get_offset()
             ren = self.font2.render(i.name, 1, (0, 0, 0))
             self.screen.blit(ren, (i.capitol.pos[0]-ren.get_width()/2 - ox + 1, i.capitol.pos[1] + 50 - oy + 1))
             ren = self.font2.render(i.name, 1, (255, 255, 0))
             self.screen.blit(ren, (i.capitol.pos[0]-ren.get_width()/2 - ox, i.capitol.pos[1] + 50 - oy))
-
-        for i in self.islands:
-            if i.rect.colliderect(self.camera.rect.inflate(45, 45)):
-                i.render(screen, (x, y))
 
     def make_islands(self):
         grid = []
