@@ -1,6 +1,11 @@
 import math, pygame, random
 import data
 
+def safe_div(x, y):
+    if x and y:
+        return x / y
+    return 0
+
 ship_types = {
     'junk' : \
         { 'hull' : 70, 'crew' : 30, 'speed' : 200, \
@@ -119,9 +124,9 @@ class Ship(object):
     def get_gather_island(self):
         islands = self.territory.islands
         tot = self.owner.resources.get_total()
-        have_percents = [int(tot*1.0/self.owner.resources.gold*10),
-                         int(tot*1.0/self.owner.resources.string*10),
-                         int(tot*1.0/self.owner.resources.crew*10)]
+        have_percents = [int(safe_div(tot*1.0, self.owner.resources.gold*10)),
+                         int(safe_div(tot*1.0, self.owner.resources.string*10)),
+                         int(safe_div(tot*1.0, self.owner.resources.crew*10))]
         difs = [self.owner.gather_targets[0] - have_percents[0],
                 self.owner.gather_targets[1] - have_percents[1],
                 self.owner.gather_targets[2] - have_percents[2]]
@@ -146,6 +151,8 @@ class Ship(object):
             if not difs:
                 break
             difs.remove(ptarget)
+            if not difs:
+                break
             ptarget = min(difs)
             ntarget = ["gold", "string", "crew"]
             ntarget.remove(gtarget)
@@ -210,6 +217,8 @@ class Ship(object):
             else:
                 if self.can_move and self.owner.is_turn():
                     goto, t = self.get_gather_island()
+                    if not goto:
+                        return None
                     self.gather_moveto = self.get_goto_spot(goto.pos)
                     self.gather_island = goto
                     self.gather_target = t
