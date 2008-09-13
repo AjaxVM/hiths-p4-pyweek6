@@ -8,9 +8,12 @@ RB[0] -- Project lead, code, art
 Markus -- Code, art
 Keeyai -- Code
 Pymike -- Code, art
-Unnheulu/john -- Art, documenting
+Unnheulu/john -- Art, documenting, code
 Nihilocrat -- music
 
 All game code and content licensed under the GPLv3, except:
 "Pieces-of-Eight.ttf" Font is from "http://www.dafont.com/pieces-of-eight.font".
 
+==Gameplay==
+
+In a nutshell: The object of the game is to be the last one left with a territory.
