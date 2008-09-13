@@ -2,6 +2,7 @@ import pygame
 import random
 
 from world import Territory
+import constants
 
 class TerritoryInvaders(object):
     def __init__(self, terr):
