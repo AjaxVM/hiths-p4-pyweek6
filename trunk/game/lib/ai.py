@@ -23,7 +23,7 @@ class BrainShip(object):
 
         self.state = None
         self.target_pos = None #ship gather code handles this, movement won't.
-        self.pstates = ["gather", "defend", "invade", "retreat"] #everything it can do!
+        self.pstates = ["gather", "defend"]#, "invade", "retreat"] #everything it can do!
 
     def need_work(self):
         if not self.state in self.pstates:
@@ -38,6 +38,9 @@ class BrainShip(object):
         if state == "defend":
             self.target_pos = xtra
             self.ship.stop_gather()
+##        if state == "invade":
+##            self.target_pos = xtra
+##            self.ship.stop_gather()
 
     def update(self):
         if self.ship.can_move:
@@ -53,6 +56,24 @@ class DefenseGroup(object):
         self.terr = terr
         self.ships = myships
 
+##class ConquestPrepClass(object):
+##    def __init__(self, ai, ship, target_lock, dis):
+##        self.ai = ai
+##        self.ship = ship
+##        self.target_lock = target_lock
+##        self.dis = dis - self.ship.ship.string
+##
+##    def update(self):
+##        self.ship.set_state("gather") # do something while we are waiting
+##        if self.target_lock.player == self.ai.player:
+##            self.ai.waiting_for_string.remove(self)
+##        else:
+##            if self.ai.player.resources.string >= self.dis:
+##                self.ai.player.resources.string -= self.dis
+##                self.ship.ship.string += self.dis
+##                self.ship.set_state("invade", self.target_lock.territory)
+##                self.ai.waiting_for_string.remove(self)
+
 class AI(object):
     def __init__(self, state, player):
         self.state = state
@@ -63,6 +84,8 @@ class AI(object):
         self.finished = False
         self.have_defended = False
         self.defense_groups = []
+        self.conquesting = False
+##        self.waiting_for_string = []
 
     def gbtt_r(self, r, islands):
         agg = []
@@ -157,6 +180,9 @@ class AI(object):
                 if i == self.player: continue
                 if len(i.territories) > len(self.player.territories):
                     return True
+
+            if self.conquesting:
+                return False
 
             if not self.build_up:
                 self.build_up = random.randint(250, 500)
@@ -304,9 +330,40 @@ class AI(object):
                     s.set_state()
                 self.defense_groups.remove(i)
 
+##    def ready_to_war(self):
+##        if not self.need_territory():
+##            for i in self.player.territories:
+##                n = []
+##                for s in self.bships:
+##                    if not s.state == "defend":
+##                        if s.ship.territory == i:
+##                            n.append(s)
+##
+##                if len(n) >= i.pop_cap - 1:
+##                    self.conquesting = True
+##                    t = []
+##                    for x in self.state.world.mo.territories:
+##                        if not x.player == self.player:
+##                            t.append(x)
+##
+##                    cur = {}
+##                    for x in t:
+##                        x1, y1 = x.capitol.rect.center
+##                        x2, y2 = i.capitol.rect.center
+##                        dis = int(math.sqrt(abs((x1-x2))**2 + abs(y1-y2)**2))
+##                        cur[dis] = x
+##                    if not cur:
+##                        continue
+##                    pick = cur[min(cur)]
+##                    for i in n:
+####                        i.set_state()
+##                        self.waiting_for_string.append(ConquestPrepClass(self, i, pick, min(cur)))
+
     def think(self):
         for i in self.bships:
             i.update()
+##        for i in self.waiting_for_string:
+##            i.update()
         if not self.have_defended:
             x = self.need_defend()
             if x:
@@ -325,6 +382,11 @@ class AI(object):
         x = self.need_ships()
         if x and self.make_ship(x):
             return None
+
+        self.ready_to_war()
+
+        if self.player.have_lost():
+            print "Died!"
 
         self.player.end_turn()
         self.have_defended = False
