@@ -140,11 +140,10 @@ class InputController(object):
                                     if not range:
                                         return # Out of range
                                     x = self.selected_unit[0]
-                                    if x.owner.is_human() and j.owner.is_human():
-                                        self.battle_win = tools.HotseatUserBattle(
-                                            self.selected_unit[0], j,
-                                            self.state.gui)
-                                        return # Don't move
+                                    self.battle_win = tools.BattleDialog(
+                                        self.selected_unit[0], j,
+                                        self.state.gui)
+                                    return # Don't move
 
                     # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
