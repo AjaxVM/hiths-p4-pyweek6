@@ -9,19 +9,23 @@ def safe_div(x, y):
 ship_types = {
     'junk' : \
         { 'hull' : 70, 'crew' : 30, 'speed' : 200, \
-        'hold_capacity' : 40, 'damage_multiplier' : 1.2, 'cost' : 50 },
+        'hold_capacity' : 40, 'damage_multiplier' : 1.2, 'cost' : 50,
+          "fancy":"Junk"},
     'frigate' : \
         { 'hull' : 120, 'crew' : 50, 'speed' : 120, \
-        'hold_capacity' : 100, 'damage_multiplier' : 1, 'cost' : 150 },
+        'hold_capacity' : 100, 'damage_multiplier' : 1, 'cost' : 150,
+          "fancy":"Frigate"},
     'juggernaut' : \
         { 'hull' : 180, 'crew' : 100, 'speed' : 80, \
-        'hold_capacity' : 80, 'damage_multiplier' : 2.5, 'cost' : 250 },
+        'hold_capacity' : 80, 'damage_multiplier' : 2.5, 'cost' : 250,
+          "fancy":"Juggernaut"},
     'merchant' : \
         { 'hull' : 100, 'crew' : 20, 'speed' : 140, \
         'hold_capacity' : 150, 'damage_multiplier' : 0.5, 'cost' : 40 },
     'flyingdutchman' : \
         { 'hull' : 400, 'crew' : 80, 'speed' : 100, \
-        'hold_capacity' : 0, 'damage_multiplier' : 3, 'cost' : 350 }
+        'hold_capacity' : 0, 'damage_multiplier' : 3, 'cost' : 350,
+          "fancy":"Flying Dutchman"}
     # TODO: add capitol/city here or subclass it from ship, or just make it
     # have the same attributes?
 }
