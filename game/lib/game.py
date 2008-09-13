@@ -23,7 +23,7 @@ def main():
     state = State(world)
 
     state.add_player()
-    state.add_player()
+    state.add_player(AIController)
 
     gamehud = hud.Hud(screen, state)
 
