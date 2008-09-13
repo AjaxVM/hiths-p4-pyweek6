@@ -115,23 +115,30 @@ class TerritoryBottomBarBUILD(object):
         self.buttons = []
 
         button1 = gui.Button(self.app, (125, 390),
-                             "TBBB-junk", "junk", "topleft",
+                             "TBBB-junk", "Junk", "topleft",
                              icon="junk.png")
         button2 = gui.Button(self.app, (125, button1.rect.bottom+5),
-                             "TBBB-frigate", "frigate", "topleft",
+                             "TBBB-frigate", "Frigate", "topleft",
                              icon="frigate.png")
         button3 = gui.Button(self.app, (button1.rect.right+5, 390),
-                             "TBBB-juggernaut", "juggernaut", "topleft",
+                             "TBBB-juggernaut", "Juggernaut", "topleft",
                              icon="juggernaut.png")
-        button1.over_width = button3.rect.width
+        button4 = gui.Button(self.app, (button1.rect.right+5, button1.rect.bottom+5),
+                             "TBBB-flyingdutchman", "Flying Dutchman", "topleft",
+                             icon="flyingdutchman.png")
+        button1.over_width = button4.rect.width
         button1.make_image()
-        button2.over_width = button3.rect.width
+        button2.over_width = button4.rect.width
         button2.make_image()
+        button3.over_width = button4.rect.width
+        button3.make_image()
         button3.rect.left = button1.rect.right + 5
+        button4.rect.left = button1.rect.right + 5
 
         self.buttons.append(button1)
         self.buttons.append(button2)
         self.buttons.append(button3)
+        self.buttons.append(button4)
 
         font = data.font("Pieces-of-Eight.ttf", 18)
         h = font.get_height()
@@ -176,7 +183,7 @@ class TerritoryBottomBarBUILD(object):
         mpos = pygame.mouse.get_pos()
         for i in self.buttons:
             if i.rect.collidepoint(mpos):
-                screen.blit(self.s[i.text], self.r)
+                screen.blit(self.s[i.text.lower().replace(" ", "")], self.r)
 
 
 class SelectShip(object):
@@ -200,6 +207,24 @@ class SelectShip(object):
     def render(self, screen):
         if self.ship:
             screen.blit(self.ship.image, (125, 390))
+
+class BattleExplosionRender(object):
+    def __init__(self, app):
+        self.app = app
+        self.controller = None
+
+    def active(self):
+        pass
+
+    def inactive(self):
+        pass
+
+    def isactive(self):
+        pass
+
+    def render(self, screen):
+        if self.controller:
+            self.controller.render(screen)
 
 class BattleMiscRender(object):
     def __init__(self, app):
@@ -434,8 +459,9 @@ class Hud(object):
         self.ss = SelectShip(self.state, self.app)
         self.bmr = BattleMiscRender(self.app)
         self.brr = BattleResultRender()
+        self.ber = BattleResultRender()
 
-        self.special_states = [self.tbb, self.tbbB, self.ss, self.bmr, self.brr]
+        self.special_states = [self.tbb, self.tbbB, self.ss, self.bmr, self.brr, self.ber]
 
     def set_current(self, x=None):
         for i in self.special_states:

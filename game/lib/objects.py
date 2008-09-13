@@ -19,7 +19,7 @@ ship_types = {
     'merchant' : \
         { 'hull' : 100, 'crew' : 20, 'speed' : 140, \
         'hold_capacity' : 150, 'damage_multiplier' : 0.5, 'cost' : 40 },
-    'dutchman' : \
+    'flyingdutchman' : \
         { 'hull' : 400, 'crew' : 80, 'speed' : 100, \
         'hold_capacity' : 0, 'damage_multiplier' : 3, 'cost' : 350 }
     # TODO: add capitol/city here or subclass it from ship, or just make it
@@ -32,6 +32,7 @@ class Ship(object):
     close_range = 60
 
     def __init__(self, territory, owner, type='frigate', oldship=None, test=False):
+        type = type.replace(" ", "").lower()
         self._alive = True
         self.owner = owner
         self.type = type
