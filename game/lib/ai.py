@@ -36,13 +36,17 @@ class BrainShip(object):
             self.ship.am_gathering = True
         if state == "defend":
             self.target_pos = xtra
+            self.ship.stop_gather()
 
     def update(self):
         if self.ship.can_move:
             if self.target_pos:
-                if self.target_pos == self.ship.rect.center:
+                if self.ship.territory.capitol.rect.collidepoint(self.ship.rect.center):
                     self.target_pos = None
-                self.ship.move_to(self.ship.goto_spot(self.target_pos))
+                    return None
+                x = self.ship.move_to(self.target_pos)
+                if not x:
+                    self.ship.move_to(self.ship.get_goto_spot(self.target_pos))
 
 class AI(object):
     def __init__(self, state, player):
@@ -52,6 +56,7 @@ class AI(object):
 
         self.bships = []
         self.finished = False
+        self.have_defended = False
 
     def gbtt_r(self, r, islands):
         agg = []
@@ -142,6 +147,13 @@ class AI(object):
                 return True
 
     def need_defend(self):
+        good = False
+        for i in self.bships:
+            if i.ship.can_move:
+                good = True
+                break
+        if not good:
+            return False
         t = []
         for i in self.player.territories:
             t.append(TerritoryInvaders(i))
@@ -159,10 +171,6 @@ class AI(object):
             for x in t:
                 if i.territory == x.terr:
                     x.pships.append(i)
-
-        for i in t:
-            if len(i.ships) < len(i.pships)+random.randint(1, 3):
-                t.remove(i)
 
         return t
 
@@ -203,7 +211,8 @@ class AI(object):
 
         if x:
             t = random.choice(x)
-            self.player.build_ship(terr, t)
+            if not self.player.build_ship(terr, t):
+                return False
             self.bships.append(BrainShip(self.player.ships[-1]))
             return True
         return False
@@ -247,19 +256,29 @@ class AI(object):
 
     def force_defend(self, a):
         for t in a:
-            print [[(t,)]]
             dif = len(t.ships) - len(t.pships)
 
-            s = self.get_closest(dif, t.terr, t.pships)
+            s = self.get_closest(dif, t.terr, t.pships) + t.pships
+            n = []
 
             for i in s:
-                i.state = "defend"
+                for x in self.bships:
+                    if i == x.ship:
+                        n.append(x)
+
+            for i in n:
+                i.set_state("defend", t.terr.capitol.rect.center)
 
     def think(self):
-        x = self.need_defend()
-        if x:
-            self.force_defend(x)
-            return None
+        for i in self.bships:
+            i.update()
+        if not self.have_defended:
+            x = self.need_defend()
+            if x:
+                self.force_defend(x)
+                self.have_defended = True
+                return None
+
         # this goes first for these little stinkers!
         self.move_units_default()
 
@@ -270,4 +289,5 @@ class AI(object):
         if x and self.make_ship(x):
             return None
 
-        self.finished = True
+        self.player.end_turn()
+        self.have_defended = False

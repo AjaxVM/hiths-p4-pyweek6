@@ -90,6 +90,12 @@ class Ship(object):
         self.hopping = False
         self.anchored_to = territory.capitol
 
+    def stop_gather(self):
+        self.am_gathering = False
+        self.gather_moveto = None
+        self.gather_target = "gold"
+        self.gather_island = None
+
     def moving(self):
         return not (self.gather_moveto == None and self.goto == None)
 
@@ -119,8 +125,10 @@ class Ship(object):
             mangle = 0
 
         x, y = self.pos
-        x += int(math.sin(math.radians(mangle))*self.speed)
-        y += int(math.cos(math.radians(mangle))*self.speed)
+        nx = math.sin(math.radians(mangle))
+        ny = math.cos(math.radians(mangle))
+        x += int(nx*self.speed)
+        y += int(ny*self.speed)
 
         return x, y
 
