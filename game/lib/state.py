@@ -183,11 +183,12 @@ class AIController(object):
 
     def update(self):
         self.think()
+        if self.ai.finished:
+            self.player.end_turn()
 
     def think(self):
         print "thinking..."
         self.ai.think()
-##        self.player.end_turn()
 
     def start_turn(self):
         for i in self.player.ships:
@@ -196,6 +197,7 @@ class AIController(object):
     def end_turn(self):
         for i in self.player.ships:
             i.end_turn()
+        self.ai.finished = False
 
 
 class NetworkController(object):
@@ -305,9 +307,9 @@ class State(object):
         self.players[self.uturn].controller.event(event)
 
     def update(self):
-        self.players[self.uturn].controller.update()
         for i in self.players:
             i.update_ships()
+        self.players[self.uturn].controller.update()
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()
