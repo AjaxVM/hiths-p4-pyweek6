@@ -433,16 +433,19 @@ class BattleResultRender(object):
             elif not ship2.is_alive():
                 ship2.sink()
                 surf3 = font.render("Defender was sent to Davey Jones' Locker!", 1, (255, 255, 255))
-            else:
+            elif battle.results['captured'] != None:
                 captured_ship = battle.results['captured']
                 if captured_ship == ship1:
                     w = "attacking"
                     ship2.take_ship(ship1)
-                else:
+                elif captured_ship == ship2:
                     w = "defending"
                     ship1.take_ship(ship2)
                 surf3 = font.render(("The "+w+" ship was captured!"),
                                     1, (255, 255, 255))
+            else:
+                pass
+                #print 'battle results screwed'
         else:
             surf3 = font.render(("The battle was inconclusive."),
                                 1, (255, 255, 255))

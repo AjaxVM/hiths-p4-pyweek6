@@ -61,13 +61,12 @@ class Battle:
         self._fix_stats()
 
         # Check ship status and set winner
+        if (not self.opponents[0].is_alive()) and (not self.opponents[1].is_alive()):
+            return # Both ships sank
         if not self.opponents[0].is_alive():
             self.results['winner'] = self.opponents[1] # Assume the other ship won
         if not self.opponents[1].is_alive():
-            if 'winner' in self.results:
-                del self.results['winner'] # Both ships sank
-            else:
-                self.results['winner'] = self.opponents[0]
+            self.results['winner'] = self.opponents[0]
 
     def _do_damage(self, giver, taker):
         """Calculates and applies damage."""
