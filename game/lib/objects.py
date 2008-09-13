@@ -81,7 +81,7 @@ class Ship(object):
         else:
             self.resources = Resources(0, 0, 0) # Start empty
 
-        self.string = 300#0
+        self.string = 0
         self.distance_from_capitol = 0
         self.am_gathering = False
         self.gather_target = "gold"
