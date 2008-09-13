@@ -3,6 +3,17 @@ import random
 
 from world import Territory
 
+class TerritoryInvaders(object):
+    def __init__(self, terr):
+        self.terr = terr
+        self.ships = []
+        self.pships = []
+
+class TerritoryShips(object):
+    def __init__(self, terr):
+        self.terr = terr
+        self.ships = []
+
 class AI(object):
     def __init__(self, state, player):
         self.state = state
@@ -64,7 +75,8 @@ class AI(object):
         return self.gbtt_r(r, islands), m_size*4
         
 
-    def make_territory(self, pt, m_size):
+    def make_territory(self):
+        pt, m_size = self.get_best_territory()
         t = Territory(self.player)
         for i in [pt.topleft, pt.topright,
                   pt.bottomright, pt.bottomleft]:
@@ -75,6 +87,92 @@ class AI(object):
             self.state.world.mo.add(t)
             self.player.resources.string -= m_size
 
+
+    def need_territory(self):
+        print self.player.territories
+        if self.player.territories == []: #first, find a good starting territory!
+            return True
+        if self.player.resources.string >= 800:
+            return True
+
+    def need_defend(self):
+        t = []
+        for i in self.player.territories:
+            t.append(TerritoryInvaders(i))
+            for x in self.state.players:
+                if not x == self.player:
+                    for j in x.ships:
+                        if i.poly.colliderect(j.rect):
+                            t[-1].ships.append(j)
+
+        for i in t:
+            if not i.ships:
+                t.remove(i)
+
+        for i in self.player.ships:
+            for x in t:
+                if i.territory == x.terr:
+                    x.pships.append(i)
+
+        for i in t:
+            if len(i.ships) < len(i.pships)+random.randint(1, 3):
+                t.remove(i)
+
+        return t
+
+    def need_ships(self):
+        if self.player.resources.string >= 50: #make sure we can at least afford "a" ship!
+            for i in self.state.players:
+                if not i == self.player:
+                    if len(i.ships) > len(self.player.ships):
+                        nd = self.need_defend()
+                        terr = {}
+                        for i in self.player.territories:
+                            terr[i] = TerritoryShips(i)
+
+                        for i in self.player.ships:
+                            terr[i.territory].ships.append(i)
+
+                        least = None
+                        for i in terr:
+                            if not least:
+                                least = i
+                            else:
+                                if i in nd and (not least in nd):
+                                    least = i
+                                    continue
+                                if least in nd and (not i in nd):
+                                    continue
+                                if len(terr[i].ships) + random.randint(-2, 2) < len(terr[least].ships):
+                                    least = i
+                        return least
+
+    def make_ship(self, terr):
+        x = []
+        r = self.player.resources
+        if r.crew >= 30 and r.gold >= 50:
+            x.extend(["junk"]*25)
+        if r.crew >= 50 and r.gold >= 150:
+            x.extend(["frigate"]*15)
+        if r.crew >= 100 and r.gold >= 250:
+            x.extend(["juggernaut"]*7)
+        t = random.choice(x)
+
+        self.player.build_ship(terr, t)
+
+    def end_turn(self):
+        self.player.end_turn()
+
     def think(self):
-        if not self.player.territories: #first, find a good starting territory!
-            self.make_territory(*self.get_best_territory())
+        if self.need_territory:
+            print 1
+            self.make_territory()
+            return None
+
+        x = self.need_ships()
+        if x:
+            print 2
+            self.make_ship(x)
+            return None
+
+        self.end_turn()

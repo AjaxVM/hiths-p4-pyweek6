@@ -147,12 +147,17 @@ class InputController(object):
                         self.selected_unit = None
 
     def update(self):
+        if self.selected_unit:
+            if not self.selected_unit[0] in self.player.ships:
+                self.unselect_unit()
         if self.battle_win:
             self.battle_win.update()
 
     def start_turn(self):
         self.tdraw.t = None
         self.tdraw.active = False
+        for i in self.player.ships:
+            i.end_turn() #reset!
 
     def end_turn(self):
         self.tdraw.t = None
@@ -182,7 +187,7 @@ class AIController(object):
     def think(self):
         print "thinking..."
         self.ai.think()
-        self.player.end_turn()
+##        self.player.end_turn()
 
     def start_turn(self):
         pass
