@@ -239,7 +239,7 @@ class World(object):
                 pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
                 
                 for j in np:
-                    self.screen.blit(self.rock,(j[0]-8,j[1]+16))
+                    self.screen.blit(self.rock,(j[0]-16,j[1]+8))
 
 
 
