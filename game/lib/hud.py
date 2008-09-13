@@ -77,6 +77,9 @@ class NormalBottomBar(object):
         map = self.minimap.update()
         screen.blit(map, self.minimap.rect)
 
+    def update(self):
+        pass
+
 class TerritoryBottomBar(object):
     def __init__(self, state, app):
         self.state = state
@@ -448,6 +451,9 @@ class Hud(object):
         for i in self.special_states:
             if i.isactive():
                 i.render(self.app.surface)
+
+    def update(self):
+        self.normal_button_bar.update()
 
 def attack_print(ships, b):
     print 'Player', ships[0].owner.pnum, ships[0].type, ' vs. ',
