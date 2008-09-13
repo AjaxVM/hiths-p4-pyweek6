@@ -93,7 +93,8 @@ class BattleDialog(object):
                             if self.p1_choice and self.p2_choice:
                                 self.do_battle = True
                                 self.ship1.can_move = False
-                                self.gui.set_current()
+                                self.gui.ber.controller = self
+                                self.gui.set_current(self.gui.ber)
                         if event.name == "UB-Button3!":
                             self.finished = True
                         if event.widget == gui.Menu:
@@ -123,6 +124,9 @@ class BattleDialog(object):
             if self.battle_wait_timer >= 30:
                 self.execute()
                 self.do_battle = False
+
+    def render(self, screen):
+        offset = self.ship1.player.state.world.camera.get_offset()
 
 
 class SelectedTerritoryRender(object):
