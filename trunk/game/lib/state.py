@@ -9,6 +9,8 @@ from combat import Battle
 
 from gui import gui
 
+import ai
+
 class InputController(object):
     """A class that handles the player based on user input"""
     def __init__(self, state, player):
@@ -171,6 +173,8 @@ class AIController(object):
         self.state = state
         self.player = player
 
+        self.ai = ai.AI(state, player)
+
     def event(self, event):
         pass
 
@@ -179,6 +183,7 @@ class AIController(object):
 
     def think(self):
         print "thinking..."
+        self.ai.think()
         self.player.end_turn()
 
     def start_turn(self):
