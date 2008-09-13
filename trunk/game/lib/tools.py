@@ -38,20 +38,20 @@ class BattleDialog(object):
         if not self.range:
             self.finished = True
 
-        self.p1_choice = None
-        self.p2_choice = None
+        self.p1_choice = 'ball'
+        self.p2_choice = 'ball'
         self.p1_attackc = None
         self.p2_attackc = None
 
         if ship1.owner.is_human():
             self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5),
-                    "UB-Menu1", "Select Cannonball", attack_options[self.range],
+                    "UB-Menu1", "ball             ", attack_options[self.range],
                     widget_pos="bottomleft")
         else:
             self.p1_choice = ship1.owner.controller.ai.select_attack_type(ship1, ship2)
         if ship2.owner.is_human():
             self.p2_attackc = gui.Menu(self.win, (320, self.button.rect.top-5), 
-                    "UB-Menu2", "Select Cannonball", attack_options[self.range],
+                    "UB-Menu2", "ball             ", attack_options[self.range],
                     widget_pos="bottomright")
         else:
             self.p2_choice = ship2.owner.controller.ai.select_attack_type(ship2, ship1)
