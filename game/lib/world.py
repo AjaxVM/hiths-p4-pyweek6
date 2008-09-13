@@ -183,12 +183,14 @@ class Camera(object):
 class World(object):
     def __init__(self, screen_size=(640, 480),
                  world_size = (5000, 5000),
-                 screen_rect=(640, 480)):
+                 screen_rect=(640, 480),
+                 screen=None):
         self.ssize = screen_size
         self.wsize = world_size
 
         self.mo = MapObject(self.wsize, self)
         self.tile_image = data.image("water.png")
+        self.rock = data.image("rock.png")
         self.cur_timer = 0
         self.cur_cycle = 0
 
@@ -199,6 +201,8 @@ class World(object):
         self.make_islands()
 
         self.font = data.font(None, 30)
+        
+        self.screen = screen
 
     def render(self, screen):
         self.cur_timer += 1
@@ -233,6 +237,10 @@ class World(object):
                     py -= y
                     np.append((px, py))
                 pygame.draw.polygon(screen, constants.player_colors[i.player.pnum], np, 3)
+                
+                for j in np:
+                    self.screen.blit(self.rock,(j[0]-8,j[1]+16))
+
 
 
         for i in self.islands:

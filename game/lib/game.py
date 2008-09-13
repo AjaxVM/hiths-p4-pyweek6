@@ -19,7 +19,7 @@ def main():
     screen_rect = pygame.Rect(0, 30, 640, 350)
     game_screen = screen.subsurface(screen_rect)
 
-    world = World(game_size, map_size, screen_rect)
+    world = World(game_size, map_size, screen_rect, screen)
     state = State(world)
 
     state.add_player()
