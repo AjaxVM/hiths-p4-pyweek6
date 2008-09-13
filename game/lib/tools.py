@@ -38,13 +38,23 @@ class BattleDialog(object):
         if not self.range:
             self.finished = True
 
-        self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5), "UB-Menu1", "Select Cannonball",
-                                   attack_options[self.range], widget_pos="bottomleft")
-        self.p2_attackc = gui.Menu(self.win, (320, self.button.rect.top-5), "UB-Menu2", "Select Cannonball",
-                                   attack_options[self.range], widget_pos="bottomright")
-
         self.p1_choice = None
         self.p2_choice = None
+        self.p1_attackc = None
+        self.p2_attackc = None
+
+        if ship1.owner.is_human():
+            self.p1_attackc = gui.Menu(self.win, (3, self.button.rect.top-5),
+                    "UB-Menu1", "Select Cannonball", attack_options[self.range],
+                    widget_pos="bottomleft")
+        else:
+            self.p1_choice = ship1.owner.controller.ai.select_attack_type(ship1, ship2)
+        if ship2.owner.is_human():
+            self.p2_attackc = gui.Menu(self.win, (320, self.button.rect.top-5), 
+                    "UB-Menu2", "Select Cannonball", attack_options[self.range],
+                    widget_pos="bottomright")
+        else:
+            self.p2_choice = ship2.owner.controller.ai.select_attack_type(ship2, ship1)
 
         self.gui.set_current(self.gui.bmr)
         self.gui.bmr.set_to(self.ship1, self.ship2, self.win)
@@ -52,10 +62,16 @@ class BattleDialog(object):
         self.battle_wait_timer = 0
         self.do_battle = False
 
+        # Both players are AI, skip this dialog business
+        if (not ship1.owner.is_human()) and (not ship2.owner.is_human()):
+            self.execute()
+
     def execute(self):
         self.win.active = True
-        self.p1_attackc.active = False
-        self.p2_attackc.active = False
+        if self.p1_attackc:
+            self.p1_attackc.active = False
+        if self.p2_attackc:
+            self.p2_attackc.active = False
         self.button.active = False
         self.button2.active = False
         self.button3.active = True
