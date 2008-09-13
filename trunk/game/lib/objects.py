@@ -1,4 +1,5 @@
 import math, pygame, random
+from pygame.locals import *
 import data
 
 def safe_div(x, y):
@@ -507,3 +508,30 @@ class Island(object):
             x = random.choice(choices)
             choices.remove(x)
             self.resources.append(x)
+
+class Explosion(object):
+    def __init__(self, pos, group):
+        self.group = group
+        self.group.append(self)
+        self.pos = list(pos)
+        self.image = pygame.Surface((32, 32))
+        self.image.set_colorkey((0, 0, 0), RLEACCEL)
+        self.radius = 2
+        self.alpha = 255
+    def update(self):
+        if self.radius < 16:
+            self.radius += 2
+        else:
+            self.alpha -= 5
+            if self.alpha <= 0:
+                self.kill()
+            self.image.set_alpha(self.alpha)
+        pygame.draw.circle(self.image, [255, 255, 0], [16, 16], self.radius)
+    def draw(self, surf, offset):
+        p = [0, 0]
+        p[0] = self.pos[0] + offset[0]
+        p[1] = self.pos[1] + offset[1]
+        surf.blit(self.image, p)
+    def kill(self):
+        if self in self.group:
+            self.group.remove(self)

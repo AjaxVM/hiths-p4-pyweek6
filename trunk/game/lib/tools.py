@@ -6,7 +6,7 @@ from gui import gui
 import combat
 import constants
 import data
-
+from objects import *
 import math
 
 
@@ -61,6 +61,7 @@ class BattleDialog(object):
 
         self.battle_wait_timer = 0
         self.do_battle = False
+        self.explosions = []
 
         # Both players are AI, skip this dialog business
         if (not ship1.owner.is_human()) and (not ship2.owner.is_human()):
@@ -118,7 +119,11 @@ class BattleDialog(object):
         self.gui.set_current()
 
     def update(self):
+        for e in self.explosions:
+            e.update()
         if self.do_battle:
+            Explosion(self.ship1.pos, self.explosions)
+            Explosion(self.ship2.pos, self.explosions)
             self.win.active = False
             self.battle_wait_timer += 1
             if self.battle_wait_timer >= 30:
@@ -127,7 +132,8 @@ class BattleDialog(object):
 
     def render(self, screen):
         offset = self.ship1.player.state.world.camera.get_offset()
-
+        for e in self.explosions:
+            e.draw(screen, offset)
 
 class SelectedTerritoryRender(object):
     def __init__(self, player, territory, world):
