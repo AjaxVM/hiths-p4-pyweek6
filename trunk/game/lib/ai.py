@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from world import Territory
 
@@ -7,22 +8,7 @@ class AI(object):
         self.state = state
         self.player = player
 
-    def get_best_territory(self):
-        islands = list(self.state.world.islands)
-        for i in self.state.players:
-            for x in i.territories:
-                for c in x.islands:
-                    islands.remove(c)
-
-        s = self.player.resources.string
-        m = 1
-        if s == 0:
-            m_size = 0
-        else:
-            m_size = int(s / 4)
-
-        r = pygame.Rect(0,0,m_size, m_size)
-
+    def gbtt_r(self, r, islands):
         agg = []
         for i in islands:
             r.topleft = i.rect.topleft
@@ -41,9 +27,9 @@ class AI(object):
             agg.append([])
             for x in islands:
                 if not i == x: #this might get slowish...
-                    if i.rect.inflate(-10,-10).colliderect(r):
-                        if not i in agg[-1]:
-                            agg[-1].append(i)
+                    if x.rect.colliderect(r):
+                        if not x in agg[-1]:
+                            agg[-1].append(x)
 
         cur_largest = agg[0]
         for i in agg[1::]:
@@ -57,8 +43,26 @@ class AI(object):
             if i.rect.left < r.left:
                 r.left = i.rect.left
 
-
         return r
+
+    def get_best_territory(self):
+        islands = list(self.state.world.islands)
+        for i in self.state.players:
+            for x in i.territories:
+                for c in x.islands:
+                    islands.remove(c)
+
+        s = self.player.resources.string
+        m = 1
+        if s == 0:
+            m_size = 0
+        else:
+            m_size = int(s / 4)
+
+        r = pygame.Rect(0,0,m_size, m_size)
+
+        return self.gbtt_r(r, islands)
+        
 
     def make_territory(self, pt):
         t = Territory(self.player)
