@@ -190,10 +190,12 @@ class AIController(object):
 ##        self.player.end_turn()
 
     def start_turn(self):
-        pass
+        for i in self.player.ships:
+            i.end_turn() #reset!
 
     def end_turn(self):
-        pass
+        for i in self.player.ships:
+            i.end_turn()
 
 
 class NetworkController(object):

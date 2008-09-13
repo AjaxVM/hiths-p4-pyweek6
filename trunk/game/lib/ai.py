@@ -90,6 +90,7 @@ class AI(object):
         if self.state.world.mo.test_territory(t):
             self.state.world.mo.add(t)
             self.player.resources.string -= m_size
+            return True
 
 
     def need_territory(self):
@@ -132,10 +133,6 @@ class AI(object):
         return t
 
     def need_ships(self):
-##        if self.player.resources.string >= 50: #make sure we can at least afford "a" ship!
-##        for i in self.state.players:
-##            if not i == self.player:
-##                if len(i.ships) > len(self.player.ships):
         nd = self.need_defend()
         terr = {}
         for i in self.player.territories:
@@ -156,7 +153,10 @@ class AI(object):
                     continue
                 if len(terr[i].ships) + random.randint(-2, 2) < len(terr[least].ships):
                     least = i
-        return least
+
+        if nd or len(self.player.ships) < len(self.player.territories) * 3:
+            return least
+        return None
 
     def make_ship(self, terr):
         x = []
@@ -174,13 +174,21 @@ class AI(object):
             return True
         return False
 
+    def move_units_default(self):
+        for i in self.player.ships:
+            if i.can_move: #special case defensive/aggressive or resource movement done first
+                i.am_gathering = True
+
     def end_turn(self):
         self.player.end_turn()
 
     def think(self):
-        print str(self.player.resources)
-        if self.need_territory():
-            self.make_territory()
+        # this goes first for these little stinkers!
+##        self.move_units_default()
+        for i in self.player.ships:
+            i.am_gathering = True
+
+        if self.need_territory() and self.make_territory():
             return None
 
         x = self.need_ships()
