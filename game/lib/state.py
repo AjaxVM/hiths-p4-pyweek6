@@ -24,6 +24,8 @@ class InputController(object):
         self.selected_unit = None
         self.battle_win = None
 
+        self.busy = False
+
     def unselect_unit(self):
         try:
             self.player.to_be_rendered_objects.remove(self.selected_unit[1])
@@ -156,6 +158,12 @@ class InputController(object):
         if self.battle_win:
             self.battle_win.update()
 
+        self.busy = False
+        for i in self.player.ships:
+            if i.moving():
+                self.busy = True
+                break
+
     def start_turn(self):
         self.tdraw.t = None
         self.tdraw.active = False
@@ -180,6 +188,7 @@ class AIController(object):
         self.player = player
 
         self.ai = ai.AI(state, player)
+        self.busy = False
 
     def event(self, event):
         pass
@@ -213,6 +222,8 @@ class NetworkController(object):
     def __init__(self, state, player):
         self.state = state
         self.player = player
+
+        self.busy = False
 
     def event(self, event):
         pass
@@ -304,16 +315,27 @@ class State(object):
         self.players.append(Player(self, control_type, self.pt_index))
         self.pt_index += 1
 
+    def get_uturn(self):
+        if self.players[self.uturn-1].controller.busy:
+            x = self.uturn - 1
+            if x < 0: x = len(self.players)-1
+            return x
+        return self.uturn
+
     def get_current_player(self):
         return self.players[self.uturn]
 
     def event(self, event):
-        self.players[self.uturn].controller.event(event)
+        if not self.players[self.uturn-1].controller.busy:
+            self.players[self.uturn].controller.event(event)
 
     def update(self):
         for i in self.players:
             i.update_ships()
-        self.players[self.uturn].controller.update()
+        if not self.players[self.uturn-1].controller.busy:
+            self.players[self.uturn].controller.update()
+        else:
+            self.players[self.uturn-1].controller.update()
 
     def next_player_turn(self):
         self.players[self.uturn].do_end_turn()

@@ -90,6 +90,9 @@ class Ship(object):
         self.hopping = False
         self.anchored_to = territory.capitol
 
+    def moving(self):
+        return not (self.gather_moveto == None and self.goto == None)
+
     def is_alive(self):
         """Returns the status of the ship, but checks that status first, so the
         ship can be 'sunk' (pruned from list of living ships) if need be."""
