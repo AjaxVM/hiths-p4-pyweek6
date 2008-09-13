@@ -4,6 +4,7 @@ import math
 
 from world import Territory
 import constants
+import tools, combat
 
 class TerritoryInvaders(object):
     def __init__(self, terr):
@@ -24,6 +25,7 @@ class BrainShip(object):
         self.state = None
         self.target_pos = None #ship gather code handles this, movement won't.
         self.pstates = ["gather", "defend"]#, "invade", "retreat"] #everything it can do!
+        self.attacked = False
 
     def need_work(self):
         if not self.state in self.pstates:
@@ -50,6 +52,26 @@ class BrainShip(object):
                 x = self.ship.move_to(self.target_pos.capitol.pos)
                 if not x:
                     self.ship.move_to(self.ship.get_goto_spot(self.target_pos.capitol.pos))
+
+    def get_within_range(self):
+        cur = []
+        for i in self.ship.owner.state.players:
+            if not i == self.ship.owner:
+                for i in i.ships:
+                    x = i.get_range(self.ship)
+                    if x:
+                        if cur:
+                            if cur[0] == "short":
+                                pass
+                            elif cur[0] == "medium" and x == "short":
+                                cur = [x, i]
+                            elif cur[0] == "long" and x in ["medium", "short"]:
+                                cur = [x, i]
+                        else:
+                            cur = [x, i]
+        if cur:
+            return cur[1]
+        return None
 
 class DefenseGroup(object):
     def __init__(self, terr, myships):
@@ -267,6 +289,8 @@ class AI(object):
 
     def end_turn(self):
         self.player.end_turn()
+        for i in self.bships:
+            i.attacked = False
 
     def ready_attack(self):
         return False
@@ -359,7 +383,46 @@ class AI(object):
 ####                        i.set_state()
 ##                        self.waiting_for_string.append(ConquestPrepClass(self, i, pick, min(cur)))
 
+    def do_fight(self):
+        for i in self.bships:
+            if not i.attacked:
+                i.attacked = True
+                x = i.get_within_range()
+                if not x:
+                    return True
+##                self.player.controller.battle_win = tools.BattleDialog(
+##                    i.ship, x,
+##                    self.state.gui)
+                b = combat.Battle((i.ship, x), self.select_attack_type(i.ship, x, x.get_range(i.ship)),
+                                  self.select_attack_type(i.ship, x, x.get_range(i.ship)), x.get_range(i.ship))
+                b.execute()
+
+                ship1 = i.ship
+                ship2 = x
+                if b.results['captured'] == 0:
+                    ship1.sink()
+                    ship2.sink()
+                elif not ship1.is_alive() and not ship2.is_alive():
+                    ship1.sink()
+                    ship2.sink()
+                elif "winner" in b.results:
+                    if not ship1.is_alive():
+                        ship1.sink()
+                    elif not ship2.is_alive():
+                        ship2.sink()
+                    elif b.results['captured'] != None:
+                        captured_ship = b.results['captured']
+                        if captured_ship == ship1:
+                            ship2.take_ship(ship1)
+                        elif captured_ship == ship2:
+                            ship1.take_ship(ship2)
+                print "done!"
+
     def think(self):
+##        if self.player.controller.battle_win:
+##            print ".",
+##            return None
+##        print
         for i in self.bships:
             i.update()
 ##        for i in self.waiting_for_string:
@@ -384,6 +447,8 @@ class AI(object):
             return None
 
 ##        self.ready_to_war()
+        if self.do_fight():
+            return None
 
         if self.player.have_lost():
             print "Died!"
@@ -391,5 +456,8 @@ class AI(object):
         self.player.end_turn()
         self.have_defended = False
 
-    def select_attack_type(self, myship, enemy):
-        return 'ball'
+    def select_attack_type(self, myship, enemy, r):
+        attack_options = {"long": ["ball"]*7+["chain"]*3,
+                          "medium": ["ball"]*5+["chain"]*2+["grape"]*3,
+                          "close": ["ball"]*2+["chain"]*3+["grape"]*2+["board"]*3}
+        return random.choice(attack_options[r])
