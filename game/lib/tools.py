@@ -10,7 +10,7 @@ import data
 import math
 
 
-class HotseatUserBattle(object):
+class BattleDialog(object):
     def __init__(self, ship1, ship2, mgui):
         self.ship1 = ship1
         self.ship2 = ship2
