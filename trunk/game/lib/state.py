@@ -65,6 +65,13 @@ class InputController(object):
                 if event.name.startswith("TBBB-"):
                     self.player.build_ship(self.selected_territory, event.name[5::])
                     self.state.gui.set_current(self.state.gui.tbb)
+                if event.name == "SS-AddString":
+                    if self.selected_unit:
+                        if self.player.resources.string >= 50:
+                            self.player.resources.string -= 50
+                            self.selected_unit[0].string += 50
+                    else:
+                        self.state.gui.set_current()
 
         if event.type == KEYDOWN:
             if event.key == K_r:

@@ -191,15 +191,19 @@ class SelectShip(object):
         self.state = state
 
         self.app = app
+        self.button1 = gui.Button(self.app, (550, 475),
+                             "SS-AddString", "Give 50 String", "bottomright")
         self.ship = None
 
         self.inactive()
 
     def active(self):
         self._active = True
+        self.button1.active = True
 
     def inactive(self):
         self._active = False
+        self.button1.active = False
 
     def isactive(self):
         return self._active
