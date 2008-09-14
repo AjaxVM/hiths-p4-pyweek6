@@ -24,6 +24,9 @@ def main():
     map_size = (1600, 1600) # Best as a multiple of 82 (or minimap size)
     screen_rect = pygame.Rect(0, 30, 640, 350)
     game_screen = screen.subsurface(screen_rect)
+    import os
+    pygame.mixer.music.load(os.path.join('data', 'music', 'rio_grande.ogg'))
+    pygame.mixer.music.play(-1)
 
     world = World(game_size, map_size, screen_rect, screen)
     state = State(world)
