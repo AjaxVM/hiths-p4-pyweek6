@@ -26,9 +26,11 @@ ship_types = {
     'flyingdutchman' : \
         { 'hull' : 400, 'crew' : 80, 'speed' : 100, \
         'hold_capacity' : 0, 'damage_multiplier' : 3, 'cost' : 350,
-          "fancy":"Flying Dutchman"}
-    # TODO: add capitol/city here or subclass it from ship, or just make it
-    # have the same attributes?
+          "fancy":"Flying Dutchman"},
+    'capitol' : \
+        { 'hull' : 500, 'crew' : 400, 'speed' : 100, \
+        'hold_capacity' : 0, 'damage_multiplier' : 1, 'cost' : 0,
+          "fancy":"Capitol"}
 }
 
 class Ship(object):
@@ -412,6 +414,10 @@ class Ship(object):
     def take_ship(self, oldship):
         """Captures an enemy ship and "does the right thing" with all its 
         data"""
+        if oldship.type == 'capitol':
+            print 'taking capitol'
+            return
+
         oldship.owner.ships.remove(oldship)
         ship = Ship(self.territory, self.owner, oldship.type, oldship=oldship)
         ship.pos = oldship.pos
@@ -542,3 +548,39 @@ class Explosion(object):
         x += offset[0]
         y += offset[1]
         surf.blit(self.images[self.cur], (x, y))
+
+class BattleCapitol(object):
+    def __init__(self, territory, owner, pos):
+        self._alive = True
+        self.owner = owner
+        self.type = 'capitol'
+
+        td = ship_types[self.type]
+        self.hull_max = td['hull']
+        self.crew_max = td['crew']
+        self.speed_max = td['speed']
+
+        self.hull = self.hull_max
+        self.crew = self.crew_max
+        self.speed = self.speed_max
+
+        self.damage_multiplier = td['damage_multiplier']
+
+        self.territory = territory
+        self.pos = pos
+        self.rect = territory.capitol.cap_rect
+        self.image = territory.capitol.capitol_image
+
+    def is_alive(self):
+        """Returns the status of the ship, but checks that status first, so the
+        ship can be 'sunk' (pruned from list of living ships) if need be."""
+        if self.hull <= 0:
+            self._alive = False
+            return False
+        else:
+            return True
+    def sink(self):
+        print 'capitol "sink"'
+
+    def take_ship(self, oldship):
+        print 'capitol "take_ship"'
