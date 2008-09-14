@@ -156,6 +156,18 @@ class InputController(object):
                                         self.selected_unit[0], j,
                                         self.state.gui)
                                     return # Don't move
+                            # Check for capitol attack
+                            for j in i.territories:
+                                if j.capitol.rect.collidepoint(p2):
+                                    cap_ship = objects.BattleCapitol(j, i, j.rect.center)
+                                    range = self.selected_unit[0].get_range(cap_ship)
+                                    if not range:
+                                        return # Out of range
+
+                                    self.battle_win = tools.BattleDialog(
+                                        self.selected_unit[0], cap_ship,
+                                        self.state.gui)
+                                    return
 
                     # Didn't click on a ship, try to move
                     x = self.selected_unit[0].move_to(p2)
