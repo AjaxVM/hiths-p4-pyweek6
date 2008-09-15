@@ -1,0 +1,43 @@
+
+
+player_colors = [(255, 0, 0),
+               (0, 255, 0),
+               (0, 0, 255),
+               (255, 255, 0),
+               (0, 255, 255)]
+
+territory_first_name = [("Blackeye's "),
+                ("Pennie's "),
+                ("Hookhand's "),
+                ("My "),
+                ("Old Man's "),
+                ("Dead Man's "),
+                ("Mama's "),
+                ("The Shipwreck's "),
+                ("Black Jack's "),
+                ("No Hand "),
+                ("Kniver's "),
+                ("Crazy Pete's "),
+                ("Black Sand "),
+                ("Black Spot "),
+                ("Death's "),
+                ("Old "),
+                ("New "),
+                ("Black "),
+                ("Isla de ")]
+
+territory_second_name = [("Cave"),
+                ("Cove"),
+                ("Hideout"),
+                ("Hold"),
+                ("Bedroom"),
+                ("Pub"),
+                ("Island"),
+                ("Close"),
+                ("Beach"),
+                ("Shanty"),
+                ("Alehouse"),
+                ("Brothel"),
+                ("Shack"),
+                ("Shipwreck"),
+                ("Dead End")]

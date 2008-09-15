@@ -1,0 +1,10 @@
+#the basic theme
+
+Label("noimage", (255, 255, 255))
+Button("button.png", "button.png", "button-selected.png", (255, 255, 255))
+Font("Pieces-of-Eight.ttf", 20, 1)
+Menu("button.png", "button.png", "button.png", "button-selected.png", (255, 255, 255))
+Input("button.png", (255, 255, 255))
+WindowBar("button.png", "button.png", "button-selected.png", (255, 255, 0))
+Window("window.png")
+ScrollBar("button.png", "button.png", "button.png", "button-selected.png")
